@@ -27,7 +27,9 @@ Nenhuma das três depende de alguém lembrar da regra no momento de escrever.
 | Estilo | Tailwind CSS 4 | Tokens de marca em `@theme`, num arquivo só |
 | Animação de UI | Motion 12 | `whileInView` para as revelações por rolagem |
 | 3D | Three.js via `@react-three/fiber` | Cena declarativa e, principalmente, descarte de contexto WebGL no unmount |
-| Banco | PostgreSQL + Prisma | Schema versionado e revisável em PR — o principal artefato de auditoria |
+| Banco | PostgreSQL + Prisma 7 | Schema versionado e revisável em PR — o principal artefato de auditoria |
+| Autenticação | `jose` + argon2id, sessão própria | Ver abaixo |
+| Validação | Zod | Uma fronteira única entre `FormData` e o domínio tipado |
 | Testes | Vitest | Rápido o bastante para o guardrail rodar em cada commit |
 
 ### Por que Prisma e não Supabase
@@ -38,6 +40,36 @@ revisar em PR e difícil de apresentar numa auditoria. Com Prisma, o schema e as
 políticas de acesso são código, com histórico em git. Num produto cuja tese é
 "somos descritivos e conseguimos provar isso", esse histórico vale mais que as
 semanas economizadas.
+
+### Por que autenticação própria e não NextAuth
+
+Esta é a decisão mais discutível do projeto, então vai com o raciocínio inteiro.
+
+O caminho padrão seria Auth.js (NextAuth v5). O problema é que a v5 segue em
+beta — `5.0.0-beta.32` — e a v4 estável não acompanha bem o Next 16 com React
+19. Para um produto que guarda dado financeiro, depender de um beta perpétuo na
+camada de autenticação é uma dívida com data de vencimento incerta.
+
+O que precisamos é pequeno: e-mail e senha, sem OAuth, sem provedores externos.
+Isso cabe em três arquivos auditáveis:
+
+- **`password.ts`** — argon2id com os parâmetros do OWASP (19 MiB, 2 iterações).
+- **`session.ts`** — JWT assinado com HS256 via `jose`, em cookie `httpOnly` +
+  `secure` + `sameSite=lax`, referenciando uma linha em `sessions`.
+- **`actions.ts`** — cadastro, login e logout como Server Actions.
+
+O registro em banco existe porque **JWT sozinho não se revoga**: sem ele, um
+logout apagaria o cookie do navegador e deixaria uma cópia do token válida até
+expirar. Com ele, encerrar sessão ou excluir a conta invalida de fato.
+
+Dois cuidados que costumam faltar em implementação caseira e estão aqui: o login
+devolve **a mesma mensagem** para e-mail inexistente e senha errada, e calcula um
+hash descartável quando o usuário não existe — sem isso, a diferença de tempo de
+resposta entrega quais e-mails estão cadastrados.
+
+**O gatilho para migrar** é claro: no dia em que entrar login social, 2FA ou
+mágica por e-mail, o custo de manter isso à mão passa a superar o de adotar
+Auth.js. Até lá, o que temos é menor, estável e inteiramente revisável.
 
 ### Por que react-three-fiber e não Three.js imperativo
 
@@ -50,20 +82,31 @@ descarte acontece sozinho. A cena também precisa ser desligada sob
 ## Estrutura de pastas
 
 ```
+prisma/
+├── schema.prisma             # modelo de dados (LGPD + limite regulatório)
+└── migrations/               # histórico versionado
 src/
-├── app/                      # rotas (App Router)
-│   ├── page.tsx              # landing
-│   ├── layout.tsx            # shell + metadados
-│   ├── globals.css           # tokens da marca (@theme)
-│   └── icon.svg
+├── app/
+│   ├── page.tsx              # landing pública
+│   ├── (auth)/               # entrar, criar-conta — redireciona se logado
+│   ├── (app)/                # área autenticada, noindex
+│   │   ├── carteira/         # painel de composição
+│   │   ├── ativos/[classe]/  # ficha educativa
+│   │   └── conta/            # LGPD: exportar e excluir
+│   ├── api/conta/exportar/   # portabilidade em JSON
+│   └── globals.css           # tokens da marca (@theme)
 ├── components/
 │   ├── marketing/            # seções da landing
+│   ├── portfolio/            # formulário e gráficos da carteira
+│   ├── auth/, account/       # formulários de conta
 │   ├── three/                # cena 3D do hero
-│   └── ui/                   # primitivos (Section, Reveal, Disclaimer)
+│   └── ui/                   # primitivos (Section, Field, Disclaimer)
 ├── domain/                   # núcleo — sem React, sem UI
 │   ├── cnpj/                 # validação e normalização
 │   ├── assets/               # taxonomia, classificação, fichas
+│   ├── portfolio/            # dinheiro, agregação, FGC, vencimentos
 │   └── compliance/           # política e detector de violações
+├── lib/                      # infraestrutura: db, auth, ações, validação
 └── config/                   # configuração institucional
 tests/                        # guardrail de conformidade + domínio
 docs/                         # esta pasta
@@ -95,14 +138,33 @@ então a classificação é inferência para tudo que não é fundo. Como infer�
 erra, ela é apresentada com o grau de certeza que tem, e confiança baixa vira
 pedido de confirmação em vez de palpite exibido como fato.
 
-## Fase 1 — o que falta
+## Dinheiro em centavos inteiros
 
-O scaffold entrega landing, domínio e guardrail. Falta:
+`declaredValueCents` é `BigInt` no banco e inteiro em memória, nunca `Float`.
+Ponto flutuante acumula erro de arredondamento — `0.1 + 0.2 !== 0.3` — e num
+total de carteira isso aparece como centavo perdido que o usuário percebe e não
+perdoa. A conversão para texto acontece só na borda da interface, em
+`formatCents`.
 
-1. **Auth** — cadastro/login, com verificação de e-mail.
-2. **Schema Prisma** — `User`, `Portfolio`, `PortfolioAsset`, `AuditLog`, com
-   criptografia em repouso nos campos sensíveis e exclusão em cascata.
-3. **Entrada de ativos** — formulário com máscara e validação de CNPJ.
-4. **Dashboard** — composição real, reaproveitando os componentes de gráfico da
-   landing.
-5. **Conta e dados** — exportar e excluir, requisito de LGPD.
+## Fase 1 — estado
+
+Entregue e verificado ponta a ponta contra Postgres real:
+
+- [x] Landing page
+- [x] Cadastro, login, logout e proteção de rotas
+- [x] Schema Prisma com cascata de exclusão
+- [x] Entrada manual de ativos, com máscara e validação de CNPJ
+- [x] Motor de classificação com confirmação quando a confiança é baixa
+- [x] Dashboard de composição por classe e por instituição
+- [x] Segurança e Estrutura: FGC por instituição, vencimentos
+- [x] Ficha educativa por classe de ativo
+- [x] LGPD: exportar dados em JSON e excluir conta
+- [x] Contato via WhatsApp
+
+Pendências conhecidas, detalhadas em `docs/RISKS.md`:
+
+1. **Limite de tentativas** no login e no cadastro (risco 9) — a mitigação
+   contra força bruta e enumeração de e-mail.
+2. **Criptografia em repouso** dos campos sensíveis da carteira (risco 8).
+3. **Verificação de e-mail** e recuperação de senha.
+4. **Log de auditoria** de acesso a dado de carteira.

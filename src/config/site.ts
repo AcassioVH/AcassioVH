@@ -6,7 +6,15 @@
  * versionado no repositório público.
  */
 
-const WHATSAPP_PLACEHOLDER = "5500000000000";
+/**
+ * WhatsApp de contato do assessor, em formato internacional.
+ *
+ * Fica como padrão no código, e não só em variável de ambiente, porque este
+ * número é contato comercial destinado a aparecer publicamente no site — o
+ * botão precisa funcionar num deploy limpo. A variável de ambiente continua
+ * tendo precedência, para trocar o número sem publicar código novo.
+ */
+const WHATSAPP_DEFAULT = "5582981290546";
 
 export const site = {
   name: "Acássium Invest",
@@ -24,13 +32,19 @@ export const site = {
 
   contact: {
     /** Formato internacional, apenas dígitos. Ex.: 5511999999999. */
-    whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? WHATSAPP_PLACEHOLDER,
+    whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || WHATSAPP_DEFAULT,
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contato@acassium.com.br",
   },
 } as const;
 
-/** True quando o número de contato ainda não foi configurado no ambiente. */
-export const whatsappIsConfigured = site.contact.whatsappNumber !== WHATSAPP_PLACEHOLDER;
+/**
+ * Confere se o número tem forma de telefone internacional discável.
+ *
+ * Se alguém definir a variável de ambiente com lixo, a interface cai para
+ * e-mail em vez de gerar um link wa.me que abre uma conversa vazia — falha
+ * silenciosa que ninguém percebe até um cliente desistir de entrar em contato.
+ */
+export const whatsappIsConfigured = /^\d{12,15}$/.test(site.contact.whatsappNumber);
 
 const DEFAULT_WHATSAPP_MESSAGE =
   "Olá, Victor. Vim pelo site da Acássium Invest e gostaria de conversar sobre a " +

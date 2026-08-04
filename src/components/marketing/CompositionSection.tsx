@@ -5,6 +5,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { Section } from "@/components/ui/Section";
 import { Reveal } from "@/components/ui/Reveal";
 import { CATEGORY_COLORS, CATEGORY_LABELS, type AssetCategory } from "@/domain/assets/taxonomy";
+import { donutSegments } from "@/domain/portfolio/donut";
 
 /**
  * Dados meramente ilustrativos.
@@ -44,22 +45,16 @@ const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 const SEGMENT_GAP = 3;
 
 /**
- * Cada fatia começa onde a anterior terminou, então o deslocamento é acumulado.
- * O cálculo vive no escopo do módulo porque depende só de constantes: roda uma
- * vez na carga em vez de a cada render, e sem mutação durante a renderização.
+ * Calculado no escopo do módulo porque depende só de constantes: roda uma vez
+ * na carga em vez de a cada render. A geometria em si é a mesma do painel, e
+ * vem do domínio para que os dois não divirjam.
  */
-const DONUT_SEGMENTS = EXAMPLE_COMPOSITION.reduce<
-  { category: AssetCategory; length: number; offset: number }[]
->((acc, slice) => {
-  const previous = acc[acc.length - 1];
-  const offset = previous ? previous.offset + previous.length + SEGMENT_GAP : 0;
-  acc.push({
-    category: slice.category,
-    length: (slice.share / 100) * CIRCUMFERENCE - SEGMENT_GAP,
-    offset,
-  });
-  return acc;
-}, []);
+const DONUT_SEGMENTS = donutSegments(
+  EXAMPLE_COMPOSITION,
+  (slice) => slice.share,
+  CIRCUMFERENCE,
+  SEGMENT_GAP,
+);
 
 function DonutChart() {
   const prefersReducedMotion = useReducedMotion();
@@ -83,12 +78,12 @@ function DonutChart() {
         />
         {DONUT_SEGMENTS.map((segment, index) => (
           <motion.circle
-            key={segment.category}
+            key={segment.item.category}
             cx="120"
             cy="120"
             r={RADIUS}
             fill="none"
-            stroke={CATEGORY_COLORS[segment.category]}
+            stroke={CATEGORY_COLORS[segment.item.category]}
             strokeWidth={STROKE}
             strokeLinecap="butt"
             strokeDashoffset={-segment.offset}

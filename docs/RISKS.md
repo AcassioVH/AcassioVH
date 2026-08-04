@@ -155,7 +155,55 @@ desculpa técnica para tratá-lo mal.
 `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`); `.env.example`
 com `sslmode=require` e chave de criptografia de campo.
 
-**Pendente na Fase 1.** Criptografia em repouso dos campos sensíveis; exclusão
-de conta e dados pelo próprio usuário; exportação em formato legível;
-retenção mínima com expurgo automático; log de auditoria que registre acesso
-sem duplicar o dado sensível; `robots: noindex` nas rotas autenticadas.
+**Já implementado.** Exclusão de conta e dados pelo próprio titular, com
+`onDelete: Cascade` verificado no banco — apagar o usuário levou junto os cinco
+ativos e a sessão do teste; exportação em JSON pelo próprio titular, sem o hash
+da senha; `robots: noindex, nocache` nas rotas autenticadas; senha em argon2id;
+`Cache-Control: no-store, private` na rota de exportação.
+
+**Pendente.** Criptografia em repouso dos campos sensíveis
+(`declaredValueCents`, `institution`) — hoje protegidos por TLS em trânsito e
+pelo controle de acesso do banco, mas legíveis por quem obtiver um dump. Falta
+também expurgo automático de sessões expiradas e log de auditoria que registre
+acesso sem duplicar o dado sensível.
+
+---
+
+## 9. Login sem limite de tentativas
+
+**Impacto: alto. É a lacuna mais relevante do que já está de pé.**
+
+Nada hoje limita quantas vezes alguém tenta entrar. Isso abre duas portas:
+força bruta contra senha fraca, e enumeração de e-mails pelo cadastro — que,
+diferente do login, precisa dizer que o e-mail já existe para recusar conta
+duplicada.
+
+**O que já mitiga.** O login devolve a mesma mensagem para e-mail inexistente e
+para senha errada, e calcula um hash descartável quando o usuário não existe,
+igualando o tempo de resposta dos dois caminhos — sem isso, a diferença de tempo
+sozinha entregaria quais e-mails estão cadastrados. O argon2id com 19 MiB torna
+cada tentativa cara. Nada disso substitui limitar tentativas.
+
+**Próximo passo.** Limite por IP e por conta no login e no cadastro, com atraso
+progressivo. Em Vercel, `@upstash/ratelimit` resolve sem infraestrutura extra.
+Antes de qualquer usuário real, isto vem primeiro.
+
+---
+
+## 10. Autenticação implementada à mão
+
+**Impacto: médio, com contenção deliberada.**
+
+Escrever a própria autenticação é um clássico de tiro no pé, e não faço isso de
+ânimo leve. A alternativa, porém, era depender de `next-auth@5.0.0-beta` na
+camada que protege dado financeiro. O raciocínio completo está em
+`docs/ARCHITECTURE.md`.
+
+**Como está contido.** Escopo mínimo: sem OAuth, sem recuperação de senha — que
+é onde mora a maioria das falhas dessa categoria — e sem 2FA. As partes difíceis
+ficam com bibliotecas consolidadas: `jose` para assinar, `@node-rs/argon2` para
+o hash. Não há criptografia inventada aqui. A sessão é revogável porque existe
+como linha em banco, não só como token.
+
+**Gatilho para migrar.** Login social, 2FA ou link mágico por e-mail. Qualquer
+um dos três, e o custo de manter isso à mão passa a superar o de adotar Auth.js.

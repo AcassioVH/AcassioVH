@@ -10,32 +10,42 @@ visão organizada e didática dela.
 
 ## Começando
 
+Requer Node 22+ e um PostgreSQL acessível.
+
 ```bash
 npm install
-cp .env.example .env.local   # preencha os valores
+cp .env.example .env.local   # preencha DATABASE_URL e AUTH_SECRET
+npm run db:migrate           # cria o schema
 npm run dev                  # http://localhost:3000
 ```
 
+`AUTH_SECRET` precisa de no mínimo 32 caracteres — gere com
+`openssl rand -base64 32`. A aplicação recusa subir sem ela, de propósito.
+
 ```bash
-npm run verify   # typecheck + lint + testes
-npm test         # só os testes (inclui o guardrail de conformidade)
-npm run build    # build de produção
+npm run verify     # typecheck + lint + testes
+npm test           # só os testes (inclui o guardrail de conformidade)
+npm run build      # build de produção
+npm run db:studio  # inspecionar o banco
 ```
 
 ## Estado atual
 
-**Fase 1, em andamento.** O que está pronto:
+**Fase 1 completa**, verificada ponta a ponta contra um PostgreSQL real:
 
-- Landing page completa — hero 3D, composição, fichas de ativos, segurança,
-  limite regulatório e contato
-- Validação de CNPJ com dígito verificador
-- Motor de classificação com grau de confiança explícito
-- Catálogo educativo curado, cobrindo 17 classes de ativo
-- Guardrail de conformidade automatizado (29 testes)
+- Landing page — hero 3D, composição, fichas, segurança, limite e contato
+- Cadastro, login, logout e proteção de rotas
+- Entrada manual de ativos com máscara e validação de CNPJ
+- Motor de classificação que pede confirmação quando a confiança é baixa
+- Dashboard de composição por classe e por instituição
+- Segurança e Estrutura: cobertura do FGC por instituição e calendário de vencimentos
+- Ficha educativa por classe, cobrindo 17 classes de ativo
+- LGPD: exportar dados em JSON e excluir conta com cascata verificada
+- 50 testes automatizados, incluindo o guardrail de conformidade
 
-O que falta para fechar a Fase 1 está listado em
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md#fase-1--o-que-falta):
-autenticação, schema Prisma, entrada de ativos, dashboard e as rotinas de LGPD.
+**Antes de qualquer usuário real:** falta limitar tentativas de login e
+criptografar em repouso os campos sensíveis da carteira. Ambos estão detalhados
+em [`docs/RISKS.md`](docs/RISKS.md) (riscos 9 e 8).
 
 ## Documentação
 

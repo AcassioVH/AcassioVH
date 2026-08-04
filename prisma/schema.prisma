@@ -1,0 +1,108 @@
+// Schema da Acássium Invest.
+//
+// Duas restrições moldam este arquivo, e vale enunciá-las antes de ler:
+//
+// 1. LIMITE REGULATÓRIO. Não existe coluna de rentabilidade, cotação, retorno,
+//    nota ou nível de risco — em nenhuma tabela. Não é esquecimento: o que não
+//    é armazenado não vaza em relatório, não é exportado por engano e não vira
+//    base para uma feature futura que ninguém revisou. Guardamos o que o
+//    usuário declarou, e nada derivado que implique avaliação.
+//
+// 2. LGPD. Carteira é dado financeiro sensível. Todo dado pessoal pendura em
+//    `User` com `onDelete: Cascade`, então excluir a conta apaga tudo em uma
+//    transação — sem varredura manual por tabela, que é onde o dado esquecido
+//    costuma sobreviver.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// A URL de conexão vive em `prisma.config.ts` (Prisma 7+), não aqui.
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  /// Hash argon2id. A senha em claro nunca chega ao banco nem ao log.
+  passwordHash String
+  name         String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  /// Aceite explícito dos termos e do aviso de tratamento de dados (LGPD art. 8º).
+  /// Guardamos o instante do aceite porque consentimento sem data não se prova.
+  termsAcceptedAt DateTime
+
+  assets   Asset[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+/// Sessão persistida.
+///
+/// O cookie carrega um JWT curto, mas a sessão também vive aqui para que possa
+/// ser revogada de fato — logout que só apaga cookie não invalida um token
+/// copiado. Encerrar conta ou trocar senha revoga tudo.
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  /// Diagnóstico de segurança, não rastreamento. Expurgado junto com a sessão.
+  userAgent String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+/// Um ativo declarado pelo usuário.
+///
+/// Tudo aqui é declaração do próprio usuário ou classificação derivada dela.
+/// O sistema não busca preço, não calcula rendimento e não guarda histórico de
+/// valor — `declaredValue` é uma foto do que o usuário informou, com a data em
+/// que informou, e a interface apresenta o número exatamente assim.
+model Asset {
+  id     String @id @default(cuid())
+  userId String
+
+  /// Nome como o usuário digitou. Ex.: "CDB Banco Exemplo 2027".
+  name String
+  /// CNPJ normalizado, 14 dígitos, sem máscara. Opcional: ação não tem CNPJ útil.
+  cnpj String?
+  /// Instituição informada pelo usuário. Base do cálculo de concentração e FGC.
+  institution String?
+
+  /// Valor declarado, em centavos.
+  ///
+  /// Inteiro, não Float nem Decimal com casas flutuantes: dinheiro em ponto
+  /// flutuante acumula erro de arredondamento, e num total de carteira isso
+  /// aparece como centavo perdido que o usuário percebe e não perdoa.
+  declaredValueCents BigInt
+  /// Quando o usuário informou esse valor. Exibido junto ao número.
+  declaredAt         DateTime @default(now())
+
+  /// Classe resolvida pelo motor de classificação, ou escolhida na mão.
+  assetClass String
+  /// ALTA | MEDIA | BAIXA — ver src/domain/assets/classify.ts.
+  confidence String
+  /// True quando o usuário confirmou (ou corrigiu) a classificação sugerida.
+  classConfirmedByUser Boolean @default(false)
+
+  /// Vencimento, quando o tipo de ativo tiver. Alimenta o calendário.
+  maturityDate DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, assetClass])
+  @@map("assets")
+}

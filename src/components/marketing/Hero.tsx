@@ -2,6 +2,7 @@
 
 import { motion, useReducedMotion } from "motion/react";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { SCOPE_STATEMENT } from "@/domain/compliance/policy";
@@ -83,17 +84,17 @@ export function Hero() {
         </motion.p>
 
         <motion.div {...rise(0.46)} className="mt-10 flex flex-wrap items-center gap-4">
-          <a
-            href="#composicao"
+          <Link
+            href="/criar-conta"
             className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-navy transition-colors duration-300 hover:bg-gold-200"
           >
-            Ver como funciona
-          </a>
+            Organizar minha carteira
+          </Link>
           <a
-            href="#contato"
+            href="#composicao"
             className="rounded-full border border-blue-200/30 px-7 py-3.5 text-sm font-medium text-mist transition-colors duration-300 hover:border-gold/60 hover:text-gold"
           >
-            Falar com o Victor
+            Ver como funciona
           </a>
         </motion.div>
 

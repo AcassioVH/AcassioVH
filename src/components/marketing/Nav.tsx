@@ -1,8 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import { site, whatsappUrl } from "@/config/site";
 
 const LINKS = [
   { href: "#composicao", label: "Composição" },
@@ -48,14 +47,20 @@ export function Nav() {
           ))}
         </ul>
 
-        <a
-          href={whatsappUrl()}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-full border border-gold/40 px-5 py-2 text-sm font-medium text-gold transition-colors duration-300 hover:bg-gold hover:text-navy"
-        >
-          Falar com {site.advisor.name.split(" ")[0]}
-        </a>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/entrar"
+            className="hidden text-sm text-blue-200 transition-colors duration-300 hover:text-gold sm:inline"
+          >
+            Entrar
+          </Link>
+          <Link
+            href="/criar-conta"
+            className="rounded-full border border-gold/40 px-5 py-2 text-sm font-medium text-gold transition-colors duration-300 hover:bg-gold hover:text-navy"
+          >
+            Criar conta
+          </Link>
+        </div>
       </nav>
     </header>
   );
