@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+/**
+ * Tokens da identidade Acássium.
+ *
+ * A paleta inteira vive aqui. Nenhum componente deve escrever hex direto —
+ * isso mantém a troca de marca em um arquivo só e evita a deriva de tons que
+ * aparece quando cada tela inventa o seu azul.
+ */
+@theme {
+  --color-navy: #0b1f3a;
+  --color-navy-800: #10294a;
+  --color-navy-700: #16345c;
+  --color-blue: #274c77;
+  --color-blue-400: #4e7ba8;
+  --color-blue-200: #8fa9c4;
+  --color-gold: #c9a24b;
+  --color-gold-600: #9c7c3c;
+  --color-gold-200: #e6d3a3;
+  --color-mist: #f4f6f8;
+  --color-ink: #0b1f3a;
+
+  --font-serif: Georgia, "Times New Roman", "Nimbus Roman", serif;
+  --font-sans:
+    Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-navy);
+    color: var(--color-mist);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: -0.015em;
+  }
+
+  /* Foco visível e consistente — requisito de acessibilidade, não decoração. */
+  :focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-navy);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Gradiente de texto usado nos títulos de destaque. */
+  .text-gradient-gold {
+    background: linear-gradient(
+      100deg,
+      var(--color-gold-200) 0%,
+      var(--color-gold) 45%,
+      var(--color-gold-600) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Superfície de card sobre o fundo azul-marinho. */
+  .surface {
+    background: linear-gradient(
+      160deg,
+      color-mix(in srgb, var(--color-navy-800) 92%, white) 0%,
+      var(--color-navy-800) 100%
+    );
+    border: 1px solid color-mix(in srgb, var(--color-blue) 45%, transparent);
+  }
+
+  /* Linha divisória que some nas pontas. */
+  .rule-fade {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--color-blue-200) 35%, transparent),
+      transparent
+    );
+  }
+}
