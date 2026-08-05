@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { site } from "@/config/site";
 
@@ -39,6 +41,16 @@ export function Footer() {
                 <a href="#contato" className="transition-colors hover:text-gold">
                   Contato
                 </a>
+              </li>
+              <li>
+                <Link href="/termos" className="transition-colors hover:text-gold">
+                  Termos de Uso
+                </Link>
+              </li>
+              <li>
+                <Link href="/privacidade" className="transition-colors hover:text-gold">
+                  Privacidade
+                </Link>
               </li>
             </ul>
           </nav>

@@ -92,9 +92,24 @@ export function RegisterForm() {
             aria-describedby={state.errors?.acceptedTerms ? "terms-error" : undefined}
           />
           <span>
-            Li e aceito os termos de uso e o aviso de tratamento de dados. Entendo que a
-            Acássium Invest organiza e descreve a carteira que eu informar, e que não faz
-            recomendação de investimento.
+            Li e aceito os{" "}
+            <Link
+              href="/termos"
+              target="_blank"
+              className="text-gold underline underline-offset-4"
+            >
+              Termos de Uso
+            </Link>{" "}
+            e a{" "}
+            <Link
+              href="/privacidade"
+              target="_blank"
+              className="text-gold underline underline-offset-4"
+            >
+              Política de Privacidade
+            </Link>
+            . Entendo que a Acássium Invest organiza e descreve a carteira que eu
+            informar, e que não faz recomendação de investimento.
           </span>
         </label>
         {state.errors?.acceptedTerms ? (

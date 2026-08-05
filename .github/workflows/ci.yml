@@ -1,0 +1,44 @@
+name: CI
+
+# O guardrail de conformidade só protege de fato se rodar sem depender de
+# alguém lembrar. É este arquivo que torna verdadeira a frase "texto com juízo
+# de valor quebra o CI" que está em docs/COMPLIANCE.md.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+
+    env:
+      # Valores fictícios: nada aqui conecta ao banco nem assina sessão real.
+      # Existem porque a aplicação recusa subir sem eles, de propósito — e o
+      # build avalia os módulos que fazem essa checagem.
+      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
+      AUTH_SECRET: "ci-secret-apenas-para-build-com-32-caracteres"
+      FIELD_ENCRYPTION_KEY: "Y2ktZmllbGQta2V5LWFwZW5hcy1wYXJhLWJ1aWxkLTMy"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Checagem de tipos
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Testes e guardrail de conformidade
+        run: npm test
+
+      - name: Build
+        run: npm run build

@@ -35,6 +35,20 @@ export const site = {
     whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || WHATSAPP_DEFAULT,
     email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "contato@acassium.com.br",
   },
+
+  /**
+   * Identificação do controlador, exigida pela LGPD (art. 9º, I).
+   *
+   * Deixado explicitamente vazio: razão social, CNPJ e endereço só o titular do
+   * negócio pode informar. As páginas legais renderizam um marcador visível no
+   * lugar, para que a pendência apareça na tela em vez de passar despercebida.
+   */
+  legal: {
+    entityName: process.env.NEXT_PUBLIC_LEGAL_ENTITY ?? null,
+    entityDocument: process.env.NEXT_PUBLIC_LEGAL_DOCUMENT ?? null,
+    /** Data da última revisão dos documentos legais. */
+    updatedAt: "2026-08-05",
+  },
 } as const;
 
 /**
