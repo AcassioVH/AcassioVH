@@ -62,10 +62,16 @@ O registro em banco existe porque **JWT sozinho não se revoga**: sem ele, um
 logout apagaria o cookie do navegador e deixaria uma cópia do token válida até
 expirar. Com ele, encerrar sessão ou excluir a conta invalida de fato.
 
-Dois cuidados que costumam faltar em implementação caseira e estão aqui: o login
-devolve **a mesma mensagem** para e-mail inexistente e senha errada, e calcula um
+- **`security/rate-limit-policy.ts`** — janela deslizante, função pura.
+- **`security/rate-limit.ts`** — contagem no Postgres.
+
+Três cuidados que costumam faltar em implementação caseira e estão aqui: o login
+devolve **a mesma mensagem** para e-mail inexistente e senha errada; calcula um
 hash descartável quando o usuário não existe — sem isso, a diferença de tempo de
-resposta entrega quais e-mails estão cadastrados.
+resposta entrega quais e-mails estão cadastrados; e limita tentativas por conta
+e por IP, checando **antes** do argon2, que custa ~50ms de propósito e sem
+limite viraria vetor de exaustão de recursos. O detalhamento do limite está em
+`docs/RISKS.md`, risco 9.
 
 **O gatilho para migrar** é claro: no dia em que entrar login social, 2FA ou
 mágica por e-mail, o custo de manter isso à mão passa a superar o de adotar
@@ -160,11 +166,10 @@ Entregue e verificado ponta a ponta contra Postgres real:
 - [x] Ficha educativa por classe de ativo
 - [x] LGPD: exportar dados em JSON e excluir conta
 - [x] Contato via WhatsApp
+- [x] Limite de tentativas por conta e por IP, com janela deslizante
 
 Pendências conhecidas, detalhadas em `docs/RISKS.md`:
 
-1. **Limite de tentativas** no login e no cadastro (risco 9) — a mitigação
-   contra força bruta e enumeração de e-mail.
-2. **Criptografia em repouso** dos campos sensíveis da carteira (risco 8).
-3. **Verificação de e-mail** e recuperação de senha.
-4. **Log de auditoria** de acesso a dado de carteira.
+1. **Criptografia em repouso** dos campos sensíveis da carteira (risco 8).
+2. **Verificação de e-mail** e recuperação de senha.
+3. **Log de auditoria** de acesso a dado de carteira.

@@ -169,24 +169,52 @@ acesso sem duplicar o dado sensível.
 
 ---
 
-## 9. Login sem limite de tentativas
+## 9. Força bruta e enumeração de e-mails — RESOLVIDO
 
-**Impacto: alto. É a lacuna mais relevante do que já está de pé.**
+**Impacto original: alto. Estado: implementado e verificado.**
 
-Nada hoje limita quantas vezes alguém tenta entrar. Isso abre duas portas:
-força bruta contra senha fraca, e enumeração de e-mails pelo cadastro — que,
-diferente do login, precisa dizer que o e-mail já existe para recusar conta
-duplicada.
+Janela deslizante em duas dimensões, contada no Postgres:
 
-**O que já mitiga.** O login devolve a mesma mensagem para e-mail inexistente e
-para senha errada, e calcula um hash descartável quando o usuário não existe,
-igualando o tempo de resposta dos dois caminhos — sem isso, a diferença de tempo
-sozinha entregaria quais e-mails estão cadastrados. O argon2id com 19 MiB torna
-cada tentativa cara. Nada disso substitui limitar tentativas.
+| Alvo | Limite | Janela |
+|---|---|---|
+| Login por conta | 5 | 15 min |
+| Login por IP | 20 | 15 min |
+| Cadastro por IP | 5 | 60 min |
 
-**Próximo passo.** Limite por IP e por conta no login e no cadastro, com atraso
-progressivo. Em Vercel, `@upstash/ratelimit` resolve sem infraestrutura extra.
-Antes de qualquer usuário real, isto vem primeiro.
+Quatro decisões que fazem esse controle valer alguma coisa:
+
+1. **Contagem no banco, não em memória.** Em serverless cada requisição pode
+   cair numa instância diferente; um contador em memória pareceria proteger e
+   não protegeria nada — o pior modo de falha possível para segurança.
+2. **A checagem vem antes do argon2.** Verificar hash custa ~50ms de CPU de
+   propósito; sem limite antes disso, o login seria vetor de exaustão de
+   recursos.
+3. **Falha em e-mail inexistente também conta.** Se só contássemos contas
+   reais, o bloqueio apareceria apenas para e-mails cadastrados — e o próprio
+   limite viraria o oráculo de enumeração que a mensagem única existe para
+   evitar. Verificado: e-mail fantasma bloqueia no mesmo limiar.
+4. **Tentativa já bloqueada não é registrada.** Martelar durante o bloqueio não
+   prolonga o castigo — caso contrário, um terceiro manteria a conta de outra
+   pessoa travada indefinidamente.
+
+Acerto de senha limpa o contador da conta, mas não o do IP: quem errou três
+vezes e acertou na quarta não segue a um passo do bloqueio, e o teto por IP
+continua valendo contra varredura de várias contas.
+
+As linhas guardam e-mail, que é dado pessoal, então são expurgadas ao sair da
+janela (`pruneExpiredAttempts`, oportunista na escrita) — retenção mínima é
+requisito de LGPD, não só higiene de banco.
+
+**Limitação conhecida.** O limite por IP depende de `x-forwarded-for`, que é
+forjável por quem fala direto com a aplicação. Só é confiável porque em
+produção o tráfego entra pelo proxy da Vercel, que reescreve o cabeçalho. **Ao
+trocar de hospedagem, confirme que o novo proxy faz o mesmo** — senão o limite
+por IP vira decorativo. O limite por conta não depende disso.
+
+**O que ainda não cobre.** Um atacante com muitos IPs contorna o teto por IP e
+fica com 5 tentativas por conta a cada 15 minutos. Contra senha razoável isso
+é lento demais para servir, e o próximo degrau seria CAPTCHA ou 2FA — que só
+se paga quando houver base de usuários para proteger.
 
 ---
 

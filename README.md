@@ -41,11 +41,11 @@ npm run db:studio  # inspecionar o banco
 - Segurança e Estrutura: cobertura do FGC por instituição e calendário de vencimentos
 - Ficha educativa por classe, cobrindo 17 classes de ativo
 - LGPD: exportar dados em JSON e excluir conta com cascata verificada
-- 50 testes automatizados, incluindo o guardrail de conformidade
+- Limite de tentativas de login e cadastro, por conta e por IP
+- 64 testes automatizados, incluindo o guardrail de conformidade
 
-**Antes de qualquer usuário real:** falta limitar tentativas de login e
-criptografar em repouso os campos sensíveis da carteira. Ambos estão detalhados
-em [`docs/RISKS.md`](docs/RISKS.md) (riscos 9 e 8).
+**Antes de qualquer usuário real:** falta criptografar em repouso os campos
+sensíveis da carteira — detalhado em [`docs/RISKS.md`](docs/RISKS.md), risco 8.
 
 ## Documentação
 

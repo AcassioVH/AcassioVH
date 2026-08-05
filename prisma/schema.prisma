@@ -61,6 +61,26 @@ model Session {
   @@map("sessions")
 }
 
+/// Tentativa malsucedida de autenticação, para o limite de tentativas.
+///
+/// Fica no Postgres, e não em memória do processo, porque em serverless cada
+/// requisição pode cair numa instância diferente — um contador em memória
+/// pareceria proteger e não protegeria nada, que é o pior modo de falha
+/// possível para um controle de segurança.
+///
+/// `key` é o alvo do limite, já namespaced: "login:conta:<email>",
+/// "login:ip:<ip>" ou "cadastro:ip:<ip>". O e-mail aqui é dado pessoal, então
+/// estas linhas são expurgadas assim que saem da janela — ver `pruneExpired`.
+model AuthAttempt {
+  id        String   @id @default(cuid())
+  key       String
+  createdAt DateTime @default(now())
+
+  @@index([key, createdAt])
+  @@index([createdAt])
+  @@map("auth_attempts")
+}
+
 /// Um ativo declarado pelo usuário.
 ///
 /// Tudo aqui é declaração do próprio usuário ou classificação derivada dela.
