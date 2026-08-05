@@ -3,6 +3,7 @@ import "server-only";
 import { headers } from "next/headers";
 
 import { db } from "@/lib/db";
+import { hmacKey } from "@/lib/security/crypto";
 import {
   describeRetryAfter,
   evaluate,
@@ -18,11 +19,17 @@ import {
  * recentes e gravamos as novas.
  */
 
-/** Namespaces das chaves. Evita que um e-mail colida com um IP. */
+/**
+ * Chaves do limite, já com namespace e passadas por HMAC.
+ *
+ * O namespace evita que um e-mail colida com um IP. O HMAC tira e-mail e IP
+ * legíveis do banco sem perder a consulta por igualdade exata — cifrar não
+ * serviria aqui, porque o IV aleatório impediria reencontrar a linha.
+ */
 export const rateLimitKeys = {
-  loginAccount: (email: string) => `login:conta:${email.trim().toLowerCase()}`,
-  loginIp: (ip: string) => `login:ip:${ip}`,
-  registerIp: (ip: string) => `cadastro:ip:${ip}`,
+  loginAccount: (email: string) => hmacKey(`login:conta:${email.trim().toLowerCase()}`),
+  loginIp: (ip: string) => hmacKey(`login:ip:${ip}`),
+  registerIp: (ip: string) => hmacKey(`cadastro:ip:${ip}`),
 } as const;
 
 /**

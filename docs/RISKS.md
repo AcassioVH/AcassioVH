@@ -161,11 +161,57 @@ ativos e a sessão do teste; exportação em JSON pelo próprio titular, sem o h
 da senha; `robots: noindex, nocache` nas rotas autenticadas; senha em argon2id;
 `Cache-Control: no-store, private` na rota de exportação.
 
-**Pendente.** Criptografia em repouso dos campos sensíveis
-(`declaredValueCents`, `institution`) — hoje protegidos por TLS em trânsito e
-pelo controle de acesso do banco, mas legíveis por quem obtiver um dump. Falta
-também expurgo automático de sessões expiradas e log de auditoria que registre
-acesso sem duplicar o dado sensível.
+**Criptografia em repouso — implementada.** `name`, `cnpj`, `institution` e
+`declaredValueCents` são cifrados com AES-256-GCM antes de chegar ao banco.
+Verificado num dump real: nenhuma busca por texto em claro encontra nada, e dois
+ativos com a mesma instituição produzem criptogramas diferentes — o IV aleatório
+impede deduzir igualdade por comparação.
+
+GCM é cifra autenticada, então também detecta adulteração: alguém com acesso de
+escrita não consegue alterar um valor declarado sem que a leitura falhe.
+
+As chaves de `auth_attempts` passaram a ser HMAC. Cifrar não serviria ali — a
+busca é por igualdade exata, e o IV aleatório impediria reencontrar a linha. O
+HMAC preserva a consulta e tira e-mail e IP legíveis do banco. A contrapartida
+assumida é que igualdade continua visível, aceitável para contadores efêmeros.
+
+**O que continua em claro, por decisão.** `assetClass` e `maturityDate`. Um dump
+revelaria a forma aproximada da carteira — "tem CDB e FII, com algo vencendo em
+março" — sem nome, instituição nem valor. Bem menos danoso que a exposição
+completa, e mantém os dois indexáveis. Vale reavaliar se o produto crescer.
+
+**O que isto não protege.** Comprometimento do servidor da aplicação: lá a chave
+está em memória, por necessidade. Nenhum esquema de criptografia de campo
+protege contra isso, e dizer o contrário seria falso conforto. O cenário coberto
+é o do dump — backup vazado, réplica mal configurada, acesso de leitura amplo
+demais.
+
+**Pendente.** Expurgo automático de sessões expiradas e log de auditoria que
+registre acesso sem duplicar o dado sensível.
+
+---
+
+## 11. A chave de cifra é ponto único de perda total
+
+**Impacto: crítico em operação. Nasceu com o risco 8.**
+
+Perder `FIELD_ENCRYPTION_KEY` significa perder **toda** a carteira de **todos**
+os usuários, de forma irreversível — o backup do Postgres sozinho não recupera
+nada. Isso é consequência direta de a criptografia funcionar.
+
+**O que precisa existir antes de produção:**
+
+1. A chave guardada fora do banco e fora do repositório, com cópia em cofre
+   (1Password, AWS Secrets Manager ou equivalente). Variável de ambiente na
+   Vercel **não é backup** — é configuração, e some com o projeto.
+2. Procedimento escrito de restauração que inclua a chave, não só o dump.
+3. Rotação. O formato já carrega prefixo de versão (`v1:`) e as subchaves saem
+   de uma mestra por HKDF, então o caminho está aberto — mas o processo de
+   recifrar o acervo não está implementado. Enquanto não estiver, trocar a chave
+   quebra tudo.
+
+Ambientes usam chaves distintas: desenvolvimento nunca deve conseguir ler um
+dump de produção.
 
 ---
 

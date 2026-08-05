@@ -57,13 +57,12 @@ Isso cabe em três arquivos auditáveis:
 - **`session.ts`** — JWT assinado com HS256 via `jose`, em cookie `httpOnly` +
   `secure` + `sameSite=lax`, referenciando uma linha em `sessions`.
 - **`actions.ts`** — cadastro, login e logout como Server Actions.
+- **`security/rate-limit-policy.ts`** — janela deslizante, função pura.
+- **`security/rate-limit.ts`** — contagem no Postgres.
 
 O registro em banco existe porque **JWT sozinho não se revoga**: sem ele, um
 logout apagaria o cookie do navegador e deixaria uma cópia do token válida até
 expirar. Com ele, encerrar sessão ou excluir a conta invalida de fato.
-
-- **`security/rate-limit-policy.ts`** — janela deslizante, função pura.
-- **`security/rate-limit.ts`** — contagem no Postgres.
 
 Três cuidados que costumam faltar em implementação caseira e estão aqui: o login
 devolve **a mesma mensagem** para e-mail inexistente e senha errada; calcula um
@@ -146,11 +145,44 @@ pedido de confirmação em vez de palpite exibido como fato.
 
 ## Dinheiro em centavos inteiros
 
-`declaredValueCents` é `BigInt` no banco e inteiro em memória, nunca `Float`.
+`declaredValueCents` é inteiro de centavos em toda a aplicação, nunca `Float`.
 Ponto flutuante acumula erro de arredondamento — `0.1 + 0.2 !== 0.3` — e num
 total de carteira isso aparece como centavo perdido que o usuário percebe e não
-perdoa. A conversão para texto acontece só na borda da interface, em
-`formatCents`.
+perdoa. A formatação acontece só na borda da interface, em `formatCents`.
+
+No banco a coluna é `String`, não `BigInt`, porque o valor está cifrado e
+criptograma é opaco por natureza. A tipagem forte sobrevive na fronteira de
+`loadPortfolio`, que decifra e converte de volta para número.
+
+## Criptografia em repouso
+
+Quatro campos do `Asset` são cifrados com AES-256-GCM antes de chegar ao banco:
+`name`, `cnpj`, `institution` e `declaredValueCents` — o que, onde e quanto.
+
+O cenário coberto é o do **dump**: backup vazado, réplica mal configurada,
+acesso de leitura amplo demais. TLS não ajuda aí, e o controle de acesso do
+Postgres já foi contornado por definição. Comprometimento do servidor da
+aplicação **não** está coberto — lá a chave está em memória, por necessidade, e
+nenhum esquema de criptografia de campo resolve isso.
+
+Três escolhas que fazem diferença:
+
+- **GCM, não CBC.** Cifra autenticada detecta adulteração: quem tiver acesso de
+  escrita não consegue alterar um valor declarado sem que a leitura falhe.
+- **IV aleatório por valor.** Com IV fixo, valores iguais gerariam criptogramas
+  iguais e a tabela entregaria, por simples comparação, quais usuários têm a
+  mesma instituição — sem decifrar nada.
+- **Subchaves por finalidade, via HKDF.** A mestra nunca é usada diretamente;
+  cifra e HMAC têm chaves derivadas distintas.
+
+`assetClass` e `maturityDate` ficam em claro por decisão consciente, registrada
+em `docs/RISKS.md`, risco 8. Já as chaves de `auth_attempts` usam HMAC em vez de
+cifra: a busca ali é por igualdade exata, e o IV aleatório impediria reencontrar
+a linha.
+
+**A contrapartida é séria e está no risco 11:** perder `FIELD_ENCRYPTION_KEY`
+significa perder toda a carteira de todos os usuários. Custódia da chave é
+pré-requisito de produção.
 
 ## Fase 1 — estado
 
@@ -167,9 +199,11 @@ Entregue e verificado ponta a ponta contra Postgres real:
 - [x] LGPD: exportar dados em JSON e excluir conta
 - [x] Contato via WhatsApp
 - [x] Limite de tentativas por conta e por IP, com janela deslizante
+- [x] Criptografia em repouso dos campos sensíveis da carteira
 
 Pendências conhecidas, detalhadas em `docs/RISKS.md`:
 
-1. **Criptografia em repouso** dos campos sensíveis da carteira (risco 8).
+1. **Custódia da chave de cifra** (risco 11) — cofre de segredos e procedimento
+   de restauração. É operacional, não código, e bloqueia produção.
 2. **Verificação de e-mail** e recuperação de senha.
 3. **Log de auditoria** de acesso a dado de carteira.

@@ -68,9 +68,13 @@ model Session {
 /// pareceria proteger e não protegeria nada, que é o pior modo de falha
 /// possível para um controle de segurança.
 ///
-/// `key` é o alvo do limite, já namespaced: "login:conta:<email>",
-/// "login:ip:<ip>" ou "cadastro:ip:<ip>". O e-mail aqui é dado pessoal, então
-/// estas linhas são expurgadas assim que saem da janela — ver `pruneExpired`.
+/// `key` é o HMAC do alvo do limite — "login:conta:<email>", "login:ip:<ip>" ou
+/// "cadastro:ip:<ip>" — e não o valor em claro. A busca é por igualdade exata,
+/// então cifrar não serviria aqui: o IV aleatório impediria encontrar a linha.
+/// O HMAC preserva a consulta e tira e-mail e IP legíveis do banco. A
+/// contrapartida assumida é que igualdade continua visível, aceitável para uma
+/// tabela de contadores efêmeros. As linhas ainda são expurgadas ao sair da
+/// janela, por retenção mínima.
 model AuthAttempt {
   id        String   @id @default(cuid())
   key       String
@@ -91,21 +95,38 @@ model Asset {
   id     String @id @default(cuid())
   userId String
 
-  /// Nome como o usuário digitou. Ex.: "CDB Banco Exemplo 2027".
+  // --- Campos cifrados em repouso (AES-256-GCM, ver src/lib/security/crypto.ts) ---
+  //
+  // Estes quatro são a carteira propriamente dita: o que, onde e quanto. Com um
+  // dump do banco em mãos, é isso que causaria dano — por isso não ficam
+  // legíveis. O tipo é String porque criptograma é opaco; a tipagem forte
+  // sobrevive na fronteira da aplicação, que converte na leitura.
+
+  /// Nome como o usuário digitou. Ex.: "CDB Banco Exemplo 2027". CIFRADO.
   name String
-  /// CNPJ normalizado, 14 dígitos, sem máscara. Opcional: ação não tem CNPJ útil.
+  /// CNPJ normalizado, 14 dígitos, sem máscara. Opcional. CIFRADO.
   cnpj String?
-  /// Instituição informada pelo usuário. Base do cálculo de concentração e FGC.
+  /// Instituição informada pelo usuário. Base de concentração e FGC. CIFRADO.
   institution String?
 
-  /// Valor declarado, em centavos.
+  /// Valor declarado, em centavos, como texto decimal. CIFRADO.
   ///
-  /// Inteiro, não Float nem Decimal com casas flutuantes: dinheiro em ponto
-  /// flutuante acumula erro de arredondamento, e num total de carteira isso
-  /// aparece como centavo perdido que o usuário percebe e não perdoa.
-  declaredValueCents BigInt
+  /// Continua sendo inteiro em centavos em toda a aplicação — dinheiro em ponto
+  /// flutuante acumula erro de arredondamento, e num total de carteira isso vira
+  /// centavo perdido que o usuário percebe. A cifra apenas o transporta como
+  /// texto: `BigInt` no banco é incompatível com criptograma.
+  declaredValueCents String
   /// Quando o usuário informou esse valor. Exibido junto ao número.
   declaredAt         DateTime @default(now())
+
+  // --- Campos em claro, por decisão consciente ---
+  //
+  // `assetClass` e `maturityDate` ficam legíveis. Um dump revelaria a forma
+  // aproximada da carteira ("tem CDB e FII, com algo vencendo em março"), sem
+  // nome, instituição nem valor — bem menos danoso que a exposição completa, e
+  // mantém os dois indexáveis para relatórios e lembretes futuros.
+  //
+  // Está registrado assim em docs/RISKS.md para ser reavaliado, não esquecido.
 
   /// Classe resolvida pelo motor de classificação, ou escolhida na mão.
   assetClass String

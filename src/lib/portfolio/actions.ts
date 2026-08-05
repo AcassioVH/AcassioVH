@@ -8,6 +8,7 @@ import type { AssetClass } from "@/domain/assets/taxonomy";
 import type { PortfolioAsset } from "@/domain/portfolio/analysis";
 import { getSessionUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
+import { decryptField, decryptOptional, encryptField, encryptOptional } from "@/lib/security/crypto";
 import { assetSchema, fieldErrors } from "@/lib/validation";
 
 export type AssetFormState = {
@@ -16,33 +17,36 @@ export type AssetFormState = {
 };
 
 /**
- * Carrega a carteira do usuário autenticado.
+ * Carrega a carteira do usuário autenticado, decifrando na fronteira.
  *
  * O `where` sempre inclui `userId`. Não é redundância com a sessão: é o que
  * garante que um id de ativo adivinhado não devolva dado de outra pessoa.
+ *
+ * A ordenação é feita em memória porque `declaredValueCents` está cifrado —
+ * ordenar criptograma no banco daria ordem alfabética de bytes aleatórios. Não
+ * é perda real: a leitura sempre carrega a carteira inteira para agregar, e
+ * carteira de pessoa física tem dezenas de itens, não milhões.
  */
 export async function loadPortfolio(): Promise<PortfolioAsset[]> {
   const user = await getSessionUser();
   if (!user) redirect("/entrar");
 
-  const rows = await db.asset.findMany({
-    where: { userId: user.id },
-    orderBy: { declaredValueCents: "desc" },
-  });
+  const rows = await db.asset.findMany({ where: { userId: user.id } });
 
-  return rows.map((row) => ({
-    id: row.id,
-    name: row.name,
-    cnpj: row.cnpj,
-    institution: row.institution,
-    // BigInt no banco protege contra estouro; em memória, centavos cabem com
-    // folga em Number (seguro até ~90 trilhões de reais).
-    valueCents: Number(row.declaredValueCents),
-    assetClass: row.assetClass as AssetClass,
-    confidence: row.confidence,
-    classConfirmedByUser: row.classConfirmedByUser,
-    maturityDate: row.maturityDate,
-  }));
+  return rows
+    .map((row) => ({
+      id: row.id,
+      name: decryptField(row.name),
+      cnpj: decryptOptional(row.cnpj),
+      institution: decryptOptional(row.institution),
+      // Centavos cabem com folga em Number — seguro até ~90 trilhões de reais.
+      valueCents: Number(decryptField(row.declaredValueCents)),
+      assetClass: row.assetClass as AssetClass,
+      confidence: row.confidence,
+      classConfirmedByUser: row.classConfirmedByUser,
+      maturityDate: row.maturityDate,
+    }))
+    .sort((a, b) => b.valueCents - a.valueCents);
 }
 
 export async function createAssetAction(
@@ -76,10 +80,11 @@ export async function createAssetAction(
   await db.asset.create({
     data: {
       userId: user.id,
-      name,
-      cnpj,
-      institution,
-      declaredValueCents: BigInt(value),
+      // Cifrados na fronteira: daqui para dentro do banco, nada legível.
+      name: encryptField(name),
+      cnpj: encryptOptional(cnpj),
+      institution: encryptOptional(institution),
+      declaredValueCents: encryptField(String(value)),
       maturityDate,
       assetClass: classification.assetClass,
       confidence: classification.confidence,

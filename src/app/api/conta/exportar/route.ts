@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { getSessionUser } from "@/lib/auth/session";
 import { db } from "@/lib/db";
+import { decryptField, decryptOptional } from "@/lib/security/crypto";
 
 /**
  * Exportação de dados pessoais — LGPD art. 18, direito à portabilidade.
@@ -60,12 +61,13 @@ export async function GET() {
       criadaEm: user.createdAt.toISOString(),
       termosAceitosEm: user.termsAcceptedAt.toISOString(),
     },
+    // Decifrados aqui: a exportação é para o próprio titular, e entregar
+    // criptograma no lugar dos dados esvaziaria o direito à portabilidade.
     ativos: user.assets.map((asset) => ({
-      nome: asset.name,
-      cnpj: asset.cnpj,
-      instituicao: asset.institution,
-      // BigInt não é serializável em JSON: vira string, sem perder precisão.
-      valorDeclaradoCentavos: asset.declaredValueCents.toString(),
+      nome: decryptField(asset.name),
+      cnpj: decryptOptional(asset.cnpj),
+      instituicao: decryptOptional(asset.institution),
+      valorDeclaradoCentavos: decryptField(asset.declaredValueCents),
       valorDeclaradoEm: asset.declaredAt.toISOString(),
       classe: asset.assetClass,
       confiancaDaClassificacao: asset.confidence,

@@ -14,13 +14,14 @@ Requer Node 22+ e um PostgreSQL acessível.
 
 ```bash
 npm install
-cp .env.example .env.local   # preencha DATABASE_URL e AUTH_SECRET
+cp .env.example .env.local   # preencha DATABASE_URL, AUTH_SECRET e FIELD_ENCRYPTION_KEY
 npm run db:migrate           # cria o schema
 npm run dev                  # http://localhost:3000
 ```
 
-`AUTH_SECRET` precisa de no mínimo 32 caracteres — gere com
-`openssl rand -base64 32`. A aplicação recusa subir sem ela, de propósito.
+`AUTH_SECRET` e `FIELD_ENCRYPTION_KEY` precisam de no mínimo 32 bytes — gere
+cada uma com `openssl rand -base64 32`. A aplicação recusa subir sem elas, de
+propósito.
 
 ```bash
 npm run verify     # typecheck + lint + testes
@@ -42,10 +43,14 @@ npm run db:studio  # inspecionar o banco
 - Ficha educativa por classe, cobrindo 17 classes de ativo
 - LGPD: exportar dados em JSON e excluir conta com cascata verificada
 - Limite de tentativas de login e cadastro, por conta e por IP
-- 64 testes automatizados, incluindo o guardrail de conformidade
+- Criptografia em repouso dos campos sensíveis da carteira (AES-256-GCM)
+- 82 testes automatizados, incluindo o guardrail de conformidade
 
-**Antes de qualquer usuário real:** falta criptografar em repouso os campos
-sensíveis da carteira — detalhado em [`docs/RISKS.md`](docs/RISKS.md), risco 8.
+**Antes de produção**, o item operacional que falta não é código: a chave
+`FIELD_ENCRYPTION_KEY` precisa de cópia em cofre de segredos e de um
+procedimento de restauração que a inclua. Perdê-la significa perder toda a
+carteira de todos os usuários, de forma irreversível — ver
+[`docs/RISKS.md`](docs/RISKS.md), risco 11.
 
 ## Documentação
 
