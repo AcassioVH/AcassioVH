@@ -59,6 +59,8 @@ Isso cabe em três arquivos auditáveis:
 - **`actions.ts`** — cadastro, login e logout como Server Actions.
 - **`security/rate-limit-policy.ts`** — janela deslizante, função pura.
 - **`security/rate-limit.ts`** — contagem no Postgres.
+- **`password-reset.ts`** + **`reset-actions.ts`** — recuperação de senha.
+- **`email/mailer.ts`** — envio transacional, com Resend por trás.
 
 O registro em banco existe porque **JWT sozinho não se revoga**: sem ele, um
 logout apagaria o cookie do navegador e deixaria uma cópia do token válida até
@@ -71,6 +73,23 @@ resposta entrega quais e-mails estão cadastrados; e limita tentativas por conta
 e por IP, checando **antes** do argon2, que custa ~50ms de propósito e sem
 limite viraria vetor de exaustão de recursos. O detalhamento do limite está em
 `docs/RISKS.md`, risco 9.
+
+**Recuperação de senha.** O token tem 32 bytes aleatórios, vale uma hora, serve
+uma vez só, e é guardado como HMAC — um dump do banco não permite redefinir a
+senha de ninguém. Emitir um novo invalida o anterior, e o consumo acontece numa
+transação com `usedAt: null` no filtro, que é o que impede uso duplo em corrida.
+
+Três detalhes que decidem se isso protege ou não:
+
+- **Redefinir revoga todas as sessões.** Sem isso, quem tivesse invadido a conta
+  continuaria dentro depois de o dono legítimo trocar a senha — que é exatamente
+  o cenário em que alguém redefine a senha.
+- **A resposta é sempre a mesma**, exista ou não a conta. Este formulário é
+  público; confirmar a existência do e-mail o transformaria no oráculo de
+  enumeração mais fácil do sistema.
+- **Orçamento de limite próprio**, separado do login. Compartilhá-lo bloquearia
+  o pedido de redefinição para quem errou a senha várias vezes — ou seja, para
+  quem mais precisa dele. Foi um bug real, pego em teste de fluxo.
 
 **O gatilho para migrar** é claro: no dia em que entrar login social, 2FA ou
 mágica por e-mail, o custo de manter isso à mão passa a superar o de adotar

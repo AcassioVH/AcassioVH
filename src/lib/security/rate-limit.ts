@@ -30,6 +30,8 @@ export const rateLimitKeys = {
   loginAccount: (email: string) => hmacKey(`login:conta:${email.trim().toLowerCase()}`),
   loginIp: (ip: string) => hmacKey(`login:ip:${ip}`),
   registerIp: (ip: string) => hmacKey(`cadastro:ip:${ip}`),
+  resetAccount: (email: string) => hmacKey(`reset:conta:${email.trim().toLowerCase()}`),
+  resetIp: (ip: string) => hmacKey(`reset:ip:${ip}`),
 } as const;
 
 /**

@@ -35,8 +35,9 @@ model User {
   /// Guardamos o instante do aceite porque consentimento sem data não se prova.
   termsAcceptedAt DateTime
 
-  assets   Asset[]
-  sessions Session[]
+  assets         Asset[]
+  sessions       Session[]
+  passwordResets PasswordResetToken[]
 
   @@map("users")
 }
@@ -59,6 +60,31 @@ model Session {
   @@index([userId])
   @@index([expiresAt])
   @@map("sessions")
+}
+
+/// Token de redefinição de senha.
+///
+/// O token em claro só existe em dois lugares: no e-mail do usuário e na URL
+/// que ele clica. Aqui fica apenas o HMAC — se alguém obtiver um dump do banco,
+/// não consegue redefinir a senha de ninguém, porque não dá para reconstruir o
+/// token a partir do hash. É a mesma razão de guardar senha como hash.
+///
+/// Uso único e expiração curta: `usedAt` marca o consumo, e um token já usado
+/// nunca mais vale, mesmo dentro do prazo.
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  /// HMAC-SHA256 do token. O valor em claro nunca chega ao banco.
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("password_reset_tokens")
 }
 
 /// Tentativa malsucedida de autenticação, para o limite de tentativas.

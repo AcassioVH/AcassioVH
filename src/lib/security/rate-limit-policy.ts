@@ -85,4 +85,15 @@ export const RATE_LIMITS = {
   loginPerAccount: { limit: 5, windowSeconds: 15 * 60 },
   loginPerIp: { limit: 20, windowSeconds: 15 * 60 },
   registerPerIp: { limit: 5, windowSeconds: 60 * 60 },
+
+  /**
+   * Recuperação de senha tem orçamento PRÓPRIO, separado do login.
+   *
+   * Compartilhar a chave com o login criava uma armadilha: quem errasse a senha
+   * até bater o limite ficava impedido de pedir a redefinição — exatamente no
+   * momento em que mais precisa dela. O limite existe para conter disparo de
+   * e-mail em massa, não para punir quem esqueceu a senha.
+   */
+  resetPerAccount: { limit: 3, windowSeconds: 60 * 60 },
+  resetPerIp: { limit: 10, windowSeconds: 60 * 60 },
 } as const satisfies Record<string, RateLimitRule>;

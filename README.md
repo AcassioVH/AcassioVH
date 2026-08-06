@@ -35,7 +35,7 @@ npm run db:studio  # inspecionar o banco
 **Fase 1 completa**, verificada ponta a ponta contra um PostgreSQL real:
 
 - Landing page — hero 3D, composição, fichas, segurança, limite e contato
-- Cadastro, login, logout e proteção de rotas
+- Cadastro, login, logout, recuperação de senha e proteção de rotas
 - Entrada manual de ativos com máscara e validação de CNPJ
 - Motor de classificação que pede confirmação quando a confiança é baixa
 - Dashboard de composição por classe e por instituição
@@ -45,7 +45,7 @@ npm run db:studio  # inspecionar o banco
 - Limite de tentativas de login e cadastro, por conta e por IP
 - Criptografia em repouso dos campos sensíveis da carteira (AES-256-GCM)
 - Sistema de marca "profundidade como clareza", com o limite regulatório expresso na própria escala de cor
-- 87 testes automatizados, incluindo o guardrail de conformidade
+- 94 testes automatizados, incluindo o guardrail de conformidade
 
 **Antes de produção**, o item operacional que falta não é código: a chave
 `FIELD_ENCRYPTION_KEY` precisa de cópia em cofre de segredos e de um

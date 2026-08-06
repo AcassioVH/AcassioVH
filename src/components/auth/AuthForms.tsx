@@ -21,11 +21,20 @@ function FormError({ message }: { message?: string }) {
   );
 }
 
-export function LoginForm() {
+export function LoginForm({ passwordWasReset = false }: { passwordWasReset?: boolean }) {
   const [state, action, pending] = useActionState(loginAction, EMPTY);
 
   return (
     <form action={action} className="space-y-6">
+      {passwordWasReset && !state.message ? (
+        <p
+          role="status"
+          className="border border-st-identified/45 bg-st-identified/[0.07] px-4 py-3 text-sm text-st-identified"
+        >
+          Senha redefinida. Entre com a senha nova.
+        </p>
+      ) : null}
+
       <FormError message={state.message} />
 
       <Field
@@ -46,6 +55,15 @@ export function LoginForm() {
       />
 
       <SubmitButton pending={pending}>Entrar</SubmitButton>
+
+      <p className="text-center text-base">
+        <Link
+          href="/recuperar-senha"
+          className="text-tertiary underline-offset-4 transition-colors hover:text-light hover:underline"
+        >
+          Esqueci minha senha
+        </Link>
+      </p>
 
       <p className="text-center text-base text-tertiary">
         Ainda não tem conta?{" "}
