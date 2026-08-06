@@ -3,11 +3,22 @@ import type { CategorySlice, InstitutionSlice } from "@/domain/portfolio/analysi
 import { formatCents } from "@/domain/portfolio/money";
 
 /**
- * Composição em barras.
+ * Composição em barras, por VALOR DECLARADO.
  *
- * Componentes de servidor, sem animação: aqui o gráfico mostra dado real do
- * usuário e a prioridade é aparecer pronto no primeiro render. A versão animada
- * existe só na landing, onde o dado é ilustrativo.
+ * Divergência deliberada do arquivo de design, decidida com o cliente: o design
+ * compõe por contagem de ativos ("Securitização · 7") e diz explicitamente que
+ * não é alocação por valor. Aqui a barra é a participação do valor que o
+ * usuário declarou, com a contagem como informação secundária embaixo.
+ *
+ * O motivo é que somar valores que o próprio usuário informou continua sendo
+ * aritmética sobre os dados dele — descrição, não avaliação. A ressalva de que
+ * isso não indica concentração adequada ou inadequada acompanha o painel.
+ *
+ * Não troque para contagem sem falar com o cliente: a escolha é de produto.
+ *
+ * Componentes de servidor, sem animação: aqui o gráfico mostra dado real e a
+ * prioridade é aparecer pronto no primeiro render. A versão animada existe só
+ * na landing, onde o dado é ilustrativo.
  *
  * Cada barra vem sempre acompanhada de rótulo e valor — nenhuma informação do
  * sistema depende só de cor.

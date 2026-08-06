@@ -106,6 +106,27 @@ nome que colida com utilidade nativa do Tailwind. O tom `#060D10` chama-se
 token chamado `base`, toda a regra de cor `text-base` passava a sobrescrever a
 cor de qualquer texto que usasse aquele tamanho, e o texto sumia no fundo.
 
+### Divergências deliberadas do arquivo de design
+
+O design é a referência, mas duas coisas foram decididas diferente, com o
+cliente, e ficam registradas para não serem "corrigidas" depois por engano:
+
+1. **Composição por valor, não por contagem.** O design agrupa por número de
+   ativos ("Securitização · 7") e diz que não é alocação por valor. O produto
+   mostra a participação do valor declarado, com a contagem como informação
+   secundária. Somar valores que o próprio usuário informou continua sendo
+   aritmética sobre os dados dele — descrição, não avaliação — e era o que o
+   briefing original pedia.
+
+2. **"Parte do nome e do CNPJ", não "identifica pelo CNPJ".** O design afirma
+   identificação pelo CNPJ; isso só é verdade para fundos. Ver risco 1 em
+   `docs/RISKS.md`. A landing não deve prometer o que o dado público não
+   sustenta.
+
+As telas **B (conexão com instituição)** e **D (acervo com glossário)** do
+design descrevem funcionalidades de Fase 2 que não existem no backend. Não
+foram implementadas como fachada.
+
 ### Por que não há mais cena 3D
 
 O design substituiu o objeto flutuante do hero por profundidade e luz — camadas
