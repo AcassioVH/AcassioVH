@@ -21,8 +21,6 @@
     "@node-rs/argon2": "^2.0.2",
     "@prisma/adapter-pg": "^7.9.1",
     "@prisma/client": "^7.9.1",
-    "@react-three/drei": "^10.7.7",
-    "@react-three/fiber": "^9.7.0",
     "dotenv": "^17.4.2",
     "jose": "^6.2.8",
     "motion": "^12.43.0",
@@ -31,7 +29,6 @@
     "prisma": "^7.9.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "three": "^0.185.1",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -41,7 +38,6 @@
     "@types/pg": "^8.20.4",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "@types/three": "^0.185.0",
     "eslint": "^9.18.0",
     "eslint-config-next": "^16.3.0",
     "tailwindcss": "^4.3.3",

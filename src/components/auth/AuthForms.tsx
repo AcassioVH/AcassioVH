@@ -14,7 +14,7 @@ function FormError({ message }: { message?: string }) {
   return (
     <p
       role="alert"
-      className="rounded-xl border border-gold/40 bg-gold/5 px-4 py-3 text-sm text-gold"
+      className="border border-st-attention/50 bg-st-attention/[0.07] px-4 py-3 text-sm text-st-attention"
     >
       {message}
     </p>
@@ -47,9 +47,9 @@ export function LoginForm() {
 
       <SubmitButton pending={pending}>Entrar</SubmitButton>
 
-      <p className="text-center text-sm text-blue-200">
+      <p className="text-center text-base text-tertiary">
         Ainda não tem conta?{" "}
-        <Link href="/criar-conta" className="text-gold underline-offset-4 hover:underline">
+        <Link href="/criar-conta" className="text-light underline-offset-4 hover:underline">
           Criar conta
         </Link>
       </p>
@@ -84,11 +84,11 @@ export function RegisterForm() {
       />
 
       <div>
-        <label className="flex items-start gap-3 text-sm leading-relaxed text-blue-200">
+        <label className="flex items-start gap-3 text-base leading-relaxed text-aux">
           <input
             type="checkbox"
             name="acceptedTerms"
-            className="mt-1 size-4 shrink-0 accent-[#c9a24b]"
+            className="mt-1 size-4 shrink-0 accent-[#E3BC7E]"
             aria-describedby={state.errors?.acceptedTerms ? "terms-error" : undefined}
           />
           <span>
@@ -96,7 +96,7 @@ export function RegisterForm() {
             <Link
               href="/termos"
               target="_blank"
-              className="text-gold underline underline-offset-4"
+              className="text-light underline underline-offset-4"
             >
               Termos de Uso
             </Link>{" "}
@@ -104,7 +104,7 @@ export function RegisterForm() {
             <Link
               href="/privacidade"
               target="_blank"
-              className="text-gold underline underline-offset-4"
+              className="text-light underline underline-offset-4"
             >
               Política de Privacidade
             </Link>
@@ -113,7 +113,7 @@ export function RegisterForm() {
           </span>
         </label>
         {state.errors?.acceptedTerms ? (
-          <p id="terms-error" role="alert" className="mt-2 text-xs text-gold">
+          <p id="terms-error" role="alert" className="mt-2 text-sm text-st-attention">
             {state.errors.acceptedTerms}
           </p>
         ) : null}
@@ -121,9 +121,9 @@ export function RegisterForm() {
 
       <SubmitButton pending={pending}>Criar conta</SubmitButton>
 
-      <p className="text-center text-sm text-blue-200">
+      <p className="text-center text-base text-tertiary">
         Já tem conta?{" "}
-        <Link href="/entrar" className="text-gold underline-offset-4 hover:underline">
+        <Link href="/entrar" className="text-light underline-offset-4 hover:underline">
           Entrar
         </Link>
       </p>

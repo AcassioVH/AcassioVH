@@ -2,7 +2,6 @@ import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/ui/Section";
 import { site, whatsappUrl, whatsappIsConfigured } from "@/config/site";
 
-/** Ícone do WhatsApp, embutido para não depender de CDN nem de pacote de ícones. */
 function WhatsAppIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" className="size-5">
@@ -16,32 +15,26 @@ export function ContactSection() {
   return (
     <Section
       id="contato"
-      eyebrow="Contato"
-      title={
-        <>
-          Prefere conversar
-          <br />
-          <span className="text-blue-200">com uma pessoa?</span>
-        </>
-      }
+      depth="deep"
+      eyebrow="Fora do escopo do serviço"
+      title="Prefere conversar com uma pessoa?"
       description={
         <p>
-          A plataforma organiza e explica. Quando a conversa passa a ser sobre decisão, o
-          lugar dela é com um assessor registrado — e aí você fala direto com o{" "}
-          {site.advisor.name}.
+          A plataforma organiza e explica. Quando a conversa passa a ser sobre decisão, o lugar
+          dela é com um assessor registrado — e aí você fala direto com o {site.advisor.name}.
         </p>
       }
     >
       <Reveal>
-        <div className="surface flex flex-col items-start justify-between gap-8 rounded-2xl p-8 sm:p-12 lg:flex-row lg:items-center">
+        <div className="flex flex-col items-start justify-between gap-8 border border-edge bg-surface p-7 sm:p-10 lg:flex-row lg:items-center">
           <div>
-            <p className="font-serif text-2xl text-mist">{site.advisor.name}</p>
-            <p className="mt-2 text-sm text-blue-200">
+            <p className="font-display text-2xl text-title">{site.advisor.name}</p>
+            <p className="mt-2 font-mono text-xs uppercase tracking-[0.14em] text-tertiary">
               {site.advisor.role} · {site.advisor.firm}
             </p>
-            <p className="mt-6 max-w-md text-sm leading-relaxed text-blue-200">
-              O atendimento de assessoria acontece fora desta plataforma, sob a
-              regulamentação aplicável à atividade e à instituição.
+            <p className="mt-5 max-w-md text-base leading-relaxed text-aux">
+              O atendimento de assessoria acontece fora desta plataforma, sob a regulamentação
+              aplicável à atividade e à instituição.
             </p>
           </div>
 
@@ -50,18 +43,15 @@ export function ContactSection() {
               href={whatsappUrl()}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex shrink-0 items-center gap-3 rounded-full bg-gold px-8 py-4 text-sm font-semibold text-navy transition-colors duration-300 hover:bg-gold-200"
+              className="inline-flex shrink-0 items-center gap-3 bg-light px-7 py-4 text-base font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
             >
               <WhatsAppIcon />
               Conversar no WhatsApp
             </a>
           ) : (
-            // Sem número configurado, um link para wa.me/5500000000000 levaria o
-            // usuário a uma conversa vazia com um número inexistente. Melhor
-            // mostrar o canal alternativo do que oferecer um botão quebrado.
             <a
               href={`mailto:${site.contact.email}`}
-              className="inline-flex shrink-0 items-center gap-3 rounded-full border border-gold/40 px-8 py-4 text-sm font-semibold text-gold transition-colors duration-300 hover:bg-gold hover:text-navy"
+              className="inline-flex shrink-0 items-center gap-3 border border-light/50 px-7 py-4 text-base font-semibold text-light transition-colors duration-200 hover:bg-light hover:text-[#060D10]"
             >
               {site.contact.email}
             </a>

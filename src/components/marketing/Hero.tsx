@@ -1,106 +1,128 @@
-"use client";
-
-import { motion, useReducedMotion } from "motion/react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 
-import { Disclaimer } from "@/components/ui/Disclaimer";
-import { SCOPE_STATEMENT } from "@/domain/compliance/policy";
+import { Reveal } from "@/components/ui/Reveal";
 
 /**
- * A cena 3D só existe no cliente e fica fora do bundle inicial: ela pesa mais
- * que todo o resto da landing somado, e o texto do hero precisa aparecer
- * imediatamente, sem esperar por Three.js.
+ * Hero — "Visto de cima, tudo parece igual".
+ *
+ * A composição inteira é a tese do produto em imagem: o fundo desce da água
+ * rasa (#12333B) até a base, atravessado por feixes de luz. A coluna da direita
+ * mostra a carteira como ela chega — siglas corretas e ilegíveis — e o resto da
+ * página desce até a explicação.
+ *
+ * Não há mais cena 3D aqui. O design substituiu o objeto flutuante por
+ * profundidade e luz, o que também eliminou ~350 KB de Three.js do carregamento
+ * inicial e a necessidade de detectar WebGL. As camadas abaixo são CSS puro:
+ * funcionam sem JavaScript, sem GPU e sem fallback.
  */
-const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
-  ssr: false,
-});
+
+/** A carteira como ela chega: nomes exatos, sem significado para quem lê. */
+const RAW_HOLDINGS = [
+  { name: "FIDC MULTISETORIAL SÊNIOR", opacity: 1 },
+  { name: "CRA GARANTIA REAL 2031", opacity: 0.88 },
+  { name: "CRI SÉRIE 142 · IPCA+", opacity: 0.76 },
+  { name: "DEB INCENT ENERGIA 12ª EM", opacity: 0.62 },
+] as const;
 
 export function Hero() {
-  const prefersReducedMotion = useReducedMotion();
-
-  const rise = (delay: number) => ({
-    initial: prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 24 },
-    animate: { opacity: 1, y: 0 },
-    transition: {
-      duration: prefersReducedMotion ? 0.25 : 0.9,
-      delay: prefersReducedMotion ? 0 : delay,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  });
-
   return (
     <section
       id="inicio"
       aria-labelledby="hero-title"
-      className="relative flex min-h-[100svh] items-center overflow-hidden px-6 pb-24 pt-32"
+      className="relative overflow-hidden border-b border-edge-soft"
     >
-      {/* Fundo: gradiente estático que também serve de fallback quando não há WebGL. */}
+      {/* Coluna d'água: a luz enfraquece conforme desce. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_65%_35%,#16345c_0%,#0b1f3a_58%,#08192e_100%)]"
+        className="absolute inset-0 bg-[linear-gradient(to_bottom,#12333B_0%,#0C2530_34%,#081820_66%,#060D10_100%)]"
       />
-
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-        <HeroScene />
-      </div>
-
-      {/* Véu que escurece a cena atrás do texto, preservando contraste de leitura. */}
+      {/* Cáustica: a trama que a luz faz ao atravessar a superfície. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-navy via-navy/75 to-transparent"
+        className="absolute inset-x-0 top-0 h-48 bg-[repeating-linear-gradient(96deg,rgba(201,149,74,.20)_0_3px,rgba(6,13,16,0)_3px_16px,rgba(227,188,126,.10)_16px_19px,rgba(6,13,16,0)_19px_38px)]"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 top-0 h-48 bg-[repeating-linear-gradient(84deg,rgba(234,237,236,.14)_0_2px,rgba(6,13,16,0)_2px_22px)]"
+      />
+      <div aria-hidden="true" className="beam absolute inset-x-0 top-0 h-[3px]" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-[radial-gradient(58%_100%_at_66%_-14%,rgba(227,188,126,.30)_0%,rgba(201,149,74,.10)_40%,rgba(6,13,16,0)_72%)]"
+      />
+      {/* Dois feixes descendo, inclinados como a haste da marca. */}
+      <div
+        aria-hidden="true"
+        className="shaft absolute left-[52%] top-[-40px] h-[620px] w-[150px] skew-x-[-11deg]"
+      />
+      <div
+        aria-hidden="true"
+        className="shaft absolute left-[66%] top-[-40px] h-[560px] w-[70px] skew-x-[-6deg] opacity-70"
       />
 
-      <div className="relative mx-auto w-full max-w-6xl">
-        <motion.p
-          {...rise(0.05)}
-          className="mb-6 inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/5 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.18em] text-gold"
-        >
-          <span aria-hidden="true" className="size-1.5 rounded-full bg-gold" />
-          Leitura descritiva de carteira
-        </motion.p>
+      <div className="relative mx-auto grid max-w-6xl gap-12 px-6 py-20 sm:px-10 lg:grid-cols-[1.15fr_1fr] lg:py-24">
+        <Reveal>
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-light">
+            Serviço descritivo · não recomendamos ativos
+          </p>
 
-        <motion.h1
-          {...rise(0.15)}
-          id="hero-title"
-          className="max-w-4xl text-4xl leading-[1.08] sm:text-6xl md:text-7xl"
-        >
-          A sua carteira,
-          <br />
-          <span className="text-gradient-gold">explicada.</span>
-        </motion.h1>
-
-        <motion.p
-          {...rise(0.28)}
-          className="mt-8 max-w-xl text-lg leading-relaxed text-blue-200 sm:text-xl"
-        >
-          Você informa os ativos que já tem. Nós organizamos por classe, emissor e
-          instituição, e explicamos como cada tipo funciona — liquidez, tributação e
-          garantia.
-        </motion.p>
-
-        <motion.p {...rise(0.36)} className="mt-4 max-w-xl font-serif text-lg text-gold-200">
-          {SCOPE_STATEMENT}
-        </motion.p>
-
-        <motion.div {...rise(0.46)} className="mt-10 flex flex-wrap items-center gap-4">
-          <Link
-            href="/criar-conta"
-            className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-navy transition-colors duration-300 hover:bg-gold-200"
+          <h1
+            id="hero-title"
+            className="mt-6 max-w-[19ch] text-4xl leading-[1.04] sm:text-5xl md:text-6xl"
           >
-            Organizar minha carteira
-          </Link>
-          <a
-            href="#composicao"
-            className="rounded-full border border-blue-200/30 px-7 py-3.5 text-sm font-medium text-mist transition-colors duration-300 hover:border-gold/60 hover:text-gold"
-          >
-            Ver como funciona
-          </a>
-        </motion.div>
+            Visto de cima, tudo parece igual.
+          </h1>
 
-        <motion.div {...rise(0.6)} className="mt-14 max-w-lg">
-          <Disclaimer />
-        </motion.div>
+          <p className="mt-6 max-w-[46ch] text-lg leading-relaxed text-body sm:text-xl">
+            A sua carteira chega como uma lista de siglas: FIDC multisetorial sênior, CRA com
+            garantia real, CRI série 142. São nomes exatos que não dizem nada a quem não
+            trabalha com eles.
+          </p>
+
+          <p className="mt-5 max-w-[46ch] text-lg leading-relaxed text-body sm:text-xl">
+            A Acássium parte do nome e do CNPJ e desce até o que o ativo é. Descreve a
+            estrutura, a origem dos pagamentos, os prazos e onde conferir. Não avalia, não
+            compara, não sugere troca.
+          </p>
+
+          <div className="mt-9 flex flex-wrap items-center gap-4">
+            <Link
+              href="/criar-conta"
+              className="bg-light px-6 py-3.5 text-base font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
+            >
+              Ver o que há na minha carteira
+            </Link>
+            <Link
+              href="#ativos"
+              className="border-b border-light/45 pb-0.5 text-base text-light transition-colors duration-200 hover:border-light"
+            >
+              Ler uma explicação de exemplo
+            </Link>
+          </div>
+        </Reveal>
+
+        <Reveal delay={0.12}>
+          <div className="flex h-full flex-col justify-center">
+            <p className="tech mb-4 text-tertiary">Superfície · como a carteira chega</p>
+
+            <ul className="flex flex-col gap-2.5">
+              {RAW_HOLDINGS.map((holding) => (
+                <li
+                  key={holding.name}
+                  className="flex items-baseline justify-between gap-4 border border-[rgba(163,197,202,.16)] bg-[rgba(9,26,33,.62)] px-5 py-4"
+                  style={{ opacity: holding.opacity }}
+                >
+                  <span className="font-mono text-sm tracking-wide text-aux">{holding.name}</span>
+                  <span className="whitespace-nowrap text-sm text-muted">sem descrição</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-4 text-sm leading-relaxed text-tertiary">
+              Os nomes estão corretos — só não são compreensíveis.
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

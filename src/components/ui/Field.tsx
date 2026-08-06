@@ -7,18 +7,54 @@ type BaseProps = {
   hint?: ReactNode;
 };
 
-const controlClasses =
-  "w-full rounded-xl border bg-navy-800/60 px-4 py-3 text-base text-mist " +
-  "placeholder:text-blue-200/40 transition-colors duration-200 " +
-  "focus:border-gold focus:outline-none";
-
 /**
  * Campo de formulário.
  *
- * A mensagem de erro é ligada ao controle por `aria-describedby` e o campo
- * ganha `aria-invalid`: leitor de tela anuncia o problema junto com o campo,
- * em vez de o usuário descobrir que algo falhou só ao tentar enviar de novo.
+ * Sem cantos arredondados, como o resto do sistema: as superfícies são placas.
+ * A mensagem de erro é ligada ao controle por `aria-describedby` e o campo ganha
+ * `aria-invalid` — leitor de tela anuncia o problema junto com o campo, em vez
+ * de o usuário descobrir que algo falhou só ao tentar enviar de novo.
+ *
+ * O erro usa o tom "atenção" do sistema, nunca vermelho puro, e vem sempre
+ * acompanhado de texto.
  */
+const CONTROL =
+  "w-full border bg-inset px-4 py-3 text-base text-body placeholder:text-muted " +
+  "transition-colors duration-200 focus:border-light focus:outline-none";
+
+function Wrapper({
+  label,
+  name,
+  error,
+  hint,
+  children,
+}: BaseProps & { children: ReactNode }) {
+  const errorId = `${name}-error`;
+  const hintId = `${name}-hint`;
+
+  return (
+    <div>
+      <label
+        htmlFor={name}
+        className="mb-2 block font-mono text-[11px] uppercase tracking-[0.14em] text-tertiary"
+      >
+        {label}
+      </label>
+      {children}
+      {hint && !error ? (
+        <p id={hintId} className="mt-2 text-sm leading-relaxed text-muted">
+          {hint}
+        </p>
+      ) : null}
+      {error ? (
+        <p id={errorId} role="alert" className="mt-2 text-sm text-st-attention">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function Field({
   label,
   name,
@@ -26,33 +62,17 @@ export function Field({
   hint,
   ...props
 }: BaseProps & InputHTMLAttributes<HTMLInputElement>) {
-  const errorId = `${name}-error`;
-  const hintId = `${name}-hint`;
-
   return (
-    <div>
-      <label htmlFor={name} className="mb-2 block text-sm font-medium text-mist">
-        {label}
-      </label>
+    <Wrapper label={label} name={name} error={error} hint={hint}>
       <input
         id={name}
         name={name}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : hint ? hintId : undefined}
-        className={`${controlClasses} ${error ? "border-gold" : "border-blue/40"}`}
+        aria-describedby={error ? `${name}-error` : hint ? `${name}-hint` : undefined}
+        className={`${CONTROL} ${error ? "border-st-attention" : "border-edge"}`}
         {...props}
       />
-      {hint && !error ? (
-        <p id={hintId} className="mt-2 text-xs text-blue-200/70">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={errorId} role="alert" className="mt-2 text-xs text-gold">
-          {error}
-        </p>
-      ) : null}
-    </div>
+    </Wrapper>
   );
 }
 
@@ -64,35 +84,19 @@ export function SelectField({
   children,
   ...props
 }: BaseProps & SelectHTMLAttributes<HTMLSelectElement> & { children: ReactNode }) {
-  const errorId = `${name}-error`;
-  const hintId = `${name}-hint`;
-
   return (
-    <div>
-      <label htmlFor={name} className="mb-2 block text-sm font-medium text-mist">
-        {label}
-      </label>
+    <Wrapper label={label} name={name} error={error} hint={hint}>
       <select
         id={name}
         name={name}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? errorId : hint ? hintId : undefined}
-        className={`${controlClasses} ${error ? "border-gold" : "border-blue/40"}`}
+        aria-describedby={error ? `${name}-error` : hint ? `${name}-hint` : undefined}
+        className={`${CONTROL} ${error ? "border-st-attention" : "border-edge"}`}
         {...props}
       >
         {children}
       </select>
-      {hint && !error ? (
-        <p id={hintId} className="mt-2 text-xs text-blue-200/70">
-          {hint}
-        </p>
-      ) : null}
-      {error ? (
-        <p id={errorId} role="alert" className="mt-2 text-xs text-gold">
-          {error}
-        </p>
-      ) : null}
-    </div>
+    </Wrapper>
   );
 }
 
@@ -107,7 +111,7 @@ export function SubmitButton({
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-full bg-gold px-6 py-3.5 text-sm font-semibold text-navy transition-colors duration-300 hover:bg-gold-200 disabled:cursor-not-allowed disabled:opacity-60"
+      className="w-full bg-light px-6 py-3.5 text-base font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4] disabled:cursor-not-allowed disabled:opacity-50"
     >
       {pending ? "Enviando…" : children}
     </button>

@@ -24,7 +24,7 @@ export function AssetForm() {
       {state.message ? (
         <p
           role="status"
-          className="rounded-xl border border-gold/40 bg-gold/5 px-4 py-3 text-sm text-gold"
+          className="border border-st-identified/45 bg-st-identified/[0.07] px-4 py-3 text-sm text-st-identified"
         >
           {state.message}
         </p>

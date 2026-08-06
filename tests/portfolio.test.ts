@@ -5,9 +5,11 @@ import {
   byCategory,
   byInstitution,
   fgcExposure,
+  identificationStatus,
   isFgcCovered,
   maturityCalendar,
   pendingConfirmation,
+  statusCounts,
   totalCents,
   UNSPECIFIED_INSTITUTION,
   type PortfolioAsset,
@@ -210,5 +212,63 @@ describe("classificações pendentes de confirmação", () => {
     ]);
 
     expect(pending).toHaveLength(1);
+  });
+
+  it("inclui confiança média não confirmada", () => {
+    // Um ticker como PETR4 resolve com confiança MEDIA. O painel marcava esses
+    // ativos como "a confirmar" e não os oferecia para confirmação.
+    const pending = pendingConfirmation([
+      asset({ valueCents: 100, assetClass: "ACAO", confidence: "MEDIA", classConfirmedByUser: false }),
+    ]);
+
+    expect(pending).toHaveLength(1);
+  });
+
+  it("o contador e a lista de pendências nunca divergem", () => {
+    // É o invariante que quebrou: o topo dizia "2 a confirmar" enquanto a lista
+    // abaixo oferecia um único ativo. Duas funções decidindo o mesmo por
+    // critérios diferentes.
+    const carteira = [
+      asset({ valueCents: 100, confidence: "ALTA", classConfirmedByUser: false }),
+      asset({ valueCents: 100, assetClass: "ACAO", confidence: "MEDIA", classConfirmedByUser: false }),
+      asset({ valueCents: 100, confidence: "BAIXA", classConfirmedByUser: false }),
+      asset({ valueCents: 100, assetClass: "NAO_CLASSIFICADO", confidence: "BAIXA", classConfirmedByUser: false }),
+      asset({ valueCents: 100, confidence: "BAIXA", classConfirmedByUser: true }),
+    ];
+
+    const counts = statusCounts(carteira);
+    expect(pendingConfirmation(carteira)).toHaveLength(counts.preparing + counts.missing);
+  });
+});
+
+describe("estado de identificação", () => {
+  it("é sobre o quanto sabemos do ativo, não sobre o mérito dele", () => {
+    expect(identificationStatus(asset({ valueCents: 1, confidence: "ALTA" })).label).toBe(
+      "IDENTIFICADO",
+    );
+    expect(
+      identificationStatus(
+        asset({ valueCents: 1, confidence: "MEDIA", classConfirmedByUser: false }),
+      ).label,
+    ).toBe("A CONFIRMAR");
+    expect(
+      identificationStatus(asset({ valueCents: 1, assetClass: "NAO_CLASSIFICADO" })).label,
+    ).toBe("NÃO CLASSIFICADO");
+  });
+
+  it("confirmação manual vale mais que a confiança do motor", () => {
+    const confirmed = asset({
+      valueCents: 1,
+      confidence: "BAIXA",
+      classConfirmedByUser: true,
+    });
+    expect(identificationStatus(confirmed).tone).toBe("identified");
+  });
+
+  it("todo estado carrega rótulo — nunca só cor", () => {
+    for (const confidence of ["ALTA", "MEDIA", "BAIXA"]) {
+      const status = identificationStatus(asset({ valueCents: 1, confidence }));
+      expect(status.label.length).toBeGreaterThan(0);
+    }
   });
 });

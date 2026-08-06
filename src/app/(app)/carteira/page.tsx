@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import {
-  CategoryDonut,
-  CategoryLegend,
-  InstitutionBars,
-} from "@/components/portfolio/CompositionCharts";
 import { AssetForm } from "@/components/portfolio/AssetForm";
+import { CategoryBars, InstitutionBars } from "@/components/portfolio/CompositionCharts";
+import { StatusPill } from "@/components/ui/StatusPill";
 import { profileFor } from "@/domain/assets/profiles";
 import { ASSET_CLASSES } from "@/domain/assets/taxonomy";
 import {
@@ -14,54 +11,64 @@ import {
   byCategory,
   byInstitution,
   fgcExposure,
+  identificationStatus,
   maturityCalendar,
   pendingConfirmation,
+  statusCounts,
   totalCents,
 } from "@/domain/portfolio/analysis";
 import { formatCents } from "@/domain/portfolio/money";
-import {
-  confirmClassAction,
-  deleteAssetAction,
-  loadPortfolio,
-} from "@/lib/portfolio/actions";
+import { confirmClassAction, deleteAssetAction, loadPortfolio } from "@/lib/portfolio/actions";
 
-export const metadata: Metadata = { title: "Sua carteira" };
+export const metadata: Metadata = { title: "Minha carteira" };
 
 const dateFormatter = new Intl.DateTimeFormat("pt-BR", { timeZone: "UTC" });
 
-function Card({
+function Panel({
   title,
   children,
-  footnote,
+  note,
+  className = "",
 }: {
   title: string;
   children: React.ReactNode;
-  footnote?: React.ReactNode;
+  note?: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <section className="surface rounded-2xl p-6 sm:p-8">
-      <h2 className="mb-6 text-sm font-medium uppercase tracking-[0.18em] text-gold">
-        {title}
-      </h2>
+    <section className={`border border-edge bg-surface p-6 sm:p-7 ${className}`}>
+      <h2 className="tech mb-6 text-tertiary">{title}</h2>
       {children}
-      {footnote ? (
-        <p className="mt-6 border-t border-blue/20 pt-4 text-xs leading-relaxed text-blue-200/70">
-          {footnote}
+      {note ? (
+        <p className="mt-6 border-t border-edge-soft pt-4 text-sm leading-relaxed text-muted">
+          {note}
         </p>
       ) : null}
     </section>
   );
 }
 
-function EmptyState() {
+function StatusTile({
+  tone,
+  label,
+  count,
+}: {
+  tone: "identified" | "preparing" | "missing";
+  label: string;
+  count: number;
+}) {
+  const color = {
+    identified: "var(--color-st-identified)",
+    preparing: "var(--color-st-preparing)",
+    missing: "var(--color-st-missing)",
+  }[tone];
+
   return (
-    <div className="surface rounded-2xl p-10 text-center">
-      <h2 className="text-2xl">Sua carteira está vazia</h2>
-      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-blue-200">
-        Adicione o primeiro ativo com nome, valor e — quando houver — CNPJ e
-        instituição. A leitura por classe, instituição, FGC e vencimentos aparece
-        assim que existir algo para organizar.
+    <div className="min-w-[130px] border border-edge bg-surface px-5 py-3.5">
+      <p className="tech mb-2" style={{ color }}>
+        {label}
       </p>
+      <p className="tabular font-display text-2xl leading-none text-title">{count}</p>
     </div>
   );
 }
@@ -75,44 +82,57 @@ export default async function PortfolioPage() {
   const fgc = fgcExposure(assets);
   const maturities = maturityCalendar(assets);
   const pending = pendingConfirmation(assets);
+  const counts = statusCounts(assets);
 
   return (
-    <div className="space-y-8">
-      <header>
-        <h1 className="text-3xl sm:text-4xl">Sua carteira</h1>
-        <p className="mt-3 text-sm text-blue-200">
-          Total declarado:{" "}
-          <span className="font-serif text-lg text-mist">{formatCents(total)}</span>
-          {assets.length > 0 ? (
-            <span className="text-blue-200/70">
-              {" "}
-              · {assets.length} {assets.length === 1 ? "ativo" : "ativos"}
-            </span>
-          ) : null}
-        </p>
-        <p className="mt-2 text-xs text-blue-200/60">
-          Soma dos valores que você informou. Não calculamos rendimento nem atualizamos
-          cotação — para valores de mercado, consulte a fonte oficial indicada na ficha de
-          cada ativo.
-        </p>
+    <div className="flex flex-col gap-px">
+      <header className="flex flex-wrap items-end justify-between gap-8 pb-8">
+        <div>
+          <h1 className="text-3xl sm:text-4xl">
+            {assets.length} {assets.length === 1 ? "ativo" : "ativos"}, {institutions.length}{" "}
+            {institutions.length === 1 ? "instituição" : "instituições"}
+          </h1>
+          <p className="mt-3 max-w-[62ch] text-base leading-relaxed text-aux">
+            A lista está organizada por valor declarado, não por desempenho. Abra o verbete de
+            qualquer tipo de ativo para descer à explicação.
+          </p>
+          <p className="mt-4 font-mono text-sm text-tertiary">
+            TOTAL DECLARADO ·{" "}
+            <span className="tabular text-title">{formatCents(total)}</span>
+          </p>
+          <p className="mt-2 font-mono text-[11px] leading-relaxed text-muted">
+            Soma do que você informou. Não calculamos rendimento nem atualizamos cotação.
+          </p>
+        </div>
+
+        {assets.length > 0 ? (
+          <div className="flex flex-wrap gap-px">
+            <StatusTile tone="identified" label="Identificados" count={counts.identified} />
+            <StatusTile tone="preparing" label="A confirmar" count={counts.preparing} />
+            <StatusTile tone="missing" label="Não classificados" count={counts.missing} />
+          </div>
+        ) : null}
       </header>
 
       {pending.length > 0 ? (
-        <section className="rounded-2xl border border-gold/30 bg-gold/[0.04] p-6 sm:p-8">
-          <h2 className="text-base text-gold">Confirme a classificação</h2>
-          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-blue-200">
-            Não conseguimos identificar com segurança o tipo destes ativos pelo nome e pelo
-            CNPJ informados. Preferimos perguntar a exibir uma ficha que pode não
-            corresponder ao que você tem.
+        <section className="border border-[#3A3A2A] bg-[#0E1416] p-6 sm:p-7">
+          <div className="flex flex-wrap items-baseline justify-between gap-4">
+            <h2 className="text-xl text-title">Confirme a classificação</h2>
+            <StatusPill tone="attention" label="AÇÃO NECESSÁRIA" />
+          </div>
+          <p className="mt-3 max-w-[70ch] text-base leading-relaxed text-aux">
+            Não identificamos com segurança o tipo destes ativos pelo nome e pelo CNPJ
+            informados. Preferimos perguntar a exibir um verbete que pode não corresponder ao
+            que você tem.
           </p>
 
-          <ul className="mt-6 space-y-4">
+          <ul className="mt-6 flex flex-col gap-4">
             {pending.map((asset) => (
               <li
                 key={asset.id}
-                className="flex flex-wrap items-center justify-between gap-4 border-t border-gold/15 pt-4"
+                className="flex flex-wrap items-center justify-between gap-4 border-t border-edge-soft pt-4"
               >
-                <span className="text-sm text-mist">{asset.name}</span>
+                <span className="text-base text-title">{asset.name}</span>
                 <form action={confirmClassAction} className="flex items-center gap-2">
                   <input type="hidden" name="id" value={asset.id} />
                   <label htmlFor={`class-${asset.id}`} className="sr-only">
@@ -122,7 +142,7 @@ export default async function PortfolioPage() {
                     id={`class-${asset.id}`}
                     name="assetClass"
                     defaultValue={asset.assetClass}
-                    className="rounded-lg border border-blue/40 bg-navy-800 px-3 py-2 text-sm text-mist"
+                    className="border border-edge bg-inset px-3 py-2 text-sm text-body"
                   >
                     {ASSET_CLASSES.filter((c) => c !== "NAO_CLASSIFICADO").map((assetClass) => (
                       <option key={assetClass} value={assetClass}>
@@ -132,7 +152,7 @@ export default async function PortfolioPage() {
                   </select>
                   <button
                     type="submit"
-                    className="rounded-full bg-gold px-4 py-2 text-xs font-semibold text-navy transition-colors hover:bg-gold-200"
+                    className="bg-light px-4 py-2 text-sm font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
                   >
                     Confirmar
                   </button>
@@ -144,39 +164,116 @@ export default async function PortfolioPage() {
       ) : null}
 
       {assets.length === 0 ? (
-        <EmptyState />
+        <div className="border border-edge bg-surface p-10 text-center">
+          <h2 className="text-2xl">Sua carteira está vazia</h2>
+          <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-aux">
+            Adicione o primeiro ativo com nome, valor e — quando houver — CNPJ e instituição. A
+            leitura por estrutura, instituição, cobertura do FGC e vencimentos aparece assim que
+            existir algo para organizar.
+          </p>
+        </div>
       ) : (
         <>
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card title="Por classe de ativo">
-              <div className="flex flex-col items-center gap-8 sm:flex-row sm:items-start">
-                <CategoryDonut slices={categories} />
-                <CategoryLegend slices={categories} />
-              </div>
-            </Card>
+          <section className="border border-edge bg-surface">
+            <h2 className="sr-only">Ativos declarados</h2>
 
-            <Card
-              title="Por instituição"
-              footnote="A cobertura do FGC é contada por CPF e por instituição, por isso a distribuição entre instituições aparece separada da distribuição por classe."
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[46rem] border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-edge-soft">
+                    <th scope="col" className="tech px-6 py-3 font-normal text-muted">
+                      Ativo
+                    </th>
+                    <th scope="col" className="tech px-6 py-3 font-normal text-muted">
+                      Estrutura
+                    </th>
+                    <th scope="col" className="tech px-6 py-3 font-normal text-muted">
+                      Instituição
+                    </th>
+                    <th scope="col" className="tech px-6 py-3 text-right font-normal text-muted">
+                      Valor declarado
+                    </th>
+                    <th scope="col" className="tech px-6 py-3 text-right font-normal text-muted">
+                      Verbete
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      <span className="sr-only">Ações</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {assets.map((asset) => {
+                    const profile = profileFor(asset.assetClass);
+                    const status = identificationStatus(asset);
+
+                    return (
+                      <tr key={asset.id} className="border-b border-[#101B20] last:border-0">
+                        <td className="px-6 py-4 text-base text-title">{asset.name}</td>
+                        <td className="px-6 py-4 text-base text-aux">
+                          <Link
+                            href={`/ativos/${asset.assetClass}`}
+                            className="border-b border-light/30 text-light transition-colors hover:border-light"
+                          >
+                            {profile.label}
+                          </Link>
+                        </td>
+                        <td className="px-6 py-4 text-base text-aux">
+                          {asset.institution ?? "—"}
+                        </td>
+                        <td className="tabular whitespace-nowrap px-6 py-4 text-right font-mono text-sm text-title">
+                          {formatCents(asset.valueCents)}
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <StatusPill tone={status.tone} label={status.label} />
+                        </td>
+                        <td className="px-6 py-4 text-right">
+                          <form action={deleteAssetAction}>
+                            <input type="hidden" name="id" value={asset.id} />
+                            <button
+                              type="submit"
+                              className="border border-edge px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-tertiary transition-colors duration-200 hover:border-st-missing/60 hover:text-st-missing"
+                            >
+                              Remover
+                            </button>
+                          </form>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <div className="grid gap-px lg:grid-cols-2">
+            <Panel
+              title="Composição por classe"
+              note="Agrupamento por tipo de estrutura. Não indica concentração adequada ou inadequada."
+            >
+              <CategoryBars slices={categories} />
+            </Panel>
+
+            <Panel
+              title="Composição por instituição"
+              note="A cobertura do FGC é contada por CPF e por instituição, por isso esta leitura aparece separada."
             >
               <InstitutionBars slices={institutions} />
-            </Card>
+            </Panel>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-2">
-            <Card
-              title="Segurança e estrutura — FGC"
-              footnote={
+          <div className="grid gap-px lg:grid-cols-2">
+            <Panel
+              title="Cobertura do FGC"
+              note={
                 <>
-                  Considera apenas ativos de tipos cobertos pelo FGC (CDB, LCI, LCA, LC e
-                  poupança). Limite vigente considerado:{" "}
-                  {formatCents(FGC_LIMIT_PER_INSTITUTION_CENTS)} por CPF e por instituição,
-                  com teto global por período. Confirme as regras atuais em{" "}
+                  Considera apenas ativos de tipos cobertos (CDB, LCI, LCA, LC e poupança).
+                  Limite vigente considerado: {formatCents(FGC_LIMIT_PER_INSTITUTION_CENTS)} por
+                  CPF e por instituição, com teto global por período. Confirme em{" "}
                   <a
                     href="https://www.fgc.org.br"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-gold underline-offset-4 hover:underline"
+                    className="border-b border-light/30 text-light hover:border-light"
                   >
                     fgc.org.br
                   </a>
@@ -185,57 +282,57 @@ export default async function PortfolioPage() {
               }
             >
               {fgc.length === 0 ? (
-                <p className="text-sm text-blue-200">
+                <p className="text-base text-aux">
                   Nenhum ativo de tipo coberto pelo FGC na sua carteira.
                 </p>
               ) : (
-                <ul className="space-y-4">
+                <ul className="flex flex-col gap-4">
                   {fgc.map((entry) => (
                     <li
                       key={entry.institution}
-                      className="border-b border-blue/20 pb-4 last:border-0 last:pb-0"
+                      className="border-b border-edge-soft pb-4 last:border-0 last:pb-0"
                     >
                       <div className="flex items-baseline justify-between gap-4">
-                        <span className="text-sm text-mist">{entry.institution}</span>
-                        <span className="font-serif text-base text-mist">
+                        <span className="text-base text-title">{entry.institution}</span>
+                        <span className="tabular font-mono text-sm text-title">
                           {formatCents(entry.coveredValueCents)}
                         </span>
                       </div>
-                      {entry.aboveLimitCents > 0 ? (
-                        <p className="mt-2 text-xs text-gold">
-                          {formatCents(entry.aboveLimitCents)} acima do limite de cobertura
-                          por instituição.
-                        </p>
-                      ) : (
-                        <p className="mt-2 text-xs text-blue-200/70">
-                          Dentro do limite de cobertura por instituição.
-                        </p>
-                      )}
+                      <div className="mt-2">
+                        {entry.aboveLimitCents > 0 ? (
+                          <StatusPill
+                            tone="attention"
+                            label={`${formatCents(entry.aboveLimitCents)} ACIMA DO LIMITE`}
+                          />
+                        ) : (
+                          <StatusPill tone="identified" label="DENTRO DO LIMITE" />
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>
               )}
-            </Card>
+            </Panel>
 
-            <Card
+            <Panel
               title="Calendário de vencimentos"
-              footnote="Datas conforme informadas por você. Ativos sem vencimento, como ações e fundos abertos, não aparecem aqui."
+              note="Datas conforme informadas por você. Ativos sem vencimento, como ações e fundos abertos, não aparecem aqui."
             >
               {maturities.length === 0 ? (
-                <p className="text-sm text-blue-200">
+                <p className="text-base text-aux">
                   Nenhum ativo com data de vencimento informada.
                 </p>
               ) : (
-                <ul className="space-y-4">
+                <ul className="flex flex-col gap-3">
                   {maturities.map((entry) => (
                     <li
                       key={entry.asset.id}
-                      className="flex flex-wrap items-baseline justify-between gap-3 border-b border-blue/20 pb-3 last:border-0 last:pb-0"
+                      className="flex flex-wrap items-baseline justify-between gap-3 border-b border-edge-soft pb-3 last:border-0 last:pb-0"
                     >
-                      <span className="text-sm text-mist">{entry.asset.name}</span>
-                      <span className="text-right text-xs text-blue-200">
+                      <span className="text-base text-title">{entry.asset.name}</span>
+                      <span className="tabular font-mono text-sm text-tertiary">
                         {dateFormatter.format(entry.maturityDate)}
-                        <span className="ml-2 text-blue-200/60">
+                        <span className="ml-3 text-muted">
                           {entry.daysUntil < 0
                             ? "vencido"
                             : entry.daysUntil === 0
@@ -247,58 +344,16 @@ export default async function PortfolioPage() {
                   ))}
                 </ul>
               )}
-            </Card>
+            </Panel>
           </div>
-
-          <Card title="Ativos declarados">
-            <ul className="space-y-4">
-              {assets.map((asset) => {
-                const profile = profileFor(asset.assetClass);
-                return (
-                  <li
-                    key={asset.id}
-                    className="flex flex-wrap items-start justify-between gap-4 border-b border-blue/20 pb-4 last:border-0 last:pb-0"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm text-mist">{asset.name}</p>
-                      <p className="mt-1 text-xs text-blue-200/70">
-                        <Link
-                          href={`/ativos/${asset.assetClass}`}
-                          className="text-gold underline-offset-4 hover:underline"
-                        >
-                          {profile.label}
-                        </Link>
-                        {asset.institution ? ` · ${asset.institution}` : ""}
-                        {asset.cnpj ? ` · CNPJ ${asset.cnpj}` : ""}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <span className="font-serif text-base text-mist">
-                        {formatCents(asset.valueCents)}
-                      </span>
-                      <form action={deleteAssetAction}>
-                        <input type="hidden" name="id" value={asset.id} />
-                        <button
-                          type="submit"
-                          className="rounded-full border border-blue-200/25 px-3 py-1.5 text-xs text-blue-200 transition-colors hover:border-gold/60 hover:text-gold"
-                        >
-                          Remover
-                        </button>
-                      </form>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </Card>
         </>
       )}
 
-      <Card title="Adicionar ativo">
+      <Panel title="Adicionar ativo">
         <div className="max-w-xl">
           <AssetForm />
         </div>
-      </Card>
+      </Panel>
     </div>
   );
 }

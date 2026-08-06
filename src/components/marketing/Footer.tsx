@@ -1,54 +1,45 @@
 import Link from "next/link";
 
-import { Disclaimer } from "@/components/ui/Disclaimer";
+import { Wordmark } from "@/components/brand/Wordmark";
 import { site } from "@/config/site";
+
+const LINKS = [
+  { href: "#traducao", label: "Como funciona" },
+  { href: "#ativos", label: "Acervo de ativos" },
+  { href: "#seguranca", label: "Estrutura" },
+  { href: "#limite", label: "Limites do serviço" },
+  { href: "#contato", label: "Contato" },
+] as const;
 
 export function Footer() {
   return (
-    <footer className="border-t border-blue/25 px-6 py-16">
+    <footer className="border-t border-edge-soft bg-abyss px-6 py-14 sm:px-10">
       <div className="mx-auto max-w-6xl">
         <div className="flex flex-col justify-between gap-10 md:flex-row">
           <div>
-            <p className="font-serif text-lg">
-              Acássium <span className="text-gold">Invest</span>
-            </p>
-            <p className="mt-3 max-w-sm text-sm leading-relaxed text-blue-200">{site.tagline}</p>
+            <Wordmark variant="full" size={18} />
+            <p className="mt-5 max-w-sm text-base leading-relaxed text-tertiary">{site.tagline}</p>
           </div>
 
           <nav aria-label="Rodapé">
-            <ul className="flex flex-wrap gap-x-8 gap-y-3 text-sm text-blue-200">
+            <ul className="flex flex-wrap gap-x-8 gap-y-3 text-base text-tertiary">
+              {LINKS.map((link) => (
+                <li key={link.href}>
+                  <a href={link.href} className="transition-colors duration-200 hover:text-light">
+                    {link.label}
+                  </a>
+                </li>
+              ))}
               <li>
-                <a href="#composicao" className="transition-colors hover:text-gold">
-                  Composição
-                </a>
-              </li>
-              <li>
-                <a href="#ativos" className="transition-colors hover:text-gold">
-                  Ativos
-                </a>
-              </li>
-              <li>
-                <a href="#seguranca" className="transition-colors hover:text-gold">
-                  Segurança
-                </a>
-              </li>
-              <li>
-                <a href="#limite" className="transition-colors hover:text-gold">
-                  Nosso limite
-                </a>
-              </li>
-              <li>
-                <a href="#contato" className="transition-colors hover:text-gold">
-                  Contato
-                </a>
-              </li>
-              <li>
-                <Link href="/termos" className="transition-colors hover:text-gold">
+                <Link href="/termos" className="transition-colors duration-200 hover:text-light">
                   Termos de Uso
                 </Link>
               </li>
               <li>
-                <Link href="/privacidade" className="transition-colors hover:text-gold">
+                <Link
+                  href="/privacidade"
+                  className="transition-colors duration-200 hover:text-light"
+                >
                   Privacidade
                 </Link>
               </li>
@@ -56,12 +47,13 @@ export function Footer() {
           </nav>
         </div>
 
-        <div aria-hidden="true" className="rule-fade my-10" />
+        <div className="mt-12 flex flex-col justify-between gap-4 border-t border-edge-soft pt-6 font-mono text-[11px] leading-relaxed tracking-wide text-muted sm:flex-row">
+          <span>ACÁSSIUM INVEST · PLATAFORMA DESCRITIVA DE ATIVOS · MACEIÓ, AL</span>
+          <span>Conteúdo baseado em registros públicos. Não constitui recomendação de investimento.</span>
+        </div>
 
-        <Disclaimer variant="full" className="max-w-4xl" />
-
-        <p className="mt-8 text-xs text-blue-200/50">
-          © {new Date().getFullYear()} {site.name}. Todos os direitos reservados.
+        <p className="mt-5 font-mono text-[11px] text-muted">
+          © {new Date().getFullYear()} {site.name}.
         </p>
       </div>
     </footer>

@@ -15,8 +15,8 @@ export function LegalSection({
 }) {
   return (
     <section className="mt-12">
-      <h2 className="mb-4 text-xl text-gold">{title}</h2>
-      <div className="space-y-4 text-sm leading-relaxed text-blue-200">{children}</div>
+      <h2 className="mb-4 text-xl text-title">{title}</h2>
+      <div className="space-y-4 text-base leading-relaxed text-aux">{children}</div>
     </section>
   );
 }
@@ -26,7 +26,7 @@ export function LegalList({ items }: { items: readonly ReactNode[] }) {
     <ul className="space-y-3">
       {items.map((item, index) => (
         <li key={index} className="flex gap-3">
-          <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-gold" />
+          <span aria-hidden="true" className="mt-2.5 size-1 shrink-0 bg-amber" />
           <span>{item}</span>
         </li>
       ))}
@@ -45,14 +45,14 @@ export function ControllerIdentification() {
 
   if (!entityName || !entityDocument) {
     return (
-      <span className="rounded bg-gold/20 px-2 py-0.5 font-medium text-gold">
+      <span className="bg-st-attention/20 px-2 py-0.5 font-medium text-st-attention">
         [razão social, CNPJ e endereço do controlador — a preencher antes de publicar]
       </span>
     );
   }
 
   return (
-    <span className="text-mist">
+    <span className="text-title">
       {entityName}, inscrita no CNPJ sob o nº {entityDocument}
     </span>
   );
@@ -68,7 +68,7 @@ export function PendingLegalReviewNotice() {
   if (process.env.NEXT_PUBLIC_LEGAL_REVIEWED === "true") return null;
 
   return (
-    <p className="mt-8 rounded-xl border border-gold/40 bg-gold/[0.06] p-5 text-sm leading-relaxed text-gold">
+    <p className="mt-8 border border-st-attention/45 bg-st-attention/[0.06] p-5 text-base leading-relaxed text-st-attention">
       <strong className="font-semibold">Documento em elaboração.</strong> Este texto
       descreve com precisão o funcionamento atual do sistema, mas ainda não passou por
       revisão de advogado. Não deve ser tratado como instrumento jurídico definitivo até

@@ -1,30 +1,74 @@
 @import "tailwindcss";
 
 /**
- * Tokens da identidade Acássium.
+ * Sistema de marca Acássium — "Profundidade como clareza".
  *
- * A paleta inteira vive aqui. Nenhum componente deve escrever hex direto —
- * isso mantém a troca de marca em um arquivo só e evita a deriva de tons que
- * aparece quando cada tela inventa o seu azul.
+ * A ideia que organiza a paleta: profundidade indica NÍVEL DE DETALHE, nunca
+ * valor, risco ou desempenho. Quanto mais fundo, mais específico o conteúdo.
+ *
+ *   Nível 1 · Superfície      — nome do ativo
+ *   Nível 2 · Coluna d'água   — o que o ativo é
+ *   Nível 3 · Zona iluminada  — estrutura e ordem
+ *   Nível 4 · Fundo           — documentos da emissão
+ *   Nível 5 · Abismo          — fora do nosso escopo
+ *
+ * O nível 5 é onde ficam recomendação, projeção e juízo de mérito. A marca
+ * declara o próprio limite em cor, e não apenas em texto legal — é a mesma
+ * regra que os tipos e os testes já impõem no código.
  */
 @theme {
-  --color-navy: #0b1f3a;
-  --color-navy-800: #10294a;
-  --color-navy-700: #16345c;
-  --color-blue: #274c77;
-  --color-blue-400: #4e7ba8;
-  --color-blue-200: #8fa9c4;
-  --color-gold: #c9a24b;
-  --color-gold-600: #9c7c3c;
-  --color-gold-200: #e6d3a3;
-  --color-mist: #f4f6f8;
-  --color-ink: #0b1f3a;
+  /* Escala de profundidade.
+   *
+   * Nenhum nome aqui pode colidir com uma utilidade nativa do Tailwind. O tom
+   * #060D10 chama-se `ground` e não `base` justamente por isso: `text-base` já
+   * é o tamanho de fonte padrão, e um token de cor com esse nome geraria uma
+   * segunda regra `text-base` que sobrescreve a cor de todo texto que usa o
+   * tamanho — o texto some no fundo, e a causa é difícil de achar. */
+  --color-abyss: #040809;
+  --color-ground: #060d10;
+  --color-deep: #081a21;
+  --color-surface: #0b1d24;
+  --color-water: #0c2530;
+  --color-shallow: #12333b;
 
-  --font-serif: Georgia, "Times New Roman", "Nimbus Roman", serif;
-  --font-sans:
-    Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  /* Estrutura. */
+  --color-edge: #17333c;
+  --color-edge-soft: #142127;
+  --color-inset: #050a0d;
 
-  --ease-cinematic: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Marca. */
+  --color-amber: #c9954a;
+  --color-light: #e3bc7e;
+  --color-amber-deep: #6b4a18;
+
+  /* Texto, com contraste medido sobre a base. */
+  --color-title: #f0f2f1; /* 17,4:1 */
+  --color-body: #d3dcde; /* 13,3:1 */
+  --color-aux: #a8b7ba; /*  8,2:1 */
+  --color-tertiary: #8ca0a4; /*  5,9:1 */
+  --color-muted: #6c7e82;
+  --color-paper: #f7f4ec;
+
+  /**
+   * Estados.
+   *
+   * Duas regras inegociáveis, herdadas do sistema de marca:
+   *
+   * 1. Nenhum estado é comunicado só por cor — sempre cor MAIS palavra. Quem
+   *    não distingue os matizes lê o rótulo e entende igual.
+   * 2. Não há verde no sistema. Verde diria "bom" e vermelho diria "ruim", e
+   *    o produto não emite juízo sobre ativo nenhum. Os matizes abaixo são
+   *    frios e âmbar de propósito: informam categoria, não mérito.
+   */
+  --color-st-identified: #8fbcc2;
+  --color-st-preparing: #94a7c4;
+  --color-st-attention: #d08a5f;
+  --color-st-missing: #d9776c;
+  --color-st-unavailable: #6c7e82;
+
+  --font-display: var(--font-display-face), "Libre Caslon Display", Georgia, serif;
+  --font-body: var(--font-body-face), "Source Sans 3", system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), "IBM Plex Mono", ui-monospace, monospace;
 }
 
 @layer base {
@@ -34,10 +78,9 @@
   }
 
   body {
-    background-color: var(--color-navy);
-    color: var(--color-mist);
-    font-family: var(--font-sans);
-    font-synthesis-weight: none;
+    background-color: var(--color-ground);
+    color: var(--color-body);
+    font-family: var(--font-body);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
@@ -45,21 +88,22 @@
   h1,
   h2,
   h3 {
-    font-family: var(--font-serif);
+    font-family: var(--font-display);
     font-weight: 400;
-    letter-spacing: -0.015em;
+    color: var(--color-title);
+    letter-spacing: -0.018em;
+    text-wrap: pretty;
   }
 
-  /* Foco visível e consistente — requisito de acessibilidade, não decoração. */
+  /* O sistema não usa cantos arredondados: as superfícies são placas, não cápsulas. */
   :focus-visible {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 3px;
-    border-radius: 2px;
+    outline: 2px solid var(--color-light);
+    outline-offset: 2px;
   }
 
   ::selection {
-    background-color: var(--color-gold);
-    color: var(--color-navy);
+    background-color: var(--color-light);
+    color: var(--color-abyss);
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -78,37 +122,50 @@
 }
 
 @layer utilities {
-  /* Gradiente de texto usado nos títulos de destaque. */
-  .text-gradient-gold {
-    background: linear-gradient(
-      100deg,
-      var(--color-gold-200) 0%,
-      var(--color-gold) 45%,
-      var(--color-gold-600) 100%
-    );
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  /**
+   * Rótulo técnico: mono, caixa alta, entreletra aberta.
+   * O sistema usa isto para tudo que é metadado — nunca para conteúdo.
+   */
+  .tech {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
   }
 
-  /* Superfície de card sobre o fundo azul-marinho. */
-  .surface {
-    background: linear-gradient(
-      160deg,
-      color-mix(in srgb, var(--color-navy-800) 92%, white) 0%,
-      var(--color-navy-800) 100%
-    );
-    border: 1px solid color-mix(in srgb, var(--color-blue) 45%, transparent);
+  /* Placa: a superfície padrão do sistema. Sem raio, borda de 1px. */
+  .plate {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-edge);
   }
 
-  /* Linha divisória que some nas pontas. */
-  .rule-fade {
-    height: 1px;
+  .plate-inset {
+    background-color: var(--color-inset);
+    border: 1px solid var(--color-edge-soft);
+  }
+
+  /* Feixe de luz descendo pela água — o gesto do hero e do onboarding. */
+  .shaft {
+    background: linear-gradient(
+      174deg,
+      color-mix(in srgb, var(--color-light) 20%, transparent),
+      transparent 70%
+    );
+  }
+
+  /* Régua luminosa no topo de uma seção. */
+  .beam {
     background: linear-gradient(
       90deg,
       transparent,
-      color-mix(in srgb, var(--color-blue-200) 35%, transparent),
+      color-mix(in srgb, var(--color-light) 85%, transparent) 45%,
+      color-mix(in srgb, var(--color-light) 20%, transparent) 70%,
       transparent
     );
+  }
+
+  /* Dígitos que precisam alinhar em coluna. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }

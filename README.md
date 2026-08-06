@@ -44,7 +44,8 @@ npm run db:studio  # inspecionar o banco
 - LGPD: exportar dados em JSON e excluir conta com cascata verificada
 - Limite de tentativas de login e cadastro, por conta e por IP
 - Criptografia em repouso dos campos sensíveis da carteira (AES-256-GCM)
-- 82 testes automatizados, incluindo o guardrail de conformidade
+- Sistema de marca "profundidade como clareza", com o limite regulatório expresso na própria escala de cor
+- 87 testes automatizados, incluindo o guardrail de conformidade
 
 **Antes de produção**, o item operacional que falta não é código: a chave
 `FIELD_ENCRYPTION_KEY` precisa de cópia em cofre de segredos e de um

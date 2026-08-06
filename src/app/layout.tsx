@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 
 import { site } from "@/config/site";
 
+import { fontVariables } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,24 +19,21 @@ export const metadata: Metadata = {
     title: `${site.name} — ${site.tagline}`,
     description: site.description,
   },
-  // Dado de carteira não deve ser indexado nem pré-visualizado por terceiros.
-  // A landing é pública; as áreas autenticadas herdam a política restritiva
-  // definida em seus próprios layouts.
   robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b1f3a",
+  themeColor: "#060d10",
   colorScheme: "dark",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={fontVariables}>
       <body className="antialiased">
         <a
           href="#conteudo"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-6 focus:z-[60] focus:rounded-full focus:bg-gold focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-navy"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-6 focus:top-6 focus:z-60 focus:bg-light focus:px-5 focus:py-2.5 focus:text-sm focus:font-semibold focus:text-abyss"
         >
           Pular para o conteúdo
         </a>

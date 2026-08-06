@@ -28,7 +28,7 @@ export default function PrivacyPage() {
   return (
     <>
       <LegalTitle>Política de Privacidade</LegalTitle>
-      <p className="mt-4 text-base text-blue-200">
+      <p className="mt-4 text-lg text-aux">
         Como a Acássium Invest trata os seus dados pessoais, conforme a Lei nº
         13.709/2018 (LGPD).
       </p>
@@ -44,7 +44,7 @@ export default function PrivacyPage() {
           direitos descritos abaixo, o contato é{" "}
           <a
             href={`mailto:${site.contact.email}`}
-            className="text-gold underline-offset-4 hover:underline"
+            className="text-light underline-offset-4 hover:underline"
           >
             {site.contact.email}
           </a>
@@ -57,21 +57,21 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             <>
-              <strong className="text-mist">Cadastro:</strong> nome e e-mail. A senha é
+              <strong className="text-title">Cadastro:</strong> nome e e-mail. A senha é
               guardada apenas como hash argon2id — nunca em texto legível, nem por nós.
             </>,
             <>
-              <strong className="text-mist">Carteira:</strong> para cada ativo que você
+              <strong className="text-title">Carteira:</strong> para cada ativo que você
               declarar, o nome, o valor, e — quando você informar — o CNPJ, a instituição
               e a data de vencimento.
             </>,
             <>
-              <strong className="text-mist">Sessão:</strong> a data de expiração e o
+              <strong className="text-title">Sessão:</strong> a data de expiração e o
               identificador do navegador usado no acesso, para que você possa encerrar
               sessões e para diagnóstico de segurança.
             </>,
             <>
-              <strong className="text-mist">Tentativas de acesso:</strong> registros
+              <strong className="text-title">Tentativas de acesso:</strong> registros
               temporários usados para limitar tentativas de login. O e-mail e o endereço
               de IP são guardados apenas em forma de HMAC, portanto não são legíveis, e
               as linhas são apagadas assim que saem da janela de contagem.
@@ -127,21 +127,21 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             <>
-              <strong className="text-mist">Criptografia em repouso:</strong> nome, CNPJ,
+              <strong className="text-title">Criptografia em repouso:</strong> nome, CNPJ,
               instituição e valor de cada ativo são cifrados com AES-256-GCM antes de
               chegar ao banco. Quem obtivesse uma cópia do banco de dados encontraria
               apenas texto ilegível nesses campos.
             </>,
             <>
-              <strong className="text-mist">Criptografia em trânsito:</strong> todo o
+              <strong className="text-title">Criptografia em trânsito:</strong> todo o
               tráfego usa HTTPS, com HSTS.
             </>,
             <>
-              <strong className="text-mist">Senhas:</strong> argon2id, com os parâmetros
+              <strong className="text-title">Senhas:</strong> argon2id, com os parâmetros
               recomendados pelo OWASP. Nem nós conseguimos ler a sua senha.
             </>,
             <>
-              <strong className="text-mist">Acesso:</strong> toda consulta à carteira é
+              <strong className="text-title">Acesso:</strong> toda consulta à carteira é
               filtrada pelo identificador do usuário autenticado, e as páginas de conta
               não são indexadas por buscadores.
             </>,
@@ -172,7 +172,7 @@ export default function PrivacyPage() {
           O art. 18 da LGPD garante a você um conjunto de direitos sobre os seus dados.
           Dois deles estão disponíveis por conta própria, sem precisar pedir a ninguém, na
           página{" "}
-          <Link href="/conta" className="text-gold underline-offset-4 hover:underline">
+          <Link href="/conta" className="text-light underline-offset-4 hover:underline">
             Conta e dados
           </Link>
           :
@@ -180,11 +180,11 @@ export default function PrivacyPage() {
         <LegalList
           items={[
             <>
-              <strong className="text-mist">Acesso e portabilidade:</strong> baixar tudo o
+              <strong className="text-title">Acesso e portabilidade:</strong> baixar tudo o
               que temos sobre você em JSON, formato legível por máquina.
             </>,
             <>
-              <strong className="text-mist">Eliminação:</strong> excluir a conta e todos os
+              <strong className="text-title">Eliminação:</strong> excluir a conta e todos os
               dados, com efeito imediato.
             </>,
           ]}

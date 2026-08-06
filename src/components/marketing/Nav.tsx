@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { Wordmark } from "@/components/brand/Wordmark";
+
 const LINKS = [
-  { href: "#composicao", label: "Composição" },
-  { href: "#ativos", label: "Ativos" },
-  { href: "#seguranca", label: "Segurança" },
-  { href: "#limite", label: "Nosso limite" },
+  { href: "#traducao", label: "Como funciona" },
+  { href: "#ativos", label: "Acervo de ativos" },
+  { href: "#limite", label: "Limites do serviço" },
 ] as const;
 
 export function Nav() {
@@ -22,43 +23,37 @@ export function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-500 ${
-        scrolled ? "border-b border-blue/25 bg-navy/85 backdrop-blur-xl" : "bg-transparent"
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-300 ${
+        scrolled ? "border-edge-soft bg-inset/95 backdrop-blur-md" : "border-transparent bg-transparent"
       }`}
     >
       <nav
         aria-label="Navegação principal"
-        className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5"
+        className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 sm:px-10"
       >
-        <a href="#inicio" className="font-serif text-lg tracking-tight text-mist">
-          Acássium <span className="text-gold">Invest</span>
-        </a>
+        <Link href="/" aria-label="Acássium Invest — início">
+          <Wordmark size={22} />
+        </Link>
 
-        <ul className="hidden items-center gap-9 md:flex">
-          {LINKS.map((link) => (
-            <li key={link.href}>
-              <a
-                href={link.href}
-                className="text-sm text-blue-200 transition-colors duration-300 hover:text-gold"
-              >
-                {link.label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-6">
+          <ul className="hidden items-center gap-7 md:flex">
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <a
+                  href={link.href}
+                  className="text-sm text-tertiary transition-colors duration-200 hover:text-title"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
 
-        <div className="flex items-center gap-4">
           <Link
             href="/entrar"
-            className="hidden text-sm text-blue-200 transition-colors duration-300 hover:text-gold sm:inline"
+            className="bg-light px-4 py-2.5 text-sm font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
           >
             Entrar
-          </Link>
-          <Link
-            href="/criar-conta"
-            className="rounded-full border border-gold/40 px-5 py-2 text-sm font-medium text-gold transition-colors duration-300 hover:bg-gold hover:text-navy"
-          >
-            Criar conta
           </Link>
         </div>
       </nav>

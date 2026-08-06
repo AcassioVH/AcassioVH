@@ -26,7 +26,7 @@ Nenhuma das três depende de alguém lembrar da regra no momento de escrever.
 | Linguagem | TypeScript estrito, com `noUncheckedIndexedAccess` | O sistema de tipos é mecanismo de conformidade, então precisa ser levado a sério |
 | Estilo | Tailwind CSS 4 | Tokens de marca em `@theme`, num arquivo só |
 | Animação de UI | Motion 12 | `whileInView` para as revelações por rolagem |
-| 3D | Three.js via `@react-three/fiber` | Cena declarativa e, principalmente, descarte de contexto WebGL no unmount |
+| Tipografia | `next/font` (Libre Caslon Display, Source Sans 3, IBM Plex Mono) | Baixadas no build e auto-hospedadas: sem CDN em runtime, sem requisição a terceiro carregando navegação do usuário |
 | Banco | PostgreSQL + Prisma 7 | Schema versionado e revisável em PR — o principal artefato de auditoria |
 | Autenticação | `jose` + argon2id, sessão própria | Ver abaixo |
 | Validação | Zod | Uma fronteira única entre `FormData` e o domínio tipado |
@@ -76,13 +76,43 @@ limite viraria vetor de exaustão de recursos. O detalhamento do limite está em
 mágica por e-mail, o custo de manter isso à mão passa a superar o de adotar
 Auth.js. Até lá, o que temos é menor, estável e inteiramente revisável.
 
-### Por que react-three-fiber e não Three.js imperativo
+### O sistema de marca: profundidade como clareza
 
-O vazamento clássico de um hero 3D é o contexto WebGL que sobrevive à
-navegação. Com R3F o ciclo de vida da cena é o ciclo de vida do componente, e o
-descarte acontece sozinho. A cena também precisa ser desligada sob
-`prefers-reduced-motion`, e isso é uma prop (`frameloop`) em vez de um
-`cancelAnimationFrame` espalhado.
+A paleta é uma escala de profundidade, e ela carrega significado:
+
+| Nível | Cor | O que vive ali |
+|---|---|---|
+| 1 · Superfície | `#12333B` | o nome do ativo |
+| 2 · Coluna d'água | `#0C2530` | o que o ativo é |
+| 3 · Zona iluminada | `#0B1D24` | estrutura e ordem |
+| 4 · Fundo | `#081A21` | documentos da emissão |
+| 5 · Abismo | `#040809` | **fora do nosso escopo** |
+
+Profundidade indica **nível de detalhe, nunca valor, risco ou desempenho**. O
+nível 5 é onde ficam recomendação, projeção e juízo de mérito: a marca declara
+o próprio limite em cor, e não só em texto legal. A landing desce essa escala
+de cima a baixo, e a última seção — o limite do serviço — é a mais escura.
+
+Duas regras do sistema estão codificadas, não confiadas a quem usar:
+
+- **Estado é cor MAIS palavra, nunca cor sozinha.** `StatusPill` exige `label`.
+- **Não há verde no sistema**, e não há vermelho na paleta de categorias. Verde
+  diria "bom" e vermelho diria "ruim"; o produto não emite juízo sobre ativo
+  nenhum. `StatusPill` não aceita cor arbitrária — só os estados nomeados.
+
+**Cuidado de nomenclatura, aprendido na prática.** Um token de cor não pode ter
+nome que colida com utilidade nativa do Tailwind. O tom `#060D10` chama-se
+`ground` e não `base` porque `text-base` já é o tamanho de fonte padrão: com o
+token chamado `base`, toda a regra de cor `text-base` passava a sobrescrever a
+cor de qualquer texto que usasse aquele tamanho, e o texto sumia no fundo.
+
+### Por que não há mais cena 3D
+
+O design substituiu o objeto flutuante do hero por profundidade e luz — camadas
+de gradiente e feixes inclinados, em CSS puro. Isso tirou Three.js,
+`@react-three/fiber` e `@react-three/drei` do projeto: 54 pacotes e ~350 KB a
+menos no carregamento inicial, sem detecção de WebGL e sem fallback, porque
+gradiente funciona sem GPU e sem JavaScript.
 
 ## Estrutura de pastas
 
@@ -104,8 +134,8 @@ src/
 │   ├── marketing/            # seções da landing
 │   ├── portfolio/            # formulário e gráficos da carteira
 │   ├── auth/, account/       # formulários de conta
-│   ├── three/                # cena 3D do hero
-│   └── ui/                   # primitivos (Section, Field, Disclaimer)
+│   ├── brand/                # marca: as duas hastes do "A"
+│   └── ui/                   # primitivos (Section, Field, StatusPill)
 ├── domain/                   # núcleo — sem React, sem UI
 │   ├── cnpj/                 # validação e normalização
 │   ├── assets/               # taxonomia, classificação, fichas

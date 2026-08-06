@@ -20,7 +20,7 @@ export default function TermsPage() {
   return (
     <>
       <LegalTitle>Termos de Uso</LegalTitle>
-      <p className="mt-4 text-base text-blue-200">
+      <p className="mt-4 text-lg text-aux">
         As condições de uso da Acássium Invest. Ao criar uma conta, você concorda com o
         que está aqui.
       </p>
@@ -45,7 +45,7 @@ export default function TermsPage() {
       </LegalSection>
 
       <LegalSection title="2. O que este serviço não é">
-        <p className="text-mist">
+        <p className="text-title">
           Esta é a cláusula mais importante destes termos, e ela define o produto inteiro.
         </p>
         <p>
@@ -123,7 +123,7 @@ export default function TermsPage() {
         </p>
         <p>
           Você pode encerrar a conta quando quiser, pela página{" "}
-          <Link href="/conta" className="text-gold underline-offset-4 hover:underline">
+          <Link href="/conta" className="text-light underline-offset-4 hover:underline">
             Conta e dados
           </Link>
           . A exclusão é imediata e definitiva.
@@ -152,13 +152,13 @@ export default function TermsPage() {
         </p>
         <p>
           O tratamento de dados pessoais é regido pela{" "}
-          <Link href="/privacidade" className="text-gold underline-offset-4 hover:underline">
+          <Link href="/privacidade" className="text-light underline-offset-4 hover:underline">
             Política de Privacidade
           </Link>
           . Estes termos são regidos pela lei brasileira. Dúvidas podem ser enviadas para{" "}
           <a
             href={`mailto:${site.contact.email}`}
-            className="text-gold underline-offset-4 hover:underline"
+            className="text-light underline-offset-4 hover:underline"
           >
             {site.contact.email}
           </a>

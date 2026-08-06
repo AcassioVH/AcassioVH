@@ -52,17 +52,22 @@ export const CATEGORY_LABELS: Record<AssetCategory, string> = {
 /**
  * Cor de cada categoria nos gráficos de composição.
  *
- * Deliberadamente sem semântica de semáforo (nada de verde "bom" / vermelho
- * "ruim"): são variações da paleta da marca, para que a leitura do gráfico não
- * sugira julgamento sobre nenhuma classe.
+ * Deliberadamente sem semântica de semáforo: não há verde no sistema, e não há
+ * vermelho aqui. Verde diria "bom" e vermelho diria "ruim" — o produto não
+ * emite juízo sobre classe de ativo nenhuma, e a paleta precisa obedecer isso
+ * antes de qualquer consideração estética.
+ *
+ * A sequência vai do âmbar da marca ao azul frio, ordenada por participação
+ * típica e não por mérito. Nenhum gráfico depende só da cor: legenda e valor
+ * acompanham sempre.
  */
 export const CATEGORY_COLORS: Record<AssetCategory, string> = {
-  RENDA_FIXA: "#274C77",
-  RENDA_VARIAVEL: "#C9A24B",
-  FUNDOS: "#4E7BA8",
-  PREVIDENCIA: "#8FA9C4",
-  ESTRUTURADO: "#9C7C3C",
-  INDEFINIDO: "#6B7A8C",
+  RENDA_FIXA: "#E3BC7E",
+  FUNDOS: "#C9954A",
+  RENDA_VARIAVEL: "#8FBCC2",
+  PREVIDENCIA: "#6C8E96",
+  ESTRUTURADO: "#94A7C4",
+  INDEFINIDO: "#6C7E82",
 };
 
 export const CLASS_TO_CATEGORY: Record<AssetClass, AssetCategory> = {

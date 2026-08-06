@@ -3,101 +3,74 @@ import { Section } from "@/components/ui/Section";
 import { DISCLAIMER_FULL } from "@/domain/compliance/policy";
 
 /**
- * Seção "Nosso limite".
+ * "Fundo · onde a nossa luz para".
  *
- * Não estava no briefing como seção própria, e proponho que esteja: o limite
- * regulatório é a restrição mais forte do produto, e produtos financeiros que
- * explicam o próprio limite tendem a ganhar confiança em vez de perder. Deixar
- * a fronteira implícita convida o usuário a projetar expectativa de conselho
- * onde ela não existe — e a frustração vira reclamação, ou coisa pior.
+ * O nível 5 da escala de profundidade — o abismo — é onde ficam recomendação,
+ * projeção e juízo de mérito. Esta seção é o produto declarando o próprio limite
+ * na cor mais escura do sistema, e não só no rodapé legal.
  */
-const WE_DO = [
-  "Identificamos cada ativo pelo CNPJ e classificamos por tipo.",
-  "Organizamos a composição por classe de ativo e por instituição.",
-  "Explicamos como funciona cada tipo: liquidez, tributação e garantia.",
-  "Apontamos a fonte oficial para você conferir os números por conta própria.",
+const FINDS = [
+  "Estrutura do ativo",
+  "Origem dos pagamentos",
+  "Ordem de recebimento",
+  "Prazos e vencimentos",
+  "Cobertura do FGC por instituição",
+  "Fontes oficiais para conferir",
 ] as const;
 
-const WE_DO_NOT = [
-  "Não dizemos o que comprar, o que manter ou o que trocar.",
-  "Não classificamos ativo como bom ou ruim, adequado ou inadequado.",
-  "Não calculamos nem afirmamos rentabilidade — isso é papel da fonte oficial.",
-  "Não fazemos projeção de retorno nem previsão de preço.",
+const DOES_NOT_FIND = [
+  "Recomendação de compra",
+  "Sugestão de realocação",
+  "Nota ou ranking de ativo",
+  "Projeção de retorno",
+  "Comparação entre posições",
+  "Alerta de urgência",
 ] as const;
 
 export function BoundarySection() {
   return (
     <Section
       id="limite"
-      eyebrow="Nosso limite"
-      title={
-        <>
-          O que fazemos —
-          <br />
-          <span className="text-blue-200">e o que não fazemos.</span>
-        </>
-      }
+      depth="abyss"
+      beam
+      eyebrow="Fundo · onde a nossa luz para"
+      title="Descrevemos até aqui. A decisão continua sua."
       description={
         <p>
-          Esta plataforma produz um relatório descritivo de composição de carteira. Essa
-          escolha é deliberada e define o produto inteiro, então preferimos declará-la
-          na porta de entrada em vez de escondê-la no rodapé.
+          A plataforma não emite recomendação, não classifica ativos por qualidade, não compara
+          posições da sua carteira e não sugere realocação. Essa fronteira é o desenho do
+          serviço, e está declarada em todas as telas.
         </p>
       }
     >
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-px sm:grid-cols-2">
         <Reveal>
-          <div className="surface h-full rounded-2xl p-8 sm:p-10">
-            <h3 className="mb-8 flex items-center gap-3 text-xl">
-              <span
-                aria-hidden="true"
-                className="grid size-7 place-items-center rounded-full bg-gold/15 text-sm text-gold"
-              >
-                ✓
-              </span>
-              O que fazemos
-            </h3>
-            <ul className="space-y-5">
-              {WE_DO.map((item) => (
-                <li key={item} className="flex gap-3.5 text-sm leading-relaxed text-mist/90">
-                  <span aria-hidden="true" className="mt-2 size-1.5 shrink-0 rounded-full bg-gold" />
-                  {item}
-                </li>
+          <div className="h-full border border-[#14232A] bg-[#070D0F] p-7 sm:p-8">
+            <p className="tech mb-4 text-st-identified">Encontra</p>
+            <ul className="space-y-2.5 text-base leading-relaxed text-body">
+              {FINDS.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>
         </Reveal>
 
-        <Reveal delay={0.12}>
-          <div className="h-full rounded-2xl border border-blue/25 bg-navy/40 p-8 sm:p-10">
-            <h3 className="mb-8 flex items-center gap-3 text-xl text-blue-200">
-              <span
-                aria-hidden="true"
-                className="grid size-7 place-items-center rounded-full bg-blue/25 text-sm"
-              >
-                —
-              </span>
-              O que não fazemos
-            </h3>
-            <ul className="space-y-5">
-              {WE_DO_NOT.map((item) => (
-                <li key={item} className="flex gap-3.5 text-sm leading-relaxed text-blue-200">
-                  <span
-                    aria-hidden="true"
-                    className="mt-2 size-1.5 shrink-0 rounded-full bg-blue-200/50"
-                  />
-                  {item}
-                </li>
+        <Reveal delay={0.08}>
+          <div className="h-full border border-[#14232A] bg-[#070D0F] p-7 sm:p-8">
+            <p className="tech mb-4 text-[#B5786A]">Não encontra</p>
+            <ul className="space-y-2.5 text-base leading-relaxed text-tertiary">
+              {DOES_NOT_FIND.map((item) => (
+                <li key={item}>{item}</li>
               ))}
             </ul>
           </div>
         </Reveal>
       </div>
 
-      <Reveal delay={0.2}>
-        <div className="mt-10 rounded-2xl border border-gold/20 bg-gold/[0.04] p-8">
-          <h3 className="mb-4 font-serif text-base text-gold">Aviso legal</h3>
-          <p className="text-sm leading-relaxed text-blue-200">{DISCLAIMER_FULL}</p>
+      <Reveal delay={0.16}>
+        <div className="mt-px border border-[#14232A] bg-[#070D0F] p-7 sm:p-8">
+          <p className="tech mb-3 text-muted">Aviso legal</p>
+          <p className="max-w-4xl text-sm leading-relaxed text-aux">{DISCLAIMER_FULL}</p>
         </div>
       </Reveal>
     </Section>

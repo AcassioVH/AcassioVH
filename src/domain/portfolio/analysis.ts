@@ -225,13 +225,56 @@ export function maturityCalendar(
     .sort((a, b) => a.maturityDate.getTime() - b.maturityDate.getTime());
 }
 
-/** Ativos cuja classificação ainda não foi confirmada e veio com confiança baixa. */
+/**
+ * Estado de identificação de um ativo.
+ *
+ * É sobre o quanto sabemos do ativo, nunca sobre o mérito dele. Um ativo
+ * "não classificado" não é pior que outro — só ainda não foi reconhecido.
+ *
+ * O sistema de marca exige que estado seja comunicado por cor MAIS palavra,
+ * então cada valor aqui carrega o rótulo que aparece na tela.
+ */
+export type IdentificationStatus = {
+  readonly tone: "identified" | "preparing" | "missing";
+  readonly label: string;
+};
+
+export function identificationStatus(asset: PortfolioAsset): IdentificationStatus {
+  if (asset.assetClass === "NAO_CLASSIFICADO") {
+    return { tone: "missing", label: "NÃO CLASSIFICADO" };
+  }
+  if (asset.classConfirmedByUser || asset.confidence === "ALTA") {
+    return { tone: "identified", label: "IDENTIFICADO" };
+  }
+  return { tone: "preparing", label: "A CONFIRMAR" };
+}
+
+/** Contagem por estado, para os marcadores do topo do painel. */
+export function statusCounts(assets: readonly PortfolioAsset[]) {
+  let identified = 0;
+  let preparing = 0;
+  let missing = 0;
+
+  for (const asset of assets) {
+    const { tone } = identificationStatus(asset);
+    if (tone === "identified") identified += 1;
+    else if (tone === "preparing") preparing += 1;
+    else missing += 1;
+  }
+
+  return { identified, preparing, missing };
+}
+
+/**
+ * Ativos que ainda pedem confirmação do usuário.
+ *
+ * Derivada de `identificationStatus` de propósito. Antes as duas funções
+ * decidiam o mesmo por critérios diferentes, e o painel exibia "2 a confirmar"
+ * enquanto oferecia um único ativo para confirmar — o contador dizia uma coisa
+ * e a lista, outra. Com uma fonte única, isso não volta a acontecer.
+ */
 export function pendingConfirmation(
   assets: readonly PortfolioAsset[],
 ): PortfolioAsset[] {
-  return assets.filter(
-    (asset) =>
-      !asset.classConfirmedByUser &&
-      (asset.confidence === "BAIXA" || asset.assetClass === "NAO_CLASSIFICADO"),
-  );
+  return assets.filter((asset) => identificationStatus(asset).tone !== "identified");
 }

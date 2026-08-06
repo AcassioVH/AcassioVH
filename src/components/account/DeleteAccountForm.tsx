@@ -19,20 +19,20 @@ export function DeleteAccountForm() {
 
   return (
     <form action={deleteAccountAction} className="space-y-4">
-      <label htmlFor="confirmacao" className="block text-sm text-blue-200">
-        Para confirmar, digite <span className="font-semibold text-gold">{CONFIRMATION}</span>
+      <label htmlFor="confirmacao" className="block text-base text-aux">
+        Para confirmar, digite <span className="font-semibold text-st-attention">{CONFIRMATION}</span>
       </label>
       <input
         id="confirmacao"
         value={confirmation}
         onChange={(event) => setConfirmation(event.target.value)}
         autoComplete="off"
-        className="w-full max-w-xs rounded-xl border border-blue/40 bg-navy-800/60 px-4 py-3 text-base text-mist focus:border-gold focus:outline-none"
+        className="w-full max-w-xs border border-edge bg-inset px-4 py-3 text-base text-body focus:border-light focus:outline-none"
       />
       <button
         type="submit"
         disabled={!armed}
-        className="block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-navy transition-colors hover:bg-gold-200 disabled:cursor-not-allowed disabled:opacity-40"
+        className="block bg-st-attention px-6 py-3 text-base font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#E0A57E] disabled:cursor-not-allowed disabled:opacity-40"
       >
         Excluir minha conta e meus dados
       </button>

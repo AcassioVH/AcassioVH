@@ -3,16 +3,18 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 
-import { Disclaimer } from "@/components/ui/Disclaimer";
+import { StatusPill } from "@/components/ui/StatusPill";
 import { Reveal } from "@/components/ui/Reveal";
 import { Section } from "@/components/ui/Section";
-import { profileFor, TAX_NOTICE } from "@/domain/assets/profiles";
+import { profileFor, TAX_NOTICE, CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
 /**
- * As fichas exibidas aqui vêm do mesmo catálogo que alimenta o produto — não há
- * cópia de texto para a landing. Isso significa que o teste de conformidade
- * cobre também o que aparece nesta seção.
+ * "Zona iluminada · o mesmo ativo, descrito".
+ *
+ * A unidade de entrega do produto: um verbete por tipo de ativo. As fichas vêm
+ * do mesmo catálogo que alimenta a área autenticada — não há cópia de texto
+ * para a landing, então o guardrail de conformidade cobre também esta seção.
  */
 const SHOWCASE: readonly AssetClass[] = [
   "CDB",
@@ -21,22 +23,23 @@ const SHOWCASE: readonly AssetClass[] = [
   "FII",
   "ACAO",
   "DEBENTURE",
+  "CRI",
   "PREVIDENCIA",
-  "COE",
 ];
 
-const GUARANTEE_LABELS: Record<string, string> = {
-  FGC: "Cobertura do FGC",
-  TESOURO_NACIONAL: "Tesouro Nacional",
-  GARANTIA_REAL: "Garantias da própria emissão",
-  SEM_GARANTIA_ESPECIFICA: "Sem cobertura do FGC",
+/** A garantia é fato estrutural do instrumento, então vira rótulo de estado. */
+const GUARANTEE_LABEL: Record<string, string> = {
+  FGC: "COBERTO PELO FGC",
+  TESOURO_NACIONAL: "TESOURO NACIONAL",
+  GARANTIA_REAL: "GARANTIA DA EMISSÃO",
+  SEM_GARANTIA_ESPECIFICA: "SEM COBERTURA DO FGC",
 };
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function FichaRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div>
-      <dt className="mb-2 text-xs font-medium uppercase tracking-[0.16em] text-gold">{label}</dt>
-      <dd className="text-sm leading-relaxed text-blue-200">{children}</dd>
+    <div className="flex justify-between gap-5 border-b border-[#142A32] py-2.5 last:border-0">
+      <span className="shrink-0 text-sm text-tertiary">{label}</span>
+      <span className="text-right text-sm text-body">{children}</span>
     </div>
   );
 }
@@ -49,29 +52,19 @@ export function AssetsSection() {
   return (
     <Section
       id="ativos"
-      eyebrow="Ativos explicados"
-      title={
-        <>
-          Cada ativo com uma ficha
-          <br />
-          <span className="text-blue-200">que explica o tipo, não o palpite.</span>
-        </>
-      }
+      depth="surface"
+      eyebrow="Zona iluminada · o mesmo ativo, descrito"
+      title="Um verbete por tipo de ativo."
       description={
         <p>
-          Para cada classe existe uma ficha curada: o que é, quem emite, como funciona a
-          liquidez, como é a tributação e qual é a estrutura de garantia. Para
-          rentabilidade, a ficha te leva direto à fonte oficial — assim o número que
-          você vê é o número de quem tem autoridade para publicá-lo.
+          Escrito em segunda pessoa, sem juízo de valor. O que o ativo é, quem emite, como
+          funciona o resgate, qual a tributação e qual a estrutura de garantia — com a fonte
+          oficial ao lado de cada afirmação.
         </p>
       }
     >
       <Reveal>
-        <div
-          role="tablist"
-          aria-label="Classes de ativo"
-          className="flex flex-wrap gap-2.5 border-b border-blue/25 pb-8"
-        >
+        <div role="tablist" aria-label="Tipos de ativo" className="flex flex-wrap gap-2.5">
           {SHOWCASE.map((assetClass) => {
             const isSelected = assetClass === selected;
             return (
@@ -80,12 +73,12 @@ export function AssetsSection() {
                 role="tab"
                 type="button"
                 aria-selected={isSelected}
-                aria-controls="ficha-ativo"
+                aria-controls="verbete"
                 onClick={() => setSelected(assetClass)}
-                className={`rounded-full px-5 py-2 text-sm transition-colors duration-300 ${
+                className={`px-4 py-2 text-sm transition-colors duration-200 ${
                   isSelected
-                    ? "bg-gold font-semibold text-navy"
-                    : "border border-blue-200/25 text-blue-200 hover:border-gold/50 hover:text-gold"
+                    ? "bg-light font-semibold text-[#060D10]"
+                    : "border border-edge text-body hover:border-light/60 hover:text-light"
                 }`}
               >
                 {profileFor(assetClass).label}
@@ -97,67 +90,71 @@ export function AssetsSection() {
 
       <Reveal delay={0.1}>
         <AnimatePresence mode="wait">
-          <motion.div
+          <motion.article
             key={selected}
-            id="ficha-ativo"
+            id="verbete"
             role="tabpanel"
-            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 16 }}
+            initial={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -12 }}
-            transition={{ duration: prefersReducedMotion ? 0.15 : 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="surface mt-10 rounded-2xl p-8 sm:p-12"
+            exit={prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: -8 }}
+            transition={{ duration: prefersReducedMotion ? 0.15 : 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-8 border border-edge bg-surface"
           >
-            <div className="mb-8 flex flex-wrap items-baseline justify-between gap-4">
+            <header className="flex flex-wrap items-start justify-between gap-6 border-b border-[#142A32] p-7 sm:p-8">
               <div>
-                <h3 className="text-2xl sm:text-3xl">{profile.fullName}</h3>
-                <p className="mt-2 text-sm text-blue-200">{profile.summary}</p>
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-light">
+                  {profile.label} · nível 3 · estrutura
+                </p>
+                <h3 className="mt-3 text-2xl sm:text-3xl">{profile.fullName}</h3>
+                <p className="mt-2 max-w-[60ch] text-base text-aux">{profile.summary}</p>
               </div>
-              <span className="rounded-full border border-gold/35 px-4 py-1.5 text-xs text-gold">
-                {GUARANTEE_LABELS[profile.guarantee.kind] ?? "Garantia"}
-              </span>
-            </div>
+              <StatusPill
+                tone={profile.guarantee.kind === "SEM_GARANTIA_ESPECIFICA" ? "unavailable" : "identified"}
+                label={GUARANTEE_LABEL[profile.guarantee.kind] ?? "GARANTIA"}
+              />
+            </header>
 
-            <p className="mb-10 max-w-3xl leading-relaxed text-mist/90">{profile.whatItIs}</p>
+            <div className="grid lg:grid-cols-[1.5fr_340px]">
+              <div className="p-7 sm:p-8">
+                <p className="max-w-[62ch] text-lg leading-[1.7] text-body">{profile.whatItIs}</p>
 
-            <dl className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              <Field label="Quem emite">{profile.issuedBy}</Field>
-              <Field label="Liquidez">{profile.liquidity}</Field>
-              <Field label="Tributação">
-                {profile.taxation}
-                <span className="mt-2 block text-blue-200/60">{TAX_NOTICE}</span>
-              </Field>
-              <Field label="Garantia">{profile.guarantee.description}</Field>
-              <Field label="Características">
-                <ul className="space-y-2">
-                  {profile.characteristics.map((item) => (
-                    <li key={item} className="flex gap-2.5">
-                      <span aria-hidden="true" className="mt-2 size-1 shrink-0 rounded-full bg-gold" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </Field>
-              <Field label="Conferir na fonte oficial">
-                <ul className="space-y-3">
+                <p className="mt-5 max-w-[62ch] text-lg leading-[1.7] text-body">
+                  {profile.liquidity}
+                </p>
+
+                <div className="mt-7 flex flex-wrap gap-2.5">
                   {profile.officialSources.map((source) => (
-                    <li key={source.url}>
-                      <a
-                        href={source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="font-medium text-gold underline decoration-gold/30 underline-offset-4 transition-colors hover:decoration-gold"
-                      >
-                        {source.label}
-                      </a>
-                      <span className="block text-blue-200/70">{source.whatYouFindThere}</span>
-                    </li>
+                    <a
+                      key={source.url}
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="border border-[#1D3A44] px-3.5 py-2.5 font-mono text-xs text-light transition-colors duration-200 hover:border-light/70"
+                    >
+                      {source.label} ↗
+                    </a>
                   ))}
-                </ul>
-              </Field>
-            </dl>
+                </div>
+              </div>
 
-            <Disclaimer className="mt-10 border-t border-blue/20 pt-6" />
-          </motion.div>
+              <aside className="border-t border-[#142A32] bg-[#091A20] p-7 sm:p-8 lg:border-l lg:border-t-0">
+                <p className="tech mb-4 text-tertiary">Ficha</p>
+
+                <div>
+                  <FichaRow label="Quem emite">{profile.issuedBy}</FichaRow>
+                  <FichaRow label="Tributação">{profile.taxation}</FichaRow>
+                  <FichaRow label="Garantia">{profile.guarantee.description}</FichaRow>
+                </div>
+
+                <p className="mt-5 border-t border-[#142A32] pt-4 text-sm leading-relaxed text-muted">
+                  {TAX_NOTICE}
+                </p>
+                <p className="mt-3 font-mono text-[11px] text-muted">
+                  Verbete revisado em {CATALOG_REVIEWED_AT}
+                </p>
+              </aside>
+            </div>
+          </motion.article>
         </AnimatePresence>
       </Reveal>
     </Section>
