@@ -81,6 +81,17 @@ naquele tamanho, e o texto sumia no fundo.
 previdência, estruturados. É o vocabulário que o visitante já traz quando chega,
 e usá-lo respeita o que ele já sabe.
 
+O critério que decide em qual categoria um produto entra é **estrutural, não
+jurídico**. Um FII é um fundo, mas a cota é negociada em bolsa e o preço se forma
+na negociação, sem valor de resgate contratado — então ele mora em renda
+variável, junto das ações, e não em "fundos" com os abertos. Separar pela
+embalagem jurídica mandaria para gavetas diferentes dois produtos que funcionam
+igual para quem investe. `tests/domain.test.ts` fixa essa escolha.
+
+"Internacional" virou categoria própria pelo mesmo motivo: o que distingue o BDR
+não é a forma de negociação, é o resultado depender de um ativo fora do país e da
+variação do câmbio.
+
 **Família** é a explicação: o agrupamento por **quem paga você** — Tesouro,
 banco, empresa, carteira de recebíveis, fundo, mercado, seguradora. Esse critério
 é conteúdo, não arrumação: agrupar por rentabilidade ou por risco seria julgar,

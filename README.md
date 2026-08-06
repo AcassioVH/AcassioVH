@@ -35,8 +35,9 @@ da emissão:
 
 Além disso:
 
-- **17 produtos** organizados por *quem paga você*: Tesouro, banco, empresa,
-  carteira de recebíveis, fundo, mercado, seguradora
+- **36 produtos** organizados por *quem paga você*, em 14 famílias de pagamento:
+  Tesouro, banco, empresa, carteira de recebíveis, fundo listado, fundo aberto,
+  emissor no exterior, seguradora
 - **Comparação de estruturas** lado a lado (`/comparar`), sem ordenar nem pontuar
 - **Gráficos de estrutura** — cadeia de pagamento, composição da categoria e a
   tabela regressiva do IR

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { classifyAsset } from "../src/domain/assets/classify";
-import { categoryOf } from "../src/domain/assets/taxonomy";
+import { ASSET_CLASSES, categoryOf } from "../src/domain/assets/taxonomy";
 import { formatCnpj, isValidCnpj, maskCnpjInput, parseCnpj } from "../src/domain/cnpj/cnpj";
 
 describe("validação de CNPJ", () => {
@@ -115,7 +115,53 @@ describe("classificação de ativos", () => {
   it("mapeia toda classe para uma categoria de composição", () => {
     expect(categoryOf("CDB")).toBe("RENDA_FIXA");
     expect(categoryOf("ACAO")).toBe("RENDA_VARIAVEL");
-    expect(categoryOf("FII")).toBe("FUNDOS");
     expect(categoryOf("NAO_CLASSIFICADO")).toBe("INDEFINIDO");
+  });
+
+  /**
+   * Fundo listado é renda variável, e não "fundos".
+   *
+   * O critério de categoria é estrutural: o que separa renda fixa de renda
+   * variável é existir ou não um valor de resgate contratado. Um FII é um fundo,
+   * mas a cota é negociada em bolsa e o preço se forma na negociação — não há
+   * regra de devolução combinada. Deixá-lo em "fundos" separava pela embalagem
+   * jurídica em vez de pela estrutura, e mandava para gavetas diferentes dois
+   * produtos que funcionam do mesmo jeito para quem investe.
+   *
+   * "Fundos" fica com os abertos, em que aplicação e resgate acontecem com o
+   * próprio fundo.
+   */
+  it("classifica fundo listado por como o preço se forma, não pela embalagem", () => {
+    expect(categoryOf("FII")).toBe("RENDA_VARIAVEL");
+    expect(categoryOf("ETF")).toBe("RENDA_VARIAVEL");
+    expect(categoryOf("FIAGRO")).toBe("RENDA_VARIAVEL");
+
+    expect(categoryOf("FUNDO")).toBe("FUNDOS");
+    expect(categoryOf("FUNDO_ACOES")).toBe("FUNDOS");
+  });
+
+  /**
+   * Internacional virou categoria própria.
+   *
+   * O BDR morava em renda variável, o que é verdade sobre a forma de negociação
+   * e omite o que de fato distingue o produto: o resultado depende de um ativo
+   * fora do país e da variação do câmbio. Isso é uma diferença de estrutura, não
+   * de embalagem.
+   */
+  it("separa exposição internacional das demais categorias", () => {
+    expect(categoryOf("BDR")).toBe("INTERNACIONAL");
+    expect(categoryOf("ACAO_EXTERIOR")).toBe("INTERNACIONAL");
+    expect(categoryOf("BOND_EXTERIOR")).toBe("INTERNACIONAL");
+    expect(categoryOf("FUNDO_CAMBIAL")).toBe("INTERNACIONAL");
+  });
+
+  /**
+   * Toda classe declarada precisa ter categoria e ficha. Sem esta asserção, uma
+   * classe nova entra na taxonomia e só aparece quebrada na tela.
+   */
+  it("não deixa nenhuma classe sem categoria", () => {
+    for (const assetClass of ASSET_CLASSES) {
+      expect(categoryOf(assetClass), `${assetClass} sem categoria`).toBeTruthy();
+    }
   });
 });

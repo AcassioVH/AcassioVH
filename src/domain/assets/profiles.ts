@@ -67,6 +67,18 @@ const SOURCE_DEBENTURES = {
   whatYouFindThere: "escritura, características e negociação do papel",
 } as const;
 
+const SOURCE_BCB = {
+  label: "Banco Central do Brasil",
+  url: "https://www.bcb.gov.br",
+  whatYouFindThere: "normas do instrumento, dados do emissor e regras de câmbio",
+} as const;
+
+const SOURCE_CVM = {
+  label: "CVM",
+  url: "https://www.gov.br/cvm/pt-br",
+  whatYouFindThere: "regulamentação aplicável e registro dos participantes do mercado",
+} as const;
+
 const SOURCE_SUSEP = {
   label: "SUSEP",
   url: "https://www.gov.br/susep/pt-br",
@@ -581,6 +593,610 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "O resgate antes do vencimento depende de recompra pelo emissor.",
     ],
     officialSources: [SOURCE_B3, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "RDB",
+    label: "RDB",
+    fullName: "Recibo de Depósito Bancário",
+    summary: "Depósito a prazo em banco, sem possibilidade de transferência.",
+    whatItIs:
+      "O RDB tem a mesma natureza do CDB — é um depósito a prazo remunerado feito em uma " +
+      "instituição financeira. A diferença está numa característica jurídica: o RDB é " +
+      "inegociável e intransferível, então não existe mercado secundário para ele. Quem " +
+      "aplica permanece com o título até o vencimento ou resgata junto ao próprio emissor, " +
+      "quando o contrato permitir.",
+    issuedBy:
+      "Bancos, financeiras, cooperativas de crédito e sociedades de crédito ao " +
+      "microempreendedor.",
+    liquidity:
+      "Não pode ser negociado nem transferido a terceiros. A saída antes do vencimento só " +
+      "existe se o contrato previr resgate antecipado junto ao emissor, nas condições " +
+      "definidas ali.",
+    liquidityTag: "Só com o emissor, sem repasse",
+    taxation:
+      "Imposto de Renda retido na fonte em alíquota regressiva pelo prazo: 22,5% até 180 " +
+      "dias, 20% de 181 a 360, 17,5% de 361 a 720 e 15% acima de 720 dias. IOF regressivo " +
+      "nos primeiros 30 dias.",
+    taxTag: "IR regressivo · 22,5% a 15%",
+    guarantee: FGC_GUARANTEE,
+    characteristics: [
+      "É intransferível por definição legal, então não há mercado secundário.",
+      "Cooperativas de crédito também emitem RDB, e nesse caso a garantia aplicável é a do FGCoop, não a do FGC.",
+      "A remuneração e o prazo são definidos na contratação, como no CDB.",
+    ],
+    officialSources: [SOURCE_FGC, SOURCE_RECEITA, SOURCE_BCB],
+  },
+  {
+    assetClass: "LF",
+    label: "LF",
+    fullName: "Letra Financeira",
+    summary: "Título de dívida bancária de prazo longo e aplicação mínima elevada.",
+    whatItIs:
+      "A Letra Financeira é um instrumento que os bancos usam para captar recursos de prazo " +
+      "mais longo do que o de um CDB comum. A norma estabelece prazo mínimo de dois anos e " +
+      "valor mínimo de aplicação alto, o que na prática restringe o instrumento a investidores " +
+      "de maior porte. Existe também a letra financeira subordinada, que em caso de " +
+      "liquidação do emissor é paga depois dos demais credores.",
+    issuedBy: "Bancos múltiplos, comerciais, de investimento e outras instituições autorizadas.",
+    liquidity:
+      "A norma veda o resgate antecipado junto ao emissor antes do prazo mínimo. A saída, " +
+      "quando ocorre, é por negociação no mercado secundário.",
+    liquidityTag: "Prazo mínimo de dois anos",
+    taxation:
+      "Imposto de Renda na fonte em alíquota regressiva pelo prazo. Como o prazo mínimo é " +
+      "de dois anos, na prática a alíquota aplicável costuma ser a de 15%.",
+    taxTag: "IR regressivo · na prática 15%",
+    guarantee: {
+      kind: "SEM_GARANTIA_ESPECIFICA",
+      description:
+        "Não conta com cobertura do FGC — a Letra Financeira está expressamente fora da " +
+        "lista de instrumentos garantidos. O pagamento depende da capacidade financeira do " +
+        "banco emissor. Na modalidade subordinada, o pagamento fica atrás dos demais " +
+        "credores na ordem de recebimento.",
+    },
+    characteristics: [
+      "Prazo mínimo de dois anos, definido em norma.",
+      "Valor mínimo de aplicação elevado, o que limita o acesso.",
+      "Não é coberta pelo FGC, ao contrário do CDB emitido pelo mesmo banco.",
+      "A modalidade subordinada tem posição própria na ordem de pagamento.",
+    ],
+    officialSources: [SOURCE_BCB, SOURCE_RECEITA, SOURCE_B3],
+  },
+  {
+    assetClass: "LIG",
+    label: "LIG",
+    fullName: "Letra Imobiliária Garantida",
+    summary: "Título bancário com carteira de créditos imobiliários segregada como garantia.",
+    whatItIs:
+      "A LIG é o instrumento brasileiro equivalente ao que o mercado internacional chama de " +
+      "covered bond. Ela tem uma característica estrutural que a distingue das demais letras: " +
+      "existe uma carteira de ativos vinculada à emissão, segregada do patrimônio do banco. " +
+      "Se o emissor quebrar, essa carteira não entra na massa falida e responde pelo " +
+      "pagamento dos titulares da letra — daí o nome de dupla garantia, o banco e a carteira.",
+    issuedBy: "Instituições financeiras autorizadas a conceder crédito imobiliário.",
+    liquidity:
+      "Há prazo mínimo de vencimento definido em norma, e durante ele não há resgate junto " +
+      "ao emissor. A negociação ocorre no mercado secundário.",
+    liquidityTag: "Prazo mínimo em norma",
+    taxation:
+      "Rendimentos isentos de Imposto de Renda para pessoa física residente no país, " +
+      "conforme a legislação vigente aplicável ao instrumento.",
+    taxTag: "Isento de IR para pessoa física",
+    guarantee: {
+      kind: "GARANTIA_REAL",
+      description:
+        "Não conta com cobertura do FGC. Em compensação, tem estrutura própria: uma carteira " +
+        "de ativos vinculada e segregada do patrimônio do emissor, que não entra em eventual " +
+        "processo de falência e responde pelo pagamento. A composição dessa carteira e o " +
+        "índice mínimo de cobertura estão definidos em norma e no documento da emissão.",
+    },
+    characteristics: [
+      "A carteira de ativos vinculada é segregada do patrimônio do banco por lei.",
+      "Não é coberta pelo FGC, e a estrutura de garantia é de natureza diferente.",
+      "Há prazo mínimo de vencimento e regras de composição da carteira definidos em norma.",
+      "A isenção de IR para pessoa física decorre de lei e pode ser alterada por lei.",
+    ],
+    officialSources: [SOURCE_BCB, SOURCE_RECEITA, SOURCE_B3],
+  },
+  {
+    assetClass: "DPGE",
+    label: "DPGE",
+    fullName: "Depósito a Prazo com Garantia Especial",
+    summary: "Depósito bancário com teto de cobertura do FGC próprio, mais alto que o comum.",
+    whatItIs:
+      "O DPGE é um depósito a prazo criado para permitir que instituições de menor porte " +
+      "captem recursos com uma garantia ampliada do FGC. Ele tem limite de cobertura próprio, " +
+      "distinto e superior ao teto aplicável aos demais depósitos, e exige que o emissor " +
+      "vincule ativos como lastro da operação junto ao Fundo.",
+    issuedBy:
+      "Bancos comerciais, múltiplos, de investimento, de desenvolvimento e sociedades de " +
+      "crédito, financiamento e investimento, dentro dos limites autorizados a cada uma.",
+    liquidity:
+      "Há prazo mínimo definido em norma e não há resgate antecipado junto ao emissor antes " +
+      "dele. É um instrumento pensado para permanecer até o vencimento.",
+    liquidityTag: "Até o vencimento, com prazo mínimo",
+    taxation:
+      "Imposto de Renda na fonte em alíquota regressiva pelo prazo, de 22,5% a 15%, com IOF " +
+      "regressivo nos primeiros 30 dias — a mesma regra dos demais depósitos a prazo.",
+    taxTag: "IR regressivo · 22,5% a 15%",
+    guarantee: {
+      kind: "FGC",
+      description:
+        "Coberto pelo FGC com limite próprio, distinto e mais alto que o teto aplicável aos " +
+        "demais depósitos, por CPF e por instituição. Os valores vigentes são publicados pelo " +
+        "próprio FGC e mudam por decisão dele. A operação exige lastro em ativos vinculados ao " +
+        "Fundo, o que a distingue de um depósito a prazo comum.",
+    },
+    characteristics: [
+      "Tem teto de cobertura do FGC próprio, separado do limite dos demais depósitos.",
+      "O emissor precisa vincular ativos como lastro junto ao FGC.",
+      "Há prazo mínimo definido em norma, sem resgate antecipado.",
+      "É emitido sobretudo por instituições de menor porte, que é a finalidade do instrumento.",
+    ],
+    officialSources: [SOURCE_FGC, SOURCE_BCB, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "CDCA",
+    label: "CDCA",
+    fullName: "Certificado de Direitos Creditórios do Agronegócio",
+    summary: "Título emitido por empresa do agro, lastreado em direitos creditórios do setor.",
+    whatItIs:
+      "O CDCA é emitido por cooperativas e empresas que atuam na produção, comercialização, " +
+      "beneficiamento ou industrialização de produtos agropecuários. O lastro são direitos " +
+      "creditórios do próprio agronegócio, vinculados ao título. A diferença em relação ao CRA " +
+      "está em quem emite: no CRA é uma securitizadora, e no CDCA é a própria empresa do setor.",
+    issuedBy:
+      "Cooperativas e pessoas jurídicas que atuam nas cadeias do agronegócio, conforme a " +
+      "legislação do setor.",
+    liquidity:
+      "Negociado no mercado secundário, com volume geralmente reduzido. Não há resgate " +
+      "antecipado junto ao emissor.",
+    liquidityTag: "Mercado secundário",
+    taxation:
+      "Rendimentos isentos de Imposto de Renda para pessoa física, conforme a legislação " +
+      "vigente aplicável aos títulos do agronegócio.",
+    taxTag: "Isento de IR para pessoa física",
+    guarantee: {
+      kind: "GARANTIA_REAL",
+      description:
+        "Não conta com cobertura do FGC. Os direitos creditórios que lastreiam a emissão ficam " +
+        "vinculados ao título, e pode haver garantias adicionais previstas no documento da " +
+        "emissão. O pagamento depende do emissor e dos devedores desses créditos.",
+    },
+    characteristics: [
+      "Quem emite é a própria empresa do agronegócio, e não uma securitizadora.",
+      "Os direitos creditórios que lastreiam a emissão ficam vinculados ao título.",
+      "Exposição concentrada no emissor e na cadeia do agronegócio.",
+    ],
+    officialSources: [SOURCE_B3, SOURCE_RECEITA, SOURCE_CVM],
+  },
+  {
+    assetClass: "UNIT",
+    label: "Unit",
+    fullName: "Unit — certificado de depósito de ações",
+    summary: "Um único ativo negociado que reúne mais de uma classe de ação da companhia.",
+    whatItIs:
+      "A Unit é um certificado que agrupa, num único ativo negociável, uma combinação fixa de " +
+      "ações de classes diferentes da mesma companhia — tipicamente uma ordinária mais duas " +
+      "preferenciais, mas a proporção varia e está definida na emissão. Quem compra uma Unit " +
+      "adquire o conjunto, não uma ação isolada. Na B3 elas costumam ser identificadas pelo " +
+      "final 11 no código de negociação.",
+    issuedBy: "Companhias abertas registradas na CVM, por meio de instituição depositária.",
+    liquidity:
+      "Negociada em bolsa nos dias e horários de pregão, como uma ação. Em várias companhias a " +
+      "Unit concentra o volume de negociação, ficando as classes individuais com menos giro.",
+    liquidityTag: "Pregão da bolsa",
+    taxation:
+      "Segue a regra das ações: ganho de capital tributado em 15% em operações comuns e 20% em " +
+      "day trade, com apuração e recolhimento pelo próprio investidor via DARF. Proventos " +
+      "seguem a regra aplicável a cada classe de ação que compõe o certificado.",
+    taxTag: "15% no ganho · 20% day trade",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A composição — quantas ações de cada classe formam uma Unit — está definida na emissão.",
+      "O código terminado em 11 na B3 costuma indicar Unit, mas o mesmo final também é usado por ETFs e fundos listados.",
+      "Os direitos de voto e de proventos são os das ações que a compõem, na proporção do certificado.",
+      "É possível desmembrar a Unit nas ações que a formam, conforme as regras da emissão.",
+    ],
+    officialSources: [SOURCE_B3, SOURCE_STATUS_INVEST, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FI_INFRA",
+    label: "FI-Infra",
+    fullName: "Fundo Incentivado de Investimento em Infraestrutura",
+    summary: "Fundo listado que investe em títulos de dívida de projetos de infraestrutura.",
+    whatItIs:
+      "O FI-Infra reúne recursos de cotistas para investir majoritariamente em debêntures " +
+      "incentivadas e outros títulos de dívida ligados a projetos de infraestrutura. A carteira " +
+      "é de crédito, mas as cotas são negociadas em bolsa e têm preço formado na negociação — " +
+      "por isso o comportamento do preço da cota não acompanha uma regra contratada.",
+    issuedBy: "Gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Cotas negociadas em bolsa durante o pregão. Na forma fechada, usual, não há resgate " +
+      "junto ao fundo — a saída ocorre pela venda das cotas no mercado.",
+    liquidityTag: "Pregão da bolsa",
+    taxation:
+      "Rendimentos distribuídos a pessoa física são isentos de IR quando cumpridas as condições " +
+      "da legislação de incentivo à infraestrutura. O ganho na negociação das cotas é tributado, " +
+      "com apuração pelo investidor. As condições específicas devem ser conferidas na fonte oficial.",
+    taxTag: "Rendimento isento sob condições",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A carteira é composta majoritariamente por títulos de dívida de projetos de infraestrutura.",
+      "Tem CNPJ próprio, com regulamento e informes consultáveis na CVM.",
+      "A cota negociada em bolsa pode ter preço diferente do valor patrimonial informado.",
+      "Cobra taxa de administração, definida no regulamento.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_B3, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FIP",
+    label: "FIP",
+    fullName: "Fundo de Investimento em Participações",
+    summary: "Fundo que compra participação em empresas fechadas e participa da gestão delas.",
+    whatItIs:
+      "O FIP investe em participações societárias de companhias, em geral fechadas, e a " +
+      "regulamentação exige que ele participe do processo decisório dessas empresas — com " +
+      "assento no conselho ou influência efetiva na definição da política estratégica. É o " +
+      "veículo usado pelo mercado para o que se chama de private equity e venture capital. O " +
+      "retorno ao cotista ocorre quando o fundo vende as participações ou recebe proventos delas.",
+    issuedBy: "Gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Constituído sob a forma fechada, com prazo de duração definido. Não há resgate junto ao " +
+      "fundo antes da liquidação, e o mercado secundário de cotas é restrito. Os aportes " +
+      "costumam ser feitos em chamadas de capital ao longo do tempo, e não de uma vez.",
+    liquidityTag: "Fechado, até a liquidação",
+    taxation:
+      "A tributação incide sobre os rendimentos distribuídos ao cotista e sobre o ganho na " +
+      "alienação de cotas, conforme a regra aplicável ao tipo de fundo e ao enquadramento da " +
+      "carteira. As condições específicas devem ser conferidas na fonte oficial.",
+    taxTag: "Conforme o enquadramento da carteira",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A norma exige participação efetiva do fundo no processo decisório das investidas.",
+      "É fechado e tem prazo de duração definido em regulamento.",
+      "O capital costuma ser integralizado em chamadas ao longo do período de investimento.",
+      "Boa parte dos FIPs é destinada exclusivamente a investidores qualificados ou profissionais.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_CVM, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "ETF_INTERNACIONAL",
+    label: "ETF internacional",
+    fullName: "ETF de índice internacional negociado na B3",
+    summary: "Fundo de índice listado no Brasil cuja carteira acompanha um índice de fora.",
+    whatItIs:
+      "É um ETF constituído no Brasil, com CNPJ brasileiro e negociado em reais na B3, cuja " +
+      "carteira busca reproduzir um índice de mercado estrangeiro. Permite acompanhar um " +
+      "conjunto de ativos do exterior sem abrir conta fora do país. Como o ativo de referência " +
+      "está em outra moeda e a cota é negociada em reais, o preço reflete tanto o índice quanto " +
+      "a variação cambial.",
+    issuedBy: "Gestoras autorizadas pela CVM, com fundo registrado e CNPJ próprio no Brasil.",
+    liquidity:
+      "Cotas negociadas em bolsa durante o pregão brasileiro. O horário de negociação daqui nem " +
+      "sempre coincide com o do mercado de origem do índice, o que afeta a formação de preço em " +
+      "parte do dia.",
+    liquidityTag: "Pregão da bolsa brasileira",
+    taxation:
+      "Ganho de capital tributado em 15% em operações comuns e 20% em day trade, sem a isenção " +
+      "mensal aplicável a ações brasileiras. A apuração e o recolhimento são responsabilidade do " +
+      "investidor.",
+    taxTag: "15% no ganho · sem isenção mensal",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "O preço reflete o índice no exterior e também a variação do câmbio.",
+      "O fundo é brasileiro e tem CNPJ próprio, ainda que a carteira seja de ativos externos.",
+      "Há fundos com proteção cambial contratada, em que a variação da moeda é neutralizada — a política consta no regulamento.",
+      "Pode haver diferença entre o desempenho do fundo e o do índice de referência.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_B3, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "ACAO_EXTERIOR",
+    label: "Ação no exterior",
+    fullName: "Ação negociada em bolsa estrangeira",
+    summary: "Participação em companhia estrangeira, comprada direto na bolsa de origem.",
+    whatItIs:
+      "É a compra da ação no mercado onde ela é listada, por meio de conta em uma corretora " +
+      "no exterior ou de intermediação autorizada. Diferente do BDR, aqui o investidor detém " +
+      "o papel original, com os direitos societários que ele confere, e a operação acontece na " +
+      "moeda do país de origem.",
+    issuedBy: "Companhias listadas em bolsas estrangeiras, sob a regulação do país de origem.",
+    liquidity:
+      "Negociada no pregão da bolsa de origem, nos horários daquele mercado. A conversão de " +
+      "moeda na entrada e na saída depende do câmbio contratado e das regras da instituição " +
+      "que intermedeia.",
+    liquidityTag: "Pregão da bolsa de origem",
+    taxation:
+      "Desde a mudança na tributação de aplicações no exterior, os rendimentos e ganhos de " +
+      "pessoa física passaram a ser apurados de forma própria, com alíquota específica e " +
+      "declaração anual. As regras mudaram recentemente e têm detalhes que dependem da " +
+      "estrutura usada — confirme na Receita Federal ou com seu contador.",
+    taxTag: "Regra própria de aplicação no exterior",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "O investidor detém o papel original, e não um recibo que o represente.",
+      "A operação e a custódia ficam sob a regulação e a proteção do país de origem, não da CVM.",
+      "O resultado em reais depende do desempenho do papel e também da variação cambial.",
+      "Há obrigações próprias de declaração de bens e direitos no exterior.",
+    ],
+    officialSources: [SOURCE_RECEITA, SOURCE_BCB, SOURCE_STATUS_INVEST],
+  },
+  {
+    assetClass: "REIT",
+    label: "REIT",
+    fullName: "Real Estate Investment Trust",
+    summary: "Companhia imobiliária listada no exterior, obrigada a distribuir o lucro.",
+    whatItIs:
+      "O REIT é a estrutura usada no mercado norte-americano para investimento imobiliário " +
+      "listado. A legislação de lá dá tratamento tributário próprio à companhia desde que ela " +
+      "distribua a maior parte do lucro tributável aos acionistas e mantenha a carteira " +
+      "concentrada em imóveis ou em créditos imobiliários. Na prática cumpre função parecida " +
+      "com a do FII brasileiro, mas a natureza jurídica é de companhia, não de fundo.",
+    issuedBy: "Companhias constituídas e listadas no exterior, sob a regulação do país de origem.",
+    liquidity:
+      "Negociado no pregão da bolsa de origem. O acesso se dá por conta no exterior ou, em " +
+      "parte dos casos, por BDR de REIT negociado na B3.",
+    liquidityTag: "Pregão da bolsa de origem",
+    taxation:
+      "Os proventos costumam sofrer retenção na fonte no país de origem, e no Brasil os " +
+      "rendimentos e ganhos seguem a regra de tributação de aplicações no exterior, que mudou " +
+      "recentemente. Confirme na Receita Federal ou com seu contador.",
+    taxTag: "Retenção na origem + regra do exterior",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "É uma companhia, não um fundo — a estrutura jurídica difere da do FII.",
+      "A obrigação de distribuir a maior parte do lucro tributável é condição do regime tributário de lá.",
+      "Há REITs de imóveis físicos e REITs de créditos imobiliários, com estruturas distintas.",
+      "O resultado em reais depende do desempenho do papel e da variação cambial.",
+    ],
+    officialSources: [SOURCE_RECEITA, SOURCE_STATUS_INVEST, SOURCE_B3],
+  },
+  {
+    assetClass: "BOND_EXTERIOR",
+    label: "Bond",
+    fullName: "Título de renda fixa emitido no exterior",
+    summary: "Dívida de um governo ou empresa estrangeira, comprada em moeda estrangeira.",
+    whatItIs:
+      "Bonds são títulos de dívida emitidos fora do Brasil, em moeda estrangeira. Podem ser " +
+      "soberanos — os Treasuries do Tesouro norte-americano são o exemplo mais conhecido — ou " +
+      "corporativos, emitidos por empresas. A lógica é a mesma de um título de renda fixa " +
+      "daqui: há prazo, há uma regra de remuneração e há um emissor que responde pelo pagamento. " +
+      "O que muda é a moeda, a jurisdição e quem regula.",
+    issuedBy: "Governos e empresas, sob a legislação do país de emissão.",
+    liquidity:
+      "Negociado no mercado internacional, com liquidez que varia muito entre emissões: papéis " +
+      "soberanos de grandes economias costumam ter volume alto, e emissões corporativas " +
+      "específicas podem ter volume reduzido. O preço antes do vencimento oscila com as taxas " +
+      "de juros do mercado de origem.",
+    liquidityTag: "Mercado internacional",
+    taxation:
+      "Rendimentos e ganhos de pessoa física residente no Brasil seguem a regra de tributação " +
+      "de aplicações no exterior, que mudou recentemente e prevê apuração e alíquota próprias. " +
+      "Pode haver ainda retenção no país de origem. Confirme na Receita Federal ou com seu contador.",
+    taxTag: "Regra própria de aplicação no exterior",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "Não há cobertura do FGC — a garantia, quando existe, é a do emissor e da jurisdição de origem.",
+      "O preço antes do vencimento oscila conforme as taxas de juros do mercado de origem.",
+      "O resultado em reais depende do papel e também da variação cambial.",
+      "Emissões corporativas costumam ter cláusulas próprias, descritas no documento da emissão.",
+    ],
+    officialSources: [SOURCE_RECEITA, SOURCE_BCB],
+  },
+  {
+    assetClass: "FUNDO_CAMBIAL",
+    label: "Fundo cambial",
+    fullName: "Fundo de Investimento Cambial",
+    summary: "Fundo brasileiro cuja carteira acompanha a variação de uma moeda estrangeira.",
+    whatItIs:
+      "O fundo cambial tem por política manter a maior parte da carteira atrelada à variação de " +
+      "preço de uma moeda estrangeira — na prática, quase sempre o dólar. É o caminho mais " +
+      "simples para ter exposição cambial sem abrir conta no exterior nem comprar moeda em " +
+      "espécie: aplica-se em reais, e a cota acompanha o câmbio conforme a política do regulamento.",
+    issuedBy: "Administradoras e gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Aplicação e resgate junto ao próprio fundo, nos prazos de cotização e liquidação " +
+      "definidos no regulamento.",
+    liquidityTag: "Prazos de cotização e liquidação",
+    taxation:
+      "Segue a regra dos fundos de investimento em geral: come-cotas semestral em maio e " +
+      "novembro para os fundos sujeitos a ele, e ajuste no resgate pela tabela regressiva. A " +
+      "classificação exata do fundo consta no regulamento.",
+    taxTag: "Come-cotas + tabela regressiva",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A política de investimento define a qual moeda a carteira se vincula.",
+      "Tem CNPJ próprio, com regulamento e informes consultáveis na CVM.",
+      "A cota acompanha a variação cambial, e não o desempenho de empresas no exterior.",
+      "Cobra taxa de administração, informada no regulamento.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_BCB, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FUNDO_RENDA_FIXA",
+    label: "Fundo de renda fixa",
+    fullName: "Fundo de Investimento em Renda Fixa",
+    summary: "Fundo com a maior parte da carteira em títulos de dívida.",
+    whatItIs:
+      "É a classe de fundo cuja política concentra a carteira em ativos de renda fixa — títulos " +
+      "públicos, títulos bancários e crédito privado. Dentro dela há subdivisões previstas na " +
+      "regulamentação, conforme o tipo de risco que a carteira pode assumir e o prazo médio dos " +
+      "papéis, e é o regulamento que diz em qual delas o fundo se enquadra.",
+    issuedBy: "Administradoras e gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Definida no regulamento pelos prazos de cotização e liquidação. Fundos com carteira de " +
+      "títulos públicos de curto prazo costumam ter prazos de um dia útil; fundos com crédito " +
+      "privado costumam ter prazos mais longos, porque a carteira demora mais para ser vendida.",
+    liquidityTag: "Prazos de cotização e liquidação",
+    taxation:
+      "Sujeito ao come-cotas, antecipação semestral do IR em maio e novembro, com alíquota " +
+      "conforme a classificação de prazo do fundo, e ajuste no resgate pela tabela regressiva de " +
+      "22,5% a 15%.",
+    taxTag: "Come-cotas + IR regressivo",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "O regulamento define quanto da carteira pode estar em crédito privado.",
+      "O patrimônio do fundo é separado do patrimônio do administrador.",
+      "A cota varia diariamente, inclusive para baixo, pela marcação a mercado dos títulos.",
+      "Cobra taxa de administração, informada no regulamento e na lâmina.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FUNDO_MULTIMERCADO",
+    label: "Multimercado",
+    fullName: "Fundo de Investimento Multimercado",
+    summary: "Fundo que pode combinar várias classes de ativo na mesma carteira.",
+    whatItIs:
+      "O multimercado é a classe de fundo com a política de investimento mais ampla: pode " +
+      "combinar renda fixa, ações, câmbio, derivativos e ativos no exterior na mesma carteira, " +
+      "nos limites que o próprio regulamento estabelece. Por isso a leitura do regulamento " +
+      "importa mais aqui do que em qualquer outra classe — é ele que diz o que aquele fundo " +
+      "específico pode e não pode deter.",
+    issuedBy: "Administradoras e gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Definida no regulamento. Os prazos de cotização e liquidação de multimercados variam " +
+      "bastante — de poucos dias úteis a vários meses — conforme os ativos que a carteira detém.",
+    liquidityTag: "Prazos de cotização e liquidação",
+    taxation:
+      "Sujeito ao come-cotas semestral em maio e novembro, com alíquota conforme a classificação " +
+      "de prazo do fundo, e ajuste no resgate pela tabela regressiva. Fundos com política de " +
+      "investimento no exterior podem ter enquadramento próprio.",
+    taxTag: "Come-cotas + IR regressivo",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A política de investimento é ampla, e os limites de cada classe de ativo estão no regulamento.",
+      "Pode usar derivativos, inclusive com exposição superior ao patrimônio, quando o regulamento permitir.",
+      "Parte dos multimercados é destinada apenas a investidores qualificados ou profissionais.",
+      "Além da taxa de administração, é comum haver taxa de performance.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FUNDO_ACOES",
+    label: "Fundo de ações",
+    fullName: "Fundo de Investimento em Ações",
+    summary: "Fundo com a maior parte da carteira em ações e ativos equivalentes.",
+    whatItIs:
+      "É a classe de fundo que mantém a maior parte do patrimônio em ações e em ativos " +
+      "equiparados, como bônus de subscrição e certificados de depósito de ações. A " +
+      "regulamentação define o percentual mínimo da carteira que precisa estar nesses ativos " +
+      "para o fundo se enquadrar na classe, e esse enquadramento é o que determina a regra " +
+      "tributária aplicável.",
+    issuedBy: "Administradoras e gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Aplicação e resgate junto ao fundo, nos prazos definidos em regulamento. O prazo de " +
+      "cotização em fundos de ações costuma ser maior que o de fundos de renda fixa, porque a " +
+      "carteira precisa ser vendida em pregão.",
+    liquidityTag: "Prazos de cotização e liquidação",
+    taxation:
+      "Não está sujeito ao come-cotas. O Imposto de Renda incide apenas no resgate, em alíquota " +
+      "própria da classe, independentemente do prazo de permanência.",
+    taxTag: "Sem come-cotas · IR só no resgate",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "O percentual mínimo em ações é o que define o enquadramento na classe.",
+      "Não sofre come-cotas, ao contrário dos fundos de renda fixa e multimercado.",
+      "A cota varia diariamente conforme o preço das ações em carteira.",
+      "Cobra taxa de administração e, com frequência, taxa de performance.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "FIDC",
+    label: "FIDC",
+    fullName: "Fundo de Investimento em Direitos Creditórios",
+    summary: "Fundo cuja carteira é formada por recebíveis — dívidas de terceiros a receber.",
+    whatItIs:
+      "O FIDC compra direitos creditórios: duplicatas, parcelas de cartão, contratos de " +
+      "financiamento, aluguéis a receber. Quem paga o fundo são os devedores originais desses " +
+      "créditos. A estrutura costuma ser dividida em cotas seniores e subordinadas, e essa " +
+      "divisão define a ordem de recebimento — as subordinadas absorvem primeiro as perdas da " +
+      "carteira, e é isso que dá às seniores a proteção descrita no regulamento.",
+    issuedBy: "Administradoras e gestoras autorizadas pela CVM. Cada fundo tem CNPJ próprio.",
+    liquidity:
+      "Depende da forma de constituição. Fundos fechados não permitem resgate e a saída ocorre " +
+      "pela negociação das cotas, com mercado secundário geralmente restrito. Fundos abertos " +
+      "seguem os prazos do regulamento.",
+    liquidityTag: "Conforme a forma do fundo",
+    taxation:
+      "Segue a regra dos fundos de investimento aplicável ao seu enquadramento, com Imposto de " +
+      "Renda em alíquota regressiva pelo prazo. A classificação exata consta no regulamento.",
+    taxTag: "IR regressivo · conforme enquadramento",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "Quem paga o fundo são os devedores dos créditos comprados, não uma instituição financeira.",
+      "A divisão entre cotas seniores e subordinadas define a ordem de recebimento.",
+      "A qualidade da carteira e os critérios de elegibilidade dos créditos estão no regulamento.",
+      "Historicamente restrito a investidores qualificados, com aberturas previstas na regulamentação vigente.",
+    ],
+    officialSources: [SOURCE_CVM_FUNDOS, SOURCE_CVM, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "PGBL",
+    label: "PGBL",
+    fullName: "Plano Gerador de Benefício Livre",
+    summary: "Plano de previdência que permite deduzir as contribuições na declaração completa.",
+    whatItIs:
+      "No PGBL, as contribuições feitas no ano podem ser deduzidas da base de cálculo do " +
+      "Imposto de Renda, dentro do limite legal de percentual da renda bruta tributável, e " +
+      "desde que o titular use a declaração completa e contribua para a previdência social. " +
+      "A contrapartida está na saída: o imposto incide sobre o valor total resgatado ou " +
+      "recebido, e não apenas sobre o rendimento.",
+    issuedBy:
+      "Seguradoras e entidades abertas de previdência complementar, sob supervisão da SUSEP.",
+    liquidity:
+      "Resgates seguem as regras do plano, com prazo de carência inicial e intervalos mínimos " +
+      "entre resgates. A portabilidade para outro plano ou instituição não é tratada como " +
+      "resgate e não interrompe a contagem de prazo para fins de tributação.",
+    liquidityTag: "Conforme a carência do plano",
+    taxation:
+      "A dedução das contribuições está limitada a um percentual da renda bruta tributável " +
+      "anual e exige declaração completa. Na saída, a base de cálculo é o valor total, e " +
+      "aplica-se a tabela escolhida na contratação: a regressiva parte de 35% e cai até 10% " +
+      "conforme o tempo de cada aporte, ou a progressiva, que segue a tabela do IR da pessoa física.",
+    taxTag: "Deduz na entrada · tributa o total na saída",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "A dedução só faz sentido para quem entrega a declaração completa e contribui para a previdência social.",
+      "Na saída o imposto incide sobre o valor total, e não apenas sobre o rendimento.",
+      "Não conta com cobertura do FGC; a estrutura é de seguro, supervisionada pela SUSEP.",
+      "A portabilidade entre planos e instituições não caracteriza resgate.",
+    ],
+    officialSources: [SOURCE_SUSEP, SOURCE_RECEITA],
+  },
+  {
+    assetClass: "VGBL",
+    label: "VGBL",
+    fullName: "Vida Gerador de Benefício Livre",
+    summary: "Plano de previdência sem dedução na entrada, que tributa só o rendimento na saída.",
+    whatItIs:
+      "O VGBL é juridicamente um seguro de pessoas com cobertura por sobrevivência. As " +
+      "contribuições não são dedutíveis do Imposto de Renda, e em troca a tributação na saída " +
+      "incide apenas sobre o rendimento, não sobre o valor total. É a estrutura usada por quem " +
+      "entrega a declaração simplificada, por quem já atingiu o limite de dedução do PGBL, e " +
+      "em planejamento sucessório.",
+    issuedBy:
+      "Seguradoras e entidades abertas de previdência complementar, sob supervisão da SUSEP.",
+    liquidity:
+      "Resgates seguem as regras do plano, com carência inicial e intervalos mínimos. A " +
+      "portabilidade para outro plano ou instituição não é tratada como resgate. A portabilidade " +
+      "entre VGBL e PGBL não é permitida — a mudança de modalidade exige resgate.",
+    liquidityTag: "Conforme a carência do plano",
+    taxation:
+      "Não há dedução das contribuições. Na saída, o imposto incide apenas sobre o rendimento, " +
+      "pela tabela escolhida na contratação: a regressiva parte de 35% e cai até 10% conforme o " +
+      "tempo de cada aporte, ou a progressiva, que segue a tabela do IR da pessoa física.",
+    taxTag: "Sem dedução · tributa só o rendimento",
+    guarantee: NO_SPECIFIC_GUARANTEE,
+    characteristics: [
+      "É juridicamente um seguro de pessoas, e não um plano previdenciário em sentido estrito.",
+      "Na saída o imposto incide apenas sobre o rendimento.",
+      "Não entra em inventário, seguindo regra própria de designação de beneficiários.",
+      "Não há portabilidade entre VGBL e PGBL: mudar de modalidade exige resgate.",
+    ],
+    officialSources: [SOURCE_SUSEP, SOURCE_RECEITA],
   },
   {
     assetClass: "NAO_CLASSIFICADO",
