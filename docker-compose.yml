@@ -1,0 +1,30 @@
+# PostgreSQL para testar o sistema na sua máquina.
+#
+# Sobe só o banco. A aplicação roda com `npm run dev`, para que você veja os
+# logs — inclusive o e-mail de recuperação de senha, que sem provedor de e-mail
+# configurado é escrito no terminal com o link inteiro.
+#
+# Porta 5433 e não 5432 de propósito: se você já tiver um PostgreSQL instalado,
+# os dois convivem sem conflito.
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: acassium-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: acassium
+      POSTGRES_PASSWORD: acassium
+      POSTGRES_DB: acassium
+    ports:
+      - "5433:5432"
+    volumes:
+      - acassium-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U acassium -d acassium"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  acassium-data:

@@ -4,17 +4,19 @@
   "private": true,
   "description": "Plataforma de leitura descritiva de carteira de investimentos.",
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "postinstall": "prisma generate",
-    "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
+    "db:migrate": "prisma migrate dev",
+    "db:seed": "tsx --env-file=.env.local prisma/seed.ts",
     "db:studio": "prisma studio",
-    "start": "next start",
+    "dev": "next dev",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "preparar": "node scripts/preparar.mjs",
+    "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
     "verify": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
@@ -41,6 +43,7 @@
     "eslint": "^9.18.0",
     "eslint-config-next": "^16.3.0",
     "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.9",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }

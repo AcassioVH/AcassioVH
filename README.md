@@ -8,20 +8,25 @@ visão organizada e didática dela.
 > usuário. Não recomenda, não avalia ativos e não afirma rentabilidade — para
 > isso, aponta sempre para a fonte oficial.
 
-## Começando
+## Testar na sua máquina
 
-Requer Node 22+ e um PostgreSQL acessível.
+Requer Node 22+ e Docker. Quatro comandos:
 
 ```bash
 npm install
-cp .env.example .env.local   # preencha DATABASE_URL, AUTH_SECRET e FIELD_ENCRYPTION_KEY
-npm run db:migrate           # cria o schema
-npm run dev                  # http://localhost:3000
+docker compose up -d   # sobe o PostgreSQL
+npm run preparar       # chaves, migrações e carteira de demonstração
+npm run dev            # http://localhost:3000
 ```
 
-`AUTH_SECRET` e `FIELD_ENCRYPTION_KEY` precisam de no mínimo 32 bytes — gere
-cada uma com `openssl rand -base64 32`. A aplicação recusa subir sem elas, de
-propósito.
+Entre com **demo@acassium.com.br** / **carteira-de-demonstracao** para ver o
+sistema com sete ativos dentro.
+
+O passo a passo detalhado, incluindo como testar a recuperação de senha e como
+rodar sem Docker, está em [`docs/TESTAR.md`](docs/TESTAR.md).
+
+`npm run preparar` gera `AUTH_SECRET` e `FIELD_ENCRYPTION_KEY` aleatórias em
+`.env.local`. A aplicação recusa subir sem elas, de propósito.
 
 ```bash
 npm run verify     # typecheck + lint + testes
@@ -60,6 +65,7 @@ carteira de todos os usuários, de forma irreversível — ver
 | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | Stack, estrutura de pastas, decisões e seus porquês |
 | [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md) | **Leia antes de escrever conteúdo ou código novo** |
 | [`docs/RISKS.md`](docs/RISKS.md) | Riscos técnicos, com o estado de tratamento de cada um |
+| [`docs/TESTAR.md`](docs/TESTAR.md) | Rodar na sua máquina, passo a passo |
 
 ## A regra que organiza o código
 
