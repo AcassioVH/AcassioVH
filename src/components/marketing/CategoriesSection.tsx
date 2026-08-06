@@ -18,6 +18,7 @@
 import Link from "next/link";
 
 import { CategoryBar } from "@/components/charts/CategoryBar";
+import { MarineSnow } from "@/components/experience/Caustics";
 import { Reveal } from "@/components/ui/Reveal";
 import { CATEGORIES, familiesOf } from "@/domain/assets/families";
 
@@ -27,9 +28,11 @@ export function CategoriesSection() {
       id="categorias"
       data-depth="3"
       aria-labelledby="categorias-title"
-      className="relative border-t border-edge-soft bg-surface px-6 py-24 sm:px-10 sm:py-32"
+      className="relative overflow-hidden border-t border-edge-soft bg-surface px-6 py-24 sm:px-10 sm:py-32"
     >
-      <div className="mx-auto max-w-6xl">
+      <MarineSnow className="opacity-40" />
+
+      <div className="relative mx-auto max-w-6xl">
         <Reveal>
           <p className="tech text-amber">Por onde começar</p>
           <h2

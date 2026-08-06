@@ -183,6 +183,34 @@
   .animate-drift-fast {
     animation: drift-x 23s linear infinite reverse;
   }
+
+  /*
+   * A subida da neve marinha.
+   *
+   * O deslocamento é exatamente a altura de um ladrilho do padrão, então o fim
+   * do ciclo cai sobre o começo e a emenda não existe. `duration` vem do
+   * componente: é a diferença de velocidade entre as camadas que produz a
+   * paralaxe, e com ela a sensação de volume.
+   */
+  .animate-rise {
+    animation: rise-y linear infinite;
+  }
+
+  /*
+   * O balanço dos feixes.
+   *
+   * A inclinação de cada feixe vem do componente em `--shaft-skew`, e a
+   * animação só acrescenta o desvio: sem preservar a inclinação, o primeiro
+   * quadro endireitaria todos os feixes de uma vez.
+   */
+  .animate-sway {
+    animation: sway-x ease-in-out infinite alternate;
+  }
+
+  /* A respiração da luz que atravessa a ondulação. */
+  .animate-swell {
+    animation: swell 26s ease-in-out infinite alternate;
+  }
 }
 
 @keyframes drift-x {
@@ -191,5 +219,51 @@
   }
   to {
     transform: translate3d(-38%, 0, 0);
+  }
+}
+
+@keyframes rise-y {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    /* Exatamente um ladrilho: qualquer outro valor deixa um salto visível no
+       momento em que o ciclo reinicia. */
+    transform: translate3d(0, calc(-1 * var(--snow-tile)), 0);
+  }
+}
+
+@keyframes sway-x {
+  from {
+    transform: skewX(var(--shaft-skew)) translate3d(-1.5%, 0, 0);
+  }
+  to {
+    transform: skewX(var(--shaft-skew)) translate3d(1.5%, 0, 0);
+  }
+}
+
+@keyframes swell {
+  from {
+    opacity: 0.72;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/*
+ * Quem pediu menos movimento recebe a composição parada.
+ *
+ * Os componentes já omitem as classes de animação quando `useReducedMotion` é
+ * verdadeiro, mas isso depende de JavaScript ter rodado. Esta regra é a rede:
+ * vale já no primeiro quadro, antes de qualquer hidratação.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .animate-drift-slow,
+  .animate-drift-fast,
+  .animate-rise,
+  .animate-sway,
+  .animate-swell {
+    animation: none;
   }
 }

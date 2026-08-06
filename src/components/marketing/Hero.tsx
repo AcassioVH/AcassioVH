@@ -2,7 +2,13 @@
 
 import { motion, useReducedMotion } from "motion/react";
 
-import { Caustics, LightShafts } from "@/components/experience/Caustics";
+import {
+  Caustics,
+  LightShafts,
+  MarineSnow,
+  WaterColumn,
+  WaterSurface,
+} from "@/components/experience/Caustics";
 
 /**
  * Hero — a superfície.
@@ -44,11 +50,15 @@ export function Hero() {
       />
       <Caustics className="h-[46%]" />
       <LightShafts />
+      {/* A partícula em suspensão é o que põe o leitor dentro d'água em vez de
+          na frente de um fundo escuro: é o único elemento que ocupa o volume. */}
+      <MarineSnow />
+      <WaterColumn />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(62%_78%_at_62%_-6%,rgba(227,188,126,.26)_0%,rgba(201,149,74,.08)_42%,transparent_72%)]"
       />
-      <div className="beam absolute inset-x-0 top-0 h-[3px]" aria-hidden="true" />
+      <WaterSurface />
       {/* Vinheta: escurece as bordas e empurra o olho para o centro. */}
       <div
         aria-hidden="true"

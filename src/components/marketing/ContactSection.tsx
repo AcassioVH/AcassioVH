@@ -1,4 +1,4 @@
-import { Caustics } from "@/components/experience/Caustics";
+import { Caustics, MarineSnow } from "@/components/experience/Caustics";
 import { Reveal } from "@/components/ui/Reveal";
 import { site, whatsappIsConfigured, whatsappUrl } from "@/config/site";
 
@@ -36,6 +36,7 @@ export function ContactSection() {
         className="absolute inset-0 bg-[linear-gradient(to_bottom,#040809_0%,#081820_28%,#0c2530_62%,#12333b_100%)]"
       />
       <Caustics className="top-auto h-[55%] opacity-70" />
+      <MarineSnow className="opacity-70" />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(70%_60%_at_50%_120%,rgba(227,188,126,.3)_0%,rgba(201,149,74,.08)_45%,transparent_75%)]"

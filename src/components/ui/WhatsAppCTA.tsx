@@ -15,6 +15,7 @@
  * mal formado abre uma conversa vazia, e ninguém percebe que perdeu o contato.
  */
 
+import { MarineSnow } from "@/components/experience/Caustics";
 import { site, whatsappIsConfigured, whatsappUrl } from "@/config/site";
 
 export function WhatsAppIcon({ className = "" }: { className?: string }) {
@@ -81,6 +82,7 @@ export function WhatsAppCTA({
         aria-hidden="true"
         className="absolute inset-0 bg-[linear-gradient(to_bottom,#060d10,#081a21_40%,#0c2530)]"
       />
+      <MarineSnow className="opacity-60" />
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-[radial-gradient(62%_70%_at_50%_125%,rgba(227,188,126,.26),transparent_74%)]"

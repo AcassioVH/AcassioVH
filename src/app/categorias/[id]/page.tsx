@@ -6,6 +6,7 @@ import { CategoryBar } from "@/components/charts/CategoryBar";
 import { PaymentChain } from "@/components/charts/PaymentChain";
 import { ProductCard } from "@/components/charts/ProductCard";
 import { TaxLadder } from "@/components/charts/TaxLadder";
+import { Caustics, MarineSnow } from "@/components/experience/Caustics";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { Disclaimer } from "@/components/ui/Disclaimer";
@@ -76,6 +77,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
             aria-hidden="true"
             className="absolute left-[66%] top-[-90px] h-[440px] w-[150px] skew-x-[-10deg] bg-[linear-gradient(176deg,rgba(227,188,126,.16),transparent_68%)]"
           />
+          <Caustics className="h-[62%] opacity-60" />
+          <MarineSnow />
 
           <div className="relative mx-auto max-w-5xl">
             <Link

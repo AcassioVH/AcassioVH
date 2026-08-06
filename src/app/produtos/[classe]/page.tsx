@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { GuaranteeMark } from "@/components/charts/GuaranteeMark";
+import { Caustics, MarineSnow } from "@/components/experience/Caustics";
 import { PaymentChain } from "@/components/charts/PaymentChain";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
@@ -86,6 +87,8 @@ export default async function ProductPage({
             aria-hidden="true"
             className="absolute left-[64%] top-[-90px] h-[440px] w-[150px] skew-x-[-10deg] bg-[linear-gradient(176deg,rgba(227,188,126,.16),transparent_68%)]"
           />
+          <Caustics className="h-[62%] opacity-60" />
+          <MarineSnow />
 
           <div className="relative mx-auto max-w-4xl">
             <Link

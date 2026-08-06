@@ -10,6 +10,7 @@
  * conteúdo, que aqui ninguém vai lhe dizer o que comprar.
  */
 
+import { MarineSnow } from "@/components/experience/Caustics";
 import { Reveal } from "@/components/ui/Reveal";
 
 const STEPS = [
@@ -48,6 +49,7 @@ export function IntroSection() {
         aria-hidden="true"
         className="absolute inset-0 bg-[linear-gradient(to_bottom,#0c2530,#0a1f28_60%,#081a21)]"
       />
+      <MarineSnow className="opacity-55" />
 
       <div className="relative mx-auto max-w-6xl">
         <Reveal>

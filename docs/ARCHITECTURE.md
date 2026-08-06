@@ -52,6 +52,14 @@ contato — a única que sobe de novo. Não é enfeite: a subida é o argumento 
 o passo seguinte à informação é uma conversa com uma pessoa. `WhatsAppCTA` repete
 esse gradiente ao fim de cada página interna, pelo mesmo motivo.
 
+**A marca.** As duas hastes do "A" precisam se **tocar**: a maior é o ativo, a
+menor é a explicação, e a menor nasce de dentro da maior. A primeira versão eram
+dois retângulos inclinados ancorados na base que nunca se encostavam — duas
+barras paralelas não são um "A" e, pior, não dizem a tese, porque nada apoiado em
+nada não apoia. Hoje é SVG, e a ordem de desenho é parte do desenho: a haste
+menor vem primeiro e a maior por cima, então a junção some sob a haste que
+sustenta. A travessa continua ausente por decisão — a marca sustenta, não conclui.
+
 Duas regras estão codificadas, não confiadas a quem usar:
 
 - **Estado é cor MAIS palavra, nunca cor sozinha.** `StatusPill` exige `label`.
@@ -124,12 +132,32 @@ O hero e o contato usam gradiente, faixas repetidas e `transform`. Sem imagem,
 sem vídeo, sem canvas e sem WebGL. Isso significa que o primeiro quadro chega
 junto com o HTML, funciona sem GPU e não precisa de fallback.
 
-Duas lições ficaram no código:
+**Estar dentro d'água, e não na frente de um fundo escuro.** Gradiente, feixe e
+cáustica descrevem a *luz*; nenhum deles diz que existe água entre o olho e o
+assunto. Quem diz isso é `MarineSnow` — a partícula em suspensão é o único
+elemento da composição que ocupa o volume em vez do fundo, e é o que decide a
+leitura. Três camadas com tamanho, brilho e velocidade diferentes; a paralaxe
+entre elas é a profundidade. Sobem, e não descem: detrito de verdade afunda, mas
+partícula subindo é o que dá a sensação de que **você** está afundando, que é a
+metáfora do site inteiro.
+
+`WaterSurface` completa o par pelo outro lado: de dentro d'água, o alto do campo
+de visão é um teto líquido ondulando, e é a referência que diz de que lado da
+água o olho está. Sem ela, escuro com partícula pode ser espaço sideral.
+`WaterColumn` é o véu frio que se adensa para baixo — fica acima do fundo e
+abaixo do conteúdo, porque velar o texto seria trocar leitura por atmosfera.
+
+Três lições ficaram no código:
 
 - **`Caustics` errou por excesso na primeira versão.** Faixas estreitas e
   próximas viram malha de arame e disputam atenção com o título. Luz sobre água
   tem período longo, intensidade desigual e dissolve conforme desce — daí a
   máscara vertical e o período de ~120px.
+- **A superfície custou legibilidade à navegação.** A parte mais clara da
+  composição passou a ficar exatamente onde fica a barra fixa, e os links caíram
+  em cima das cristas. A correção não foi apagar a onda: foi um véu de
+  degradê sob a barra, que escurece o bastante para o texto e vai a zero antes de
+  alcançar a onda.
 - **`DepthGauge` perdeu os rótulos.** Os nomes dos níveis invadiam a primeira
   coluna do conteúdo em telas largas. A correção não foi encolher a fonte: foi
   notar que o rótulo já existe no olho de cada seção, e repeti-lo na régua era
