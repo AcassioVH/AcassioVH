@@ -6,12 +6,18 @@
  * sustenta, não conclui. Por isso o símbolo não deve ser "corrigido" com uma
  * barra transversal em nenhuma variação futura.
  *
- * **O erro da primeira versão, e por que ele importava.** As hastes eram dois
- * retângulos inclinados, cada um ancorado na base, que nunca se encostavam. Duas
- * barras paralelas não são um "A" e, pior, não dizem a tese: se a haste menor
- * não toca a maior, nada está apoiado em nada. A correção não foi aproximá-las —
- * foi desenhar a menor **partindo de dentro** da maior, que é o que "apoiada"
- * significa. Em SVG, porque duas caixas posicionadas não encostam sem emenda.
+ * **Dois erros já foram cometidos aqui. Os dois valem lembrar.**
+ *
+ * O primeiro: as hastes eram retângulos inclinados ancorados na base, e nunca se
+ * encostavam. Duas barras paralelas não são um "A" e, pior, não dizem a tese —
+ * se a menor não toca a maior, nada está apoiado em nada.
+ *
+ * O segundo: com as hastes desenhadas como `stroke`, a ponta de cada uma sai
+ * cortada **perpendicular ao próprio ângulo**. Como as duas inclinações são
+ * diferentes, os pés saíam cortados em ângulos diferentes e com larguras
+ * diferentes — a marca não assentava. Daí o desenho atual ser de polígonos, e
+ * não de traços: só assim as duas bases ficam horizontais, na mesma linha e com
+ * a mesma largura.
  *
  * A ordem de desenho é parte do desenho: a haste menor vem primeiro e a maior
  * por cima, então a junção some sob a haste que sustenta.
@@ -23,7 +29,7 @@
  */
 
 type MarkProps = {
-  /** Altura da haste maior, em pixels. */
+  /** Altura da caixa da marca, em pixels. */
   size?: number;
   /** Cor da haste maior — a que sustenta. */
   tall?: string;
@@ -35,14 +41,19 @@ type MarkProps = {
 /**
  * Geometria, em coordenadas de 0 a 100.
  *
- * A haste menor nasce em `JOIN`, um ponto que fica **dentro** do corpo da haste
- * maior, e não na borda dela: encostar na borda deixaria um fio de fundo visível
- * na junção assim que a tela arredondasse o subpixel.
+ * As duas hastes têm 21 de largura horizontal e terminam na mesma linha de base
+ * (y = 97), o que dá pés idênticos. A menor nasce em y = 30, onde o corpo da
+ * maior ocupa exatamente 38,45 a 59,45 — ou seja, o topo dela começa **dentro**
+ * da maior, e não encostado na borda. Encostar na borda deixaria um fio de fundo
+ * visível na junção assim que a tela arredondasse o subpixel.
+ *
+ * Mexer em um número destes sem refazer a conta quebra o encaixe. As duas
+ * espessuras perpendiculares resultantes são 19,7 e 19,5: praticamente iguais,
+ * que é o que faz as hastes parecerem do mesmo peso apesar de inclinações
+ * diferentes.
  */
-const TALL_TOP = { x: 66, y: 3 };
-const TALL_FOOT = { x: 25, y: 97 };
-const JOIN = { x: 56, y: 30 };
-const SHORT_FOOT = { x: 87, y: 97 };
+const HASTE_MAIOR = "M48.5 3 L69.5 3 L34.5 97 L13.5 97 Z";
+const HASTE_MENOR = "M38.45 30 L59.45 30 L86.5 97 L65.5 97 Z";
 
 export function Mark({
   size = 24,
@@ -59,16 +70,8 @@ export function Mark({
       viewBox="0 0 100 100"
       fill="none"
     >
-      <path
-        d={`M${JOIN.x} ${JOIN.y} L${SHORT_FOOT.x} ${SHORT_FOOT.y}`}
-        stroke={short}
-        strokeWidth={16}
-      />
-      <path
-        d={`M${TALL_TOP.x} ${TALL_TOP.y} L${TALL_FOOT.x} ${TALL_FOOT.y}`}
-        stroke={tall}
-        strokeWidth={19}
-      />
+      <path d={HASTE_MENOR} fill={short} />
+      <path d={HASTE_MAIOR} fill={tall} />
     </svg>
   );
 }
