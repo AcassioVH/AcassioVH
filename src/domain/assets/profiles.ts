@@ -109,6 +109,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Imposto de Renda retido na fonte sobre o rendimento, em alíquota regressiva pelo " +
       "prazo da aplicação: 22,5% até 180 dias, 20% de 181 a 360, 17,5% de 361 a 720 e " +
       "15% acima de 720 dias. Resgates nos primeiros 30 dias também sofrem IOF regressivo.",
+    liquidityTag: "Diária ou no vencimento",
+    taxTag: "IR regressivo · 22,5% a 15%",
     guarantee: FGC_GUARANTEE,
     characteristics: [
       "O prazo de vencimento é definido no momento da contratação.",
@@ -134,6 +136,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Rendimentos isentos de Imposto de Renda para pessoa física, conforme a legislação " +
       "vigente aplicável ao instrumento.",
+    liquidityTag: "Após a carência legal",
+    taxTag: "Isento de IR para pessoa física",
     guarantee: FGC_GUARANTEE,
     characteristics: [
       "Possui carência mínima definida em norma, o que limita o resgate antecipado.",
@@ -158,6 +162,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Rendimentos isentos de Imposto de Renda para pessoa física, conforme a legislação " +
       "vigente aplicável ao instrumento.",
+    liquidityTag: "Após a carência legal",
+    taxTag: "Isento de IR para pessoa física",
     guarantee: FGC_GUARANTEE,
     characteristics: [
       "Possui carência mínima definida em norma.",
@@ -183,6 +189,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Imposto de Renda na fonte em alíquota regressiva pelo prazo: 22,5% até 180 dias, " +
       "20% de 181 a 360, 17,5% de 361 a 720 e 15% acima de 720 dias. IOF regressivo nos " +
       "primeiros 30 dias.",
+    liquidityTag: "Em regra no vencimento",
+    taxTag: "IR regressivo · 22,5% a 15%",
     guarantee: FGC_GUARANTEE,
     characteristics: [
       "O emissor é uma financeira, categoria distinta de banco comercial.",
@@ -207,6 +215,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Rendimentos isentos de Imposto de Renda para pessoa física, conforme a legislação " +
       "vigente aplicável ao instrumento.",
+    liquidityTag: "Mercado secundário",
+    taxTag: "Isento de IR para pessoa física",
     guarantee: {
       kind: "GARANTIA_REAL",
       description:
@@ -237,6 +247,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Rendimentos isentos de Imposto de Renda para pessoa física, conforme a legislação " +
       "vigente aplicável ao instrumento.",
+    liquidityTag: "Mercado secundário",
+    taxTag: "Isento de IR para pessoa física",
     guarantee: {
       kind: "GARANTIA_REAL",
       description:
@@ -269,6 +281,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Debêntures comuns seguem a tabela regressiva de IR (22,5% a 15% conforme o prazo). " +
       "Debêntures incentivadas de infraestrutura têm rendimentos isentos de IR para pessoa " +
       "física, conforme a legislação específica aplicável.",
+    liquidityTag: "Mercado secundário",
+    taxTag: "IR regressivo · incentivada é isenta",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "O pagamento depende da situação financeira da empresa emissora.",
@@ -297,6 +311,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Imposto de Renda na fonte em alíquota regressiva pelo prazo: 22,5% até 180 dias, " +
       "20% de 181 a 360, 17,5% de 361 a 720 e 15% acima de 720 dias. IOF regressivo nos " +
       "primeiros 30 dias. Alguns títulos pagam cupons semestrais, tributados na ocorrência.",
+    liquidityTag: "Recompra diária pelo Tesouro",
+    taxTag: "IR regressivo · 22,5% a 15%",
     guarantee: {
       kind: "TESOURO_NACIONAL",
       description:
@@ -325,6 +341,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "na data de aniversário mensal do depósito: saques antes dessa data não recebem a " +
       "remuneração do mês em curso.",
     taxation: "Rendimentos isentos de Imposto de Renda para pessoa física.",
+    liquidityTag: "Saque a qualquer momento",
+    taxTag: "Isento de IR para pessoa física",
     guarantee: FGC_GUARANTEE,
     characteristics: [
       "A remuneração segue regra legal, igual em todos os bancos.",
@@ -352,6 +370,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "próprio investidor via DARF, com isenção mensal para vendas dentro do limite legal. " +
       "Operações de day trade têm alíquota de 20%. Dividendos e JCP seguem regra própria. " +
       "A apuração é responsabilidade do investidor.",
+    liquidityTag: "Pregão da bolsa",
+    taxTag: "15% no ganho · 20% day trade",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Não há prazo de vencimento nem valor de resgate contratado.",
@@ -376,6 +396,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Ganho de capital tributado em 15% em operações comuns e 20% em day trade, sem a " +
       "isenção mensal aplicável a ações brasileiras. A apuração é responsabilidade do investidor.",
+    liquidityTag: "Pregão da bolsa",
+    taxTag: "15% no ganho · sem isenção mensal",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "O preço reflete tanto o ativo no exterior quanto a variação cambial.",
@@ -404,6 +426,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "cumpridas as condições legais — entre elas o fundo ter suas cotas negociadas em bolsa, " +
       "ter número mínimo de cotistas e o cotista não deter participação relevante no fundo. " +
       "O ganho na negociação de cotas é tributado em 20%, apurado pelo investidor.",
+    liquidityTag: "Pregão da bolsa",
+    taxTag: "Rendimento isento sob condições · 20% no ganho",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Tem CNPJ próprio, o que permite consultar o registro e os informes na CVM.",
@@ -430,6 +454,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Regra de isenção sobre rendimentos distribuídos para pessoa física segue condições " +
       "legais semelhantes às dos FIIs. Ganho na negociação de cotas é tributado, com apuração " +
       "pelo investidor. As condições específicas devem ser conferidas na fonte oficial.",
+    liquidityTag: "Pregão da bolsa",
+    taxTag: "Rendimento isento sob condições · ganho tributado",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Tem CNPJ próprio, com registro e informes consultáveis na CVM.",
@@ -456,6 +482,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "ETFs de renda variável: ganho de capital tributado em 15% em operações comuns e 20% em " +
       "day trade, sem a isenção mensal das ações. ETFs de renda fixa seguem regra própria, com " +
       "alíquota conforme o prazo médio da carteira e retenção na fonte.",
+    liquidityTag: "Pregão da bolsa",
+    taxTag: "15% no ganho · sem isenção mensal",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "A carteira busca acompanhar um índice divulgado publicamente.",
@@ -484,6 +512,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "do IR em maio e novembro, com alíquota conforme a classificação de prazo do fundo, e " +
       "ajuste no resgate pela tabela regressiva. Fundos de ações seguem alíquota própria " +
       "apenas no resgate. A classificação exata consta no regulamento.",
+    liquidityTag: "Prazos de cotização e liquidação",
+    taxTag: "Come-cotas em parte dos fundos",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Tem CNPJ próprio, com registro, regulamento e informes consultáveis na CVM.",
@@ -512,6 +542,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
       "Na contratação escolhe-se entre duas tabelas. A regressiva parte de 35% e cai até 10% " +
       "conforme o tempo de cada aporte. A progressiva segue a tabela do IR sobre pessoa física, " +
       "com retenção na fonte e ajuste na declaração. A base de cálculo difere entre PGBL e VGBL.",
+    liquidityTag: "Conforme a carência do plano",
+    taxTag: "Tabela regressiva 35% a 10%, ou progressiva",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Não conta com cobertura do FGC; a estrutura é de seguro, supervisionada pela SUSEP.",
@@ -539,6 +571,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     taxation:
       "Tributado como aplicação de renda fixa, com IR na fonte em alíquota regressiva pelo " +
       "prazo, de 22,5% a 15%.",
+    liquidityTag: "Em regra no vencimento",
+    taxTag: "IR regressivo · 22,5% a 15%",
     guarantee: NO_SPECIFIC_GUARANTEE,
     characteristics: [
       "Não conta com cobertura do FGC.",
@@ -561,6 +595,8 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     issuedBy: "Não determinado.",
     liquidity: "Não determinada.",
     taxation: "Não determinada.",
+    liquidityTag: "Não determinada",
+    taxTag: "Não determinada",
     guarantee: {
       kind: "SEM_GARANTIA_ESPECIFICA",
       description:

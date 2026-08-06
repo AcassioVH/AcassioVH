@@ -7,14 +7,15 @@
  * carregar recomendação, juízo de valor sobre ativo ou afirmação de
  * rentabilidade, o CI fica vermelho.
  *
- * Escopo atual: catálogo educativo, textos da política e racionais do motor de
- * classificação. Copy de UI escrita direto em JSX ainda não é varrida — está
- * anotado em docs/RISKS.md como dívida conhecida.
+ * Escopo atual: catálogo educativo, navegação por categoria e família, textos da
+ * política e racionais do motor de classificação. Copy de UI escrita direto em
+ * JSX ainda não é varrida — está anotado em docs/RISKS.md como dívida conhecida.
  */
 
 import { describe, expect, it } from "vitest";
 
 import { classifyAsset } from "../src/domain/assets/classify";
+import { CATEGORIES, PRODUCT_FAMILIES } from "../src/domain/assets/families";
 import { ASSET_PROFILES, profileFor } from "../src/domain/assets/profiles";
 import { ASSET_CLASSES } from "../src/domain/assets/taxonomy";
 import {
@@ -32,7 +33,9 @@ function textFragmentsOf(profile: (typeof ASSET_PROFILES)[number]): [string, str
     [at("whatItIs"), profile.whatItIs],
     [at("issuedBy"), profile.issuedBy],
     [at("liquidity"), profile.liquidity],
+    [at("liquidityTag"), profile.liquidityTag],
     [at("taxation"), profile.taxation],
+    [at("taxTag"), profile.taxTag],
     [at("guarantee.description"), profile.guarantee.description],
     ...profile.characteristics.map(
       (text, i) => [at(`characteristics[${i}]`), text] as [string, string],
@@ -43,11 +46,53 @@ function textFragmentsOf(profile: (typeof ASSET_PROFILES)[number]): [string, str
   ];
 }
 
+/**
+ * A navegação também é conteúdo.
+ *
+ * Categoria e família não são só rótulos de arrumação: elas afirmam coisas sobre
+ * os produtos ("você empresta a um banco", "não há valor de resgate contratado")
+ * e aparecem na tela do mesmo jeito que um verbete. Ficaram de fora da varredura
+ * quando foram criadas — e um texto que orienta escolha caberia perfeitamente
+ * num campo desses.
+ */
+function navigationFragments(): [string, string][] {
+  return [
+    ...CATEGORIES.flatMap((category): [string, string][] => [
+      [`categoria.${category.id}.label`, category.label],
+      [`categoria.${category.id}.summary`, category.summary],
+      [`categoria.${category.id}.trait`, category.trait],
+    ]),
+    ...PRODUCT_FAMILIES.flatMap((family): [string, string][] => [
+      [`familia.${family.id}.label`, family.label],
+      [`familia.${family.id}.whoPays`, family.whoPays],
+      [`familia.${family.id}.blurb`, family.blurb],
+      ...family.chain.map(
+        (node, i) => [`familia.${family.id}.chain[${i}]`, node] as [string, string],
+      ),
+    ]),
+  ];
+}
+
 describe("linguagem do catálogo educativo", () => {
   it("não contém vocabulário de recomendação, juízo de valor ou rentabilidade", () => {
     const violations = ASSET_PROFILES.flatMap((profile) =>
       textFragmentsOf(profile).flatMap(([source, text]) => findViolations(text, source)),
     );
+
+    expect(
+      violations,
+      violations.map((v) => `\n  [${v.source}] ${v.reason}: ${v.excerpt}`).join(""),
+    ).toEqual([]);
+  });
+
+  it("não contém vocabulário de recomendação na navegação por categoria e família", () => {
+    const fragments = navigationFragments();
+
+    // Uma varredura sobre lista vazia passaria calada. A contagem mínima faz o
+    // teste falhar se alguém esvaziar o catálogo de navegação sem perceber.
+    expect(fragments.length).toBeGreaterThan(40);
+
+    const violations = fragments.flatMap(([source, text]) => findViolations(text, source));
 
     expect(
       violations,

@@ -57,8 +57,19 @@ export type AssetProfile = {
   readonly issuedBy: string;
   /** Como funciona o resgate / negociação. Descritivo, sem juízo. */
   readonly liquidity: string;
+  /**
+   * A mesma informação de `liquidity`, em três a cinco palavras, para caber em
+   * tabela e em cartão.
+   *
+   * É resumo, não classificação: diz *quando* o dinheiro fica disponível, nunca
+   * se isso é bom. Não existe "alta" ou "baixa" liquidez aqui — esses adjetivos
+   * valem juízo, e a mesma característica pesa diferente para cada pessoa.
+   */
+  readonly liquidityTag: string;
   /** Regra tributária vigente aplicável ao tipo. */
   readonly taxation: string;
+  /** A regra tributária condensada para tabela. Mesmo cuidado do `liquidityTag`. */
+  readonly taxTag: string;
   readonly guarantee: Guarantee;
   /** Características estruturais do instrumento. Fatos, não avaliações. */
   readonly characteristics: readonly string[];

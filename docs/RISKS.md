@@ -39,14 +39,21 @@ revisão.
 
 ## 3. O guardrail não cobre copy escrita em JSX
 
-**Impacto: médio. Dívida conhecida, e maior agora.**
+**Impacto: médio. Dívida conhecida, hoje menor.**
 
-`tests/compliance.test.ts` varre o catálogo, a política e os racionais do
-classificador. Não varre string escrita direto em componente — e o site novo tem
-bastante texto editorial nas seções.
+`tests/compliance.test.ts` varre o catálogo, a **navegação por categoria e
+família**, a política e os racionais do classificador. Não varre string escrita
+direto em componente — e o site tem texto editorial nas seções da home e nos
+títulos das páginas de categoria.
+
+A navegação entrou na varredura porque não é rótulo de arrumação: `summary`,
+`trait`, `whoPays` e `blurb` afirmam coisas sobre os produtos e aparecem na tela
+como qualquer verbete. Um texto que orientasse escolha caberia perfeitamente num
+campo desses, e passava calado.
 
 **Próximo passo.** Extrair a copy das seções para módulos tipados e incluí-los na
-varredura, ou rodar o detector sobre o HTML gerado no build.
+varredura, ou rodar o detector sobre o HTML gerado no build — o build é estático,
+então o HTML final existe em disco e dá para varrê-lo inteiro.
 
 ---
 
@@ -76,6 +83,42 @@ pontuação, coluna de "veredito" ou destaque visual sugerindo preferência.
 de uma coluna de veredito é o mecanismo, e há nota explícita abaixo dela.
 
 **Ao mexer nessa seção**, releia `docs/COMPLIANCE.md` antes.
+
+---
+
+## 6. Gráfico afirma mais rápido do que texto — e erra mais rápido também
+
+**Impacto: médio. Risco novo, criado junto com os gráficos.**
+
+Um desenho comunica antes de ser lido, e comunica coisas que ninguém escreveu.
+Barras que descem sugerem piora; um diagrama com menos elos parece mais limpo,
+logo melhor. Nenhuma dessas leituras está no texto, e todas chegam ao olho.
+
+**Como está contido.** Cada gráfico mede uma grandeza declarada no próprio
+componente: `PaymentChain` mostra topologia, `CategoryBar` mostra contagem de
+verbetes, `TaxLadder` mostra alíquota vigente de lei. Nenhum ordena por mérito, e
+a legenda diz em palavras o que a forma mostra.
+
+**Ao adicionar um gráfico novo**, a pergunta é a mesma dos campos de
+`AssetProfile`: a grandeza é verificável em fonte oficial, ou depende de juízo?
+Gráfico de rentabilidade, de risco ou de desempenho não entra — e não entraria
+mesmo que alguém quisesse, porque o tipo não guarda esses dados.
+
+---
+
+## 7. O convite ao WhatsApp está em todas as páginas
+
+**Impacto: baixo, com atenção permanente ao texto.**
+
+O botão aparece na barra fixa, no meio da leitura e ao fim de cada página. Isso é
+o desenho do produto: o site informa e a conversa acontece com uma pessoa.
+
+**O que não pode acontecer.** O convite não pode virar chamada de urgência
+("aproveite", "não perca", "fale agora antes que"), porque aí deixa de ser porta
+de contato e vira gatilho comercial sobre decisão de investimento.
+
+**Como está contido.** Todo o texto do convite vive em `WhatsAppCTA`, num arquivo
+só, e a ressalva de que a assessoria acontece fora do site sai sempre junto.
 
 ---
 

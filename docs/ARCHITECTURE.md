@@ -9,7 +9,7 @@ que violar a regra seja difícil, e não apenas proibido?*
 | Camada | Mecanismo | O que impede |
 |---|---|---|
 | Tipos | `AssetProfile` não tem campo de rentabilidade, nota ou opinião | Escrever a frase não compila |
-| Testes | `tests/compliance.test.ts` varre o catálogo | Texto com juízo de valor quebra o CI |
+| Testes | `tests/compliance.test.ts` varre o catálogo e a navegação | Texto com juízo de valor quebra o CI |
 
 Nenhuma das duas depende de alguém lembrar da regra ao escrever.
 
@@ -49,7 +49,8 @@ próprio limite em cor, antes de declará-lo em texto legal.
 
 A home percorre essa escala de cima a baixo e depois **volta à luz** na seção de
 contato — a única que sobe de novo. Não é enfeite: a subida é o argumento de que
-o passo seguinte à informação é uma conversa com uma pessoa.
+o passo seguinte à informação é uma conversa com uma pessoa. `WhatsAppCTA` repete
+esse gradiente ao fim de cada página interna, pelo mesmo motivo.
 
 Duas regras estão codificadas, não confiadas a quem usar:
 
@@ -64,16 +65,58 @@ nome que colida com utilidade nativa do Tailwind. O tom `#060D10` chama-se
 token chamado `base`, a regra de cor passava a sobrescrever a cor de todo texto
 naquele tamanho, e o texto sumia no fundo.
 
-## A organização do conteúdo: quem paga você
+## A organização do conteúdo: dois níveis, e por quê
 
-`src/domain/assets/families.ts` agrupa os 17 produtos por **origem do
-pagamento** — Tesouro, banco, empresa, carteira de recebíveis, fundo, mercado,
-seguradora.
+`src/domain/assets/families.ts` define os dois cortes que a navegação usa.
 
-O critério é conteúdo, não arrumação. Agrupar por rentabilidade ou por risco
-seria julgar; agrupar por quem efetivamente paga é descrever a estrutura, que é
-o que o site faz. E é a pergunta que realmente distingue um produto do outro —
-mais do que a sigla, o prazo ou o nome de quem vendeu.
+**Categoria** é a porta: renda fixa, renda variável, internacional, fundos,
+previdência, estruturados. É o vocabulário que o visitante já traz quando chega,
+e usá-lo respeita o que ele já sabe.
+
+**Família** é a explicação: o agrupamento por **quem paga você** — Tesouro,
+banco, empresa, carteira de recebíveis, fundo, mercado, seguradora. Esse critério
+é conteúdo, não arrumação: agrupar por rentabilidade ou por risco seria julgar,
+enquanto agrupar por quem efetivamente paga descreve a estrutura, que é o que o
+site faz.
+
+A descoberta é o produto. Entrar por "renda fixa" e encontrar ali dentro quatro
+pagadores diferentes — o Tesouro, um banco, uma empresa e uma carteira de
+recebíveis — é o momento em que o site ensina alguma coisa.
+
+`chain`, em cada família, é a cadeia de pagamento e vira diagrama na tela.
+
+## Uma decisão por tela
+
+A primeira versão da home fazia tudo: as famílias, o verbete de cada produto num
+painel de abas e a comparação lado a lado, na mesma rolagem. Ficou completa e
+ilegível — informação demais junta, sem hierarquia, e o visitante precisava
+atravessar o site inteiro para descobrir por onde começar.
+
+A navegação hoje tem três degraus, e cada um cabe numa decisão:
+
+| Rota | A pergunta que responde |
+|---|---|
+| `/` | o que é este site, e por onde eu entro |
+| `/categorias/[id]` | quem paga cada coisa aqui dentro, e quais são os produtos |
+| `/produtos/[classe]` | como funciona este produto, em detalhe |
+| `/comparar` | qual a diferença entre estes dois |
+
+## Gráfico como descrição
+
+O site é sobre estrutura, e estrutura se desenha melhor do que se descreve. Três
+gráficos, em `src/components/charts/`:
+
+- **`PaymentChain`** — o caminho do dinheiro até você, elo por elo. Mais elos não
+  significa pior: é topologia, não nota.
+- **`CategoryBar`** — do que uma categoria é feita, medindo **contagem de
+  verbetes no catálogo**. Não é volume de mercado nem captação; barra maior
+  significa mais material para ler.
+- **`TaxLadder`** — a tabela regressiva do IR. Alíquota vigente publicada pela
+  Receita, com o link para conferir; não sugere prazo nem projeta valor.
+
+Nenhum deles carrega grandeza que dependa de juízo — não há gráfico de
+rentabilidade, de risco nem de desempenho, e não há como haver: o tipo
+`AssetProfile` não guarda esses dados.
 
 ## Atmosfera, e por que é CSS
 
@@ -97,15 +140,18 @@ Duas lições ficaram no código:
 ```
 src/
 ├── app/
-│   ├── page.tsx                # a home: a descida inteira
+│   ├── page.tsx                # a home: apresentação e as categorias
+│   ├── categorias/[id]/        # a categoria: famílias, diagramas e produtos
 │   ├── produtos/[classe]/      # verbete por produto, estático
+│   ├── comparar/               # duas estruturas lado a lado
 │   ├── (legal)/                # termos e privacidade
 │   └── globals.css             # tokens da marca (@theme)
 ├── components/
+│   ├── charts/                 # gráficos de estrutura e o cartão de produto
 │   ├── experience/             # atmosfera: cáusticas, feixes, régua de profundidade
 │   ├── marketing/              # seções da home
 │   ├── brand/                  # a marca: as duas hastes do "A"
-│   └── ui/                     # primitivos (Section, Reveal, StatusPill, Disclaimer)
+│   └── ui/                     # primitivos (Reveal, StatusPill, Disclaimer, WhatsAppCTA)
 ├── domain/                     # núcleo — sem React, sem UI
 │   ├── assets/                 # taxonomia, famílias, verbetes, classificação
 │   ├── cnpj/                   # validação e normalização

@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GuaranteeMark } from "@/components/charts/GuaranteeMark";
+import { PaymentChain } from "@/components/charts/PaymentChain";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { Disclaimer } from "@/components/ui/Disclaimer";
-import { StatusPill } from "@/components/ui/StatusPill";
-import { CATALOGUED_CLASSES, familyOf } from "@/domain/assets/families";
+import { WhatsAppCTA, WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
+import { CATALOGUED_CLASSES, categoryOfClass, familyOf } from "@/domain/assets/families";
 import { CATALOG_REVIEWED_AT, TAX_NOTICE, profileFor } from "@/domain/assets/profiles";
-import { site, whatsappIsConfigured, whatsappUrl } from "@/config/site";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
 /**
@@ -46,13 +47,6 @@ export async function generateMetadata({
   };
 }
 
-const GUARANTEE_LABEL: Record<string, string> = {
-  FGC: "COBERTO PELO FGC",
-  TESOURO_NACIONAL: "TESOURO NACIONAL",
-  GARANTIA_REAL: "GARANTIA DA EMISSÃO",
-  SEM_GARANTIA_ESPECIFICA: "SEM COBERTURA DO FGC",
-};
-
 function Block({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="border-t border-edge-soft pt-6">
@@ -73,6 +67,8 @@ export default async function ProductPage({
 
   const profile = profileFor(assetClass);
   const family = familyOf(assetClass);
+  const category = categoryOfClass(assetClass);
+  const accent = category?.accent ?? "var(--color-light)";
   const siblings = (family?.classes ?? []).filter((c) => c !== assetClass);
 
   return (
@@ -93,14 +89,14 @@ export default async function ProductPage({
 
           <div className="relative mx-auto max-w-4xl">
             <Link
-              href="/#produtos"
+              href={category ? `/categorias/${category.id}` : "/#categorias"}
               className="font-mono text-[11px] uppercase tracking-[0.16em] text-tertiary transition-colors hover:text-light"
             >
-              ← Todos os produtos
+              ← {category ? category.label : "Todas as categorias"}
             </Link>
 
             {family ? (
-              <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em] text-light">
+              <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em]" style={{ color: accent }}>
                 {family.label}
               </p>
             ) : null}
@@ -113,20 +109,16 @@ export default async function ProductPage({
               {profile.summary}
             </p>
 
+            {/* As três respostas de sempre, antes de qualquer parágrafo: quem
+                garante, quando sai o dinheiro, como é o imposto. */}
             <div className="mt-9 flex flex-wrap items-center gap-3">
-              <StatusPill
-                tone={
-                  profile.guarantee.kind === "SEM_GARANTIA_ESPECIFICA"
-                    ? "unavailable"
-                    : "identified"
-                }
-                label={GUARANTEE_LABEL[profile.guarantee.kind] ?? "GARANTIA"}
-              />
-              {family ? (
-                <span className="border border-edge px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-tertiary">
-                  Paga você: {family.whoPays}
-                </span>
-              ) : null}
+              <GuaranteeMark kind={profile.guarantee.kind} />
+              <span className="border border-edge px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-tertiary">
+                Resgate: {profile.liquidityTag}
+              </span>
+              <span className="border border-edge px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-tertiary">
+                Imposto: {profile.taxTag}
+              </span>
             </div>
           </div>
         </header>
@@ -134,6 +126,19 @@ export default async function ProductPage({
         <article className="bg-deep px-6 py-20 sm:px-10">
           <div className="mx-auto max-w-4xl">
             <p className="max-w-[64ch] text-xl leading-[1.8] text-body">{profile.whatItIs}</p>
+
+            {family ? (
+              <figure className="mt-12 border border-edge bg-surface/60 p-7 sm:p-9">
+                <figcaption className="tech mb-6 text-tertiary">
+                  O caminho do dinheiro até você
+                </figcaption>
+                <PaymentChain chain={family.chain} accent={accent} />
+                <p className="mt-6 text-sm leading-relaxed text-muted">
+                  Quem paga: {family.whoPays}. O diagrama descreve a estrutura do
+                  pagamento — quantos elos existem não indica mérito nem risco.
+                </p>
+              </figure>
+            ) : null}
 
             <div className="mt-14 grid gap-8 sm:grid-cols-2">
               <Block label="Quem emite">{profile.issuedBy}</Block>
@@ -156,6 +161,13 @@ export default async function ProductPage({
                   ))}
                 </ul>
               </Block>
+            </div>
+
+            <div className="mt-14">
+              <WhatsAppStrip
+                subject={`o ${profile.fullName}`}
+                label={`Ficou com dúvida sobre ${profile.label}? Fale comigo no WhatsApp.`}
+              />
             </div>
 
             {/* Nível 4: os documentos. */}
@@ -213,40 +225,11 @@ export default async function ProductPage({
 
         {/* O destino, também aqui: quem chegou ao fim de um verbete é quem mais
             provavelmente quer conversar. */}
-        <section className="relative overflow-hidden border-t border-edge-soft px-6 py-20 text-center sm:px-10">
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(to_bottom,#081a21,#0c2530)]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[radial-gradient(60%_70%_at_50%_120%,rgba(227,188,126,.22),transparent_72%)]"
-          />
-          <div className="relative mx-auto max-w-2xl">
-            <h2 className="text-[clamp(1.7rem,4vw,2.6rem)] leading-tight">
-              Ficou com dúvida sobre este produto?
-            </h2>
-            <p className="mx-auto mt-5 max-w-[46ch] text-lg text-aux">
-              Fale com o {site.advisor.name}, assessor de investimentos na{" "}
-              {site.advisor.firm}.
-            </p>
-            <a
-              href={
-                whatsappIsConfigured
-                  ? whatsappUrl(
-                      `Olá, Victor. Vim pelo site da Acássium Invest e queria entender ` +
-                        `melhor sobre ${profile.fullName}.`,
-                    )
-                  : `mailto:${site.contact.email}`
-              }
-              target={whatsappIsConfigured ? "_blank" : undefined}
-              rel={whatsappIsConfigured ? "noopener noreferrer" : undefined}
-              className="mt-9 inline-block bg-light px-8 py-4 text-base font-semibold text-[#060d10] transition-colors duration-300 hover:bg-[#f0d9b4]"
-            >
-              {whatsappIsConfigured ? "Falar no WhatsApp" : site.contact.email}
-            </a>
-          </div>
-        </section>
+        <WhatsAppCTA
+          title="Ficou com dúvida sobre este produto?"
+          subject={`o ${profile.fullName}`}
+        />
+
       </main>
 
       <Footer />

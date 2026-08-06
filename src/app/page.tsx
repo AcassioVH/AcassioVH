@@ -1,23 +1,28 @@
 import { DepthGauge } from "@/components/experience/DepthGauge";
 import { BoundarySection } from "@/components/marketing/BoundarySection";
-import { ComparisonSection } from "@/components/marketing/ComparisonSection";
+import { CategoriesSection } from "@/components/marketing/CategoriesSection";
 import { ContactSection } from "@/components/marketing/ContactSection";
-import { FamiliesSection } from "@/components/marketing/FamiliesSection";
 import { Footer } from "@/components/marketing/Footer";
 import { Hero } from "@/components/marketing/Hero";
+import { IntroSection } from "@/components/marketing/IntroSection";
 import { Nav } from "@/components/marketing/Nav";
-import { ProductShowcase } from "@/components/marketing/ProductShowcase";
 
 /**
- * A página é uma descida.
+ * A home tem uma função só: apresentar o site e entregar o leitor à categoria
+ * certa.
  *
- * Superfície (as siglas como chegam) → coluna d'água (quem paga você) → zona
- * iluminada (o verbete e a comparação) → abismo (o limite do serviço) → e a
- * subida de volta à luz, que é a conversa com uma pessoa.
+ * A versão anterior tentava fazer tudo aqui — as famílias, o verbete de cada
+ * produto num painel de abas e a comparação lado a lado, tudo na mesma rolagem.
+ * Ficou completo e ilegível: informação demais junta, sem hierarquia, e o
+ * visitante precisava atravessar o site inteiro para descobrir por onde começar.
  *
- * A ordem não é estética. Cada seção é um nível a mais de detalhe, e a última
- * antes do contato é justamente aquela em que o site declara o que não faz —
- * porque é isso que explica por que o passo seguinte é humano.
+ * Agora a home é curta e a profundidade mora em outro lugar: cada categoria tem
+ * página própria (`/categorias/[id]`), cada produto tem verbete próprio
+ * (`/produtos/[classe]`), e a comparação virou uma ferramenta com endereço
+ * (`/comparar`). Uma decisão por tela.
+ *
+ * O que sobra aqui: quem somos, por onde entrar, onde a nossa competência
+ * termina, e como falar com uma pessoa.
  */
 export default function HomePage() {
   return (
@@ -26,9 +31,8 @@ export default function HomePage() {
       <DepthGauge />
       <main id="conteudo">
         <Hero />
-        <FamiliesSection />
-        <ProductShowcase />
-        <ComparisonSection />
+        <IntroSection />
+        <CategoriesSection />
         <BoundarySection />
         <ContactSection />
       </main>

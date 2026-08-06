@@ -98,19 +98,19 @@ export function Hero() {
 
         <motion.div {...rise(0.72)} className="mt-12 flex flex-wrap items-center gap-6">
           <a
-            href="#familias"
+            href="#categorias"
             className="group inline-flex items-center gap-3 bg-light px-7 py-4 text-base font-semibold text-[#060d10] transition-colors duration-300 hover:bg-[#f0d9b4]"
           >
-            Começar a descer
+            Ver as categorias
             <span aria-hidden="true" className="transition-transform duration-300 group-hover:translate-y-0.5">
               ↓
             </span>
           </a>
           <a
-            href="#produtos"
+            href="#o-que-e"
             className="border-b border-light/40 pb-1 text-base text-light transition-colors duration-300 hover:border-light"
           >
-            Ir direto a um produto
+            Como este site funciona
           </a>
         </motion.div>
       </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { Wordmark } from "@/components/brand/Wordmark";
 import { Disclaimer } from "@/components/ui/Disclaimer";
+import { WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
 import { site } from "@/config/site";
 
 /**
@@ -19,6 +20,12 @@ export default function LegalLayout({ children }: { children: React.ReactNode })
         </Link>
 
         <article className="mt-12">{children}</article>
+
+        {/* Também aqui. Documento legal é onde a dúvida costuma aparecer, e
+            deixar o leitor sem saída seria o pior lugar para fazer isso. */}
+        <div className="mt-16">
+          <WhatsAppStrip label="Alguma dúvida sobre este documento ou sobre investimentos? Fale comigo no WhatsApp." />
+        </div>
 
         <footer className="mt-16 border-t border-edge-soft pt-8">
           <p className="font-mono text-[11px] text-muted">

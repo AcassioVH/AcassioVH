@@ -4,12 +4,27 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Wordmark } from "@/components/brand/Wordmark";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppCTA";
+import { site, whatsappIsConfigured, whatsappUrl } from "@/config/site";
 
+/**
+ * A barra fixa.
+ *
+ * Os links são as três categorias que a maioria das pessoas procura por nome —
+ * as outras três ficam a um clique em "Todas". Não é hierarquia de mérito: é
+ * frequência de busca.
+ *
+ * O botão do WhatsApp abre a conversa direto, de qualquer página. Ele apontava
+ * para a âncora `#contato` da home, o que fazia com que, lendo o verbete de um
+ * produto, o botão de falar levasse a rolar outra página em vez de abrir a
+ * conversa.
+ */
 const LINKS = [
-  { href: "/#familias", label: "Quem paga você" },
-  { href: "/#produtos", label: "Produtos" },
-  { href: "/#comparar", label: "Comparar" },
-  { href: "/#limite", label: "Nosso limite" },
+  { href: "/categorias/renda-fixa", label: "Renda fixa" },
+  { href: "/categorias/renda-variavel", label: "Renda variável" },
+  { href: "/categorias/internacional", label: "Internacional" },
+  { href: "/#categorias", label: "Todas" },
+  { href: "/comparar", label: "Comparar" },
 ] as const;
 
 export function Nav() {
@@ -37,7 +52,7 @@ export function Nav() {
         </Link>
 
         <div className="flex items-center gap-6">
-          <ul className="hidden items-center gap-7 md:flex">
+          <ul className="hidden items-center gap-6 lg:flex">
             {LINKS.map((link) => (
               <li key={link.href}>
                 <Link
@@ -50,12 +65,23 @@ export function Nav() {
             ))}
           </ul>
 
-          <Link
-            href="/#contato"
-            className="bg-light px-4 py-2.5 text-sm font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
+          <a
+            href={
+              whatsappIsConfigured
+                ? whatsappUrl(
+                    "Olá, Victor. Vim pelo site da Acássium Invest e gostaria de conversar " +
+                      "sobre investimentos.",
+                  )
+                : `mailto:${site.contact.email}`
+            }
+            target={whatsappIsConfigured ? "_blank" : undefined}
+            rel={whatsappIsConfigured ? "noopener noreferrer" : undefined}
+            className="inline-flex items-center gap-2.5 bg-light px-4 py-2.5 text-sm font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
           >
-            Falar no WhatsApp
-          </Link>
+            <WhatsAppIcon className="size-4" />
+            <span className="hidden sm:inline">Falar no WhatsApp</span>
+            <span className="sm:hidden">WhatsApp</span>
+          </a>
         </div>
       </nav>
     </header>

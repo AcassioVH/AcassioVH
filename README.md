@@ -24,13 +24,23 @@ npm run build    # build estático de produção
 
 ## O que o site tem
 
-- **Descida por profundidade** — a página desce da sigla até o limite do serviço,
-  e a escala de cor carrega esse significado
+A navegação tem três degraus, do vocabulário que a pessoa já tem até o documento
+da emissão:
+
+1. **Home** — o que o site é, e as seis categorias como porta de entrada
+2. **Categoria** (`/categorias/renda-fixa`) — quais famílias de pagamento existem
+   ali dentro, cada uma com o diagrama do caminho do dinheiro, e os produtos em
+   cartões que respondem sempre às mesmas quatro perguntas
+3. **Produto** (`/produtos/CDB`) — o verbete completo, com as fontes oficiais
+
+Além disso:
+
 - **17 produtos** organizados por *quem paga você*: Tesouro, banco, empresa,
   carteira de recebíveis, fundo, mercado, seguradora
-- **Verbete por produto**, com página própria e endereçável
-- **Comparação de estruturas** lado a lado, sem ordenar nem pontuar
-- **Contato por WhatsApp** como destino da página
+- **Comparação de estruturas** lado a lado (`/comparar`), sem ordenar nem pontuar
+- **Gráficos de estrutura** — cadeia de pagamento, composição da categoria e a
+  tabela regressiva do IR
+- **WhatsApp em todas as páginas**, porque a conversa é o destino do site
 
 Tudo estático: sem banco, sem login, sem coleta de dados.
 
