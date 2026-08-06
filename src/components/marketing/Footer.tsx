@@ -4,11 +4,11 @@ import { Wordmark } from "@/components/brand/Wordmark";
 import { site } from "@/config/site";
 
 const LINKS = [
-  { href: "#traducao", label: "Como funciona" },
-  { href: "#ativos", label: "Acervo de ativos" },
-  { href: "#seguranca", label: "Estrutura" },
-  { href: "#limite", label: "Limites do serviço" },
-  { href: "#contato", label: "Contato" },
+  { href: "/#familias", label: "Quem paga você" },
+  { href: "/#produtos", label: "Produtos" },
+  { href: "/#comparar", label: "Comparar estruturas" },
+  { href: "/#limite", label: "Nosso limite" },
+  { href: "/#contato", label: "Contato" },
 ] as const;
 
 export function Footer() {
@@ -25,9 +25,9 @@ export function Footer() {
             <ul className="flex flex-wrap gap-x-8 gap-y-3 text-base text-tertiary">
               {LINKS.map((link) => (
                 <li key={link.href}>
-                  <a href={link.href} className="transition-colors duration-200 hover:text-light">
+                  <Link href={link.href} className="transition-colors duration-200 hover:text-light">
                     {link.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
               <li>

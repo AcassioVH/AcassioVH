@@ -168,4 +168,28 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
+
+  /*
+   * Deriva das cáusticas.
+   *
+   * Só `transform` é animado — o compositor resolve na GPU sem recalcular
+   * layout nem repintar. Os dois períodos são primos entre si de propósito:
+   * as camadas nunca voltam a coincidir, então o olho não acha o laço.
+   */
+  .animate-drift-slow {
+    animation: drift-x 41s linear infinite;
+  }
+
+  .animate-drift-fast {
+    animation: drift-x 23s linear infinite reverse;
+  }
+}
+
+@keyframes drift-x {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-38%, 0, 0);
+  }
 }

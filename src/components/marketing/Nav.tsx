@@ -6,9 +6,10 @@ import { useEffect, useState } from "react";
 import { Wordmark } from "@/components/brand/Wordmark";
 
 const LINKS = [
-  { href: "#traducao", label: "Como funciona" },
-  { href: "#ativos", label: "Acervo de ativos" },
-  { href: "#limite", label: "Limites do serviço" },
+  { href: "/#familias", label: "Quem paga você" },
+  { href: "/#produtos", label: "Produtos" },
+  { href: "/#comparar", label: "Comparar" },
+  { href: "/#limite", label: "Nosso limite" },
 ] as const;
 
 export function Nav() {
@@ -39,21 +40,21 @@ export function Nav() {
           <ul className="hidden items-center gap-7 md:flex">
             {LINKS.map((link) => (
               <li key={link.href}>
-                <a
+                <Link
                   href={link.href}
                   className="text-sm text-tertiary transition-colors duration-200 hover:text-title"
                 >
                   {link.label}
-                </a>
+                </Link>
               </li>
             ))}
           </ul>
 
           <Link
-            href="/entrar"
+            href="/#contato"
             className="bg-light px-4 py-2.5 text-sm font-semibold text-[#060D10] transition-colors duration-200 hover:bg-[#F0D9B4]"
           >
-            Entrar
+            Falar no WhatsApp
           </Link>
         </div>
       </nav>

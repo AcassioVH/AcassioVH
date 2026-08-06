@@ -2,18 +2,11 @@
   "name": "acassium-invest",
   "version": "0.1.0",
   "private": true,
-  "description": "Plataforma de leitura descritiva de carteira de investimentos.",
+  "description": "Site educativo sobre produtos de investimento.",
   "scripts": {
     "build": "next build",
-    "db:deploy": "prisma migrate deploy",
-    "db:migrate": "prisma migrate dev",
-    "db:seed": "tsx --env-file=.env.local prisma/seed.ts",
-    "db:studio": "prisma studio",
-    "demo": "node demo/build.mjs",
     "dev": "next dev",
     "lint": "eslint .",
-    "postinstall": "prisma generate",
-    "preparar": "node scripts/preparar.mjs",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -21,31 +14,20 @@
     "verify": "npm run typecheck && npm run lint && npm run test"
   },
   "dependencies": {
-    "@node-rs/argon2": "^2.0.2",
-    "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.9.1",
-    "dotenv": "^17.4.2",
-    "jose": "^6.2.8",
     "motion": "^12.43.0",
     "next": "^16.3.0",
-    "pg": "^8.22.0",
-    "prisma": "^7.9.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0",
-    "zod": "^4.4.3"
+    "react-dom": "^19.2.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22.10.0",
-    "@types/pg": "^8.20.4",
     "@types/react": "^19.2.0",
     "@types/react-dom": "^19.2.0",
-    "esbuild": "^0.28.1",
     "eslint": "^9.18.0",
     "eslint-config-next": "^16.3.0",
     "tailwindcss": "^4.3.3",
-    "tsx": "^4.23.9",
     "typescript": "^5.7.0",
     "vitest": "^3.0.0"
   }

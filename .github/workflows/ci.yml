@@ -12,14 +12,6 @@ jobs:
   verificar:
     runs-on: ubuntu-latest
 
-    env:
-      # Valores fictícios: nada aqui conecta ao banco nem assina sessão real.
-      # Existem porque a aplicação recusa subir sem eles, de propósito — e o
-      # build avalia os módulos que fazem essa checagem.
-      DATABASE_URL: "postgresql://ci:ci@localhost:5432/ci"
-      AUTH_SECRET: "ci-secret-apenas-para-build-com-32-caracteres"
-      FIELD_ENCRYPTION_KEY: "Y2ktZmllbGQta2V5LWFwZW5hcy1wYXJhLWJ1aWxkLTMy"
-
     steps:
       - uses: actions/checkout@v4
 
