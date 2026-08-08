@@ -14,7 +14,8 @@
  * botão precisa funcionar num deploy limpo. A variável de ambiente continua
  * tendo precedência, para trocar o número sem publicar código novo.
  */
-const WHATSAPP_DEFAULT = "5582981290546";
+// (82) 98895-0850, em formato internacional: 55 + DDD + número.
+const WHATSAPP_DEFAULT = "5582988950850";
 
 export const site = {
   name: "Acássium Invest",
