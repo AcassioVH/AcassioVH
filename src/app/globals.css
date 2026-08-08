@@ -211,6 +211,17 @@
   .animate-swell {
     animation: swell 26s ease-in-out infinite alternate;
   }
+
+  /*
+   * A seta que convida a descer.
+   *
+   * Movimento curto e lento: uma seta que salta depressa vira aviso de erro. O
+   * deslocamento é de 5px porque o que precisa ser percebido é a direção, não a
+   * seta — ela acompanha um texto que já diz para onde ir.
+   */
+  .animate-descend {
+    animation: descend-y 2.6s ease-in-out infinite;
+  }
 }
 
 @keyframes drift-x {
@@ -251,6 +262,18 @@
   }
 }
 
+@keyframes descend-y {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(0, 5px, 0);
+    opacity: 1;
+  }
+}
+
 /*
  * Quem pediu menos movimento recebe a composição parada.
  *
@@ -263,7 +286,8 @@
   .animate-drift-fast,
   .animate-rise,
   .animate-sway,
-  .animate-swell {
+  .animate-swell,
+  .animate-descend {
     animation: none;
   }
 }
