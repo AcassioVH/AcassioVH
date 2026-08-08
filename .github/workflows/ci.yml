@@ -34,3 +34,8 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # A varredura só existe depois do build: ela lê o HTML publicado, que é a
+      # única superfície onde nenhuma palavra escapa.
+      - name: Conformidade do HTML publicado
+        run: npm run varrer:html

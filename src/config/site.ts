@@ -18,10 +18,19 @@ const WHATSAPP_DEFAULT = "5582981290546";
 
 export const site = {
   name: "Acássium Invest",
-  tagline: "A sua carteira, explicada.",
+  tagline: "Os produtos de investimento, explicados.",
+  /**
+   * O que aparece no resultado de busca e no cartão do WhatsApp.
+   *
+   * Ficou desatualizada por uma versão inteira: descrevia a plataforma que
+   * recebia a carteira do usuário, produto que deixou de existir. Descrição
+   * errada é pior do que descrição ausente — promete na busca um serviço que a
+   * pessoa não encontra ao chegar.
+   */
   description:
-    "Organizamos e explicamos a composição da carteira que você já tem: classe, " +
-    "emissor, liquidez, tributação e garantia. Conteúdo informativo, sem recomendação.",
+    "Dicionário dos produtos de investimento do mercado brasileiro: o que cada um é, " +
+    "quem paga o investidor, como funciona o resgate, qual a tributação e qual a " +
+    "garantia. Conteúdo informativo, sem recomendação.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://acassium.com.br",
 
   advisor: {

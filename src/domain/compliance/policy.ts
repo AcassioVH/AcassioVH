@@ -12,17 +12,25 @@
 export const DISCLAIMER_SHORT =
   "Conteúdo meramente informativo. Não constitui recomendação de investimento.";
 
-/** Aviso legal completo, para rodapé de página e telas de carteira. */
+/**
+ * Aviso legal completo, para rodapé de página e documentos legais.
+ *
+ * Ficou desatualizado por uma versão inteira: descrevia a organização da
+ * carteira informada pelo usuário, que era o produto anterior. O site não
+ * recebe carteira nenhuma desde a reconstrução — descrever um tratamento de
+ * dados que não acontece é defeito de conformidade, não só de texto.
+ */
 export const DISCLAIMER_FULL =
-  "A Acássium Invest organiza e descreve a composição da carteira informada pelo " +
-  "próprio usuário. Não recomendamos, avaliamos ou sugerimos a compra, venda ou " +
-  "realocação de qualquer ativo, e não afirmamos rentabilidade — para conferir " +
-  "valores atualizados, consulte sempre as fontes oficiais indicadas em cada ficha. " +
-  "Conteúdo meramente informativo, não constitui recomendação de investimento.";
+  "A Acássium Invest publica conteúdo educativo sobre tipos de produto de " +
+  "investimento do mercado brasileiro. Não recomendamos, avaliamos ou sugerimos a " +
+  "compra, venda ou realocação de qualquer ativo, e não afirmamos rentabilidade — " +
+  "para conferir valores e regras vigentes, consulte sempre as fontes oficiais " +
+  "indicadas em cada verbete. Conteúdo meramente informativo, não constitui " +
+  "recomendação de investimento.";
 
 /** Explicação do limite, usada na landing e na seção institucional. */
 export const SCOPE_STATEMENT =
-  "Descrevemos o que você já tem. Não dizemos o que fazer com isso.";
+  "Descrevemos como cada produto funciona. Não dizemos o que fazer com isso.";
 
 /**
  * Vocabulário incompatível com um relatório descritivo.

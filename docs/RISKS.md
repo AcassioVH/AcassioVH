@@ -31,29 +31,33 @@ incorreto sobre matéria regulada — e agora o conteúdo é o produto inteiro.
 **Como está tratado.** Todo verbete tem `officialSources`, `TAX_NOTICE` avisa
 que regras mudam, e `CATALOG_REVIEWED_AT` aparece na tela em cada página.
 
-**Próximo passo.** Processo de revisão com data marcada, não "quando alguém
-lembrar". Vale um teste que falhe quando o catálogo passar de N meses sem
-revisão.
+**O mecanismo, desde então.** `tests/catalogo.test.ts` falha quando a data de
+revisão passa de seis meses. Era transparência sem processo — a data envelhecia
+na tela e nada acontecia. Agora o CI fica vermelho em data conhecida, e a
+correção não é empurrar a data: é reler o catálogo.
+
+**Atenção com o catálogo maior.** São 36 verbetes, e as regras de tributação de
+aplicação no exterior mudaram recentemente. O risco cresceu junto com o conteúdo.
 
 ---
 
 ## 3. O guardrail não cobre copy escrita em JSX
 
-**Impacto: médio. Dívida conhecida, hoje menor.**
+**Impacto: baixo. Dívida fechada.**
 
-`tests/compliance.test.ts` varre o catálogo, a **navegação por categoria e
-família**, a política e os racionais do classificador. Não varre string escrita
-direto em componente — e o site tem texto editorial nas seções da home e nos
-títulos das páginas de categoria.
+`tests/compliance.test.ts` varre o catálogo, a navegação e a política — dados
+tipados. O que ele nunca alcançou foi a copy escrita direto em componente.
 
-A navegação entrou na varredura porque não é rótulo de arrumação: `summary`,
-`trait`, `whoPays` e `blurb` afirmam coisas sobre os produtos e aparecem na tela
-como qualquer verbete. Um texto que orientasse escolha caberia perfeitamente num
-campo desses, e passava calado.
+**Fechado pela saída, e não pela entrada.** `scripts/varrer-html.mjs` varre o
+HTML publicado depois do build. Toda palavra que chega ao leitor está ali, tenha
+vindo do catálogo, de um componente ou de uma página escrita ontem — inclusive
+de páginas que ainda não existem. Roda no `verify` e no CI.
 
-**Próximo passo.** Extrair a copy das seções para módulos tipados e incluí-los na
-varredura, ou rodar o detector sobre o HTML gerado no build — o build é estático,
-então o HTML final existe em disco e dá para varrê-lo inteiro.
+**A duplicação é consciente e vigiada.** O script repete os padrões em
+JavaScript puro, porque roda fora do TypeScript. `tests/conformidade-html.test.ts`
+compara as duas listas e falha quando uma anda sem a outra — e checa também que
+cada frase da lista de exceções existe em texto oficial do site, para ninguém
+silenciar uma violação real acrescentando-a às exceções.
 
 ---
 

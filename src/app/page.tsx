@@ -6,6 +6,8 @@ import { Footer } from "@/components/marketing/Footer";
 import { Hero } from "@/components/marketing/Hero";
 import { IntroSection } from "@/components/marketing/IntroSection";
 import { Nav } from "@/components/marketing/Nav";
+import { GlossarioJsonLd } from "@/components/seo/StructuredData";
+import { CATALOGUED_CLASSES } from "@/domain/assets/families";
 
 /**
  * A home tem uma função só: apresentar o site e entregar o leitor à categoria
@@ -37,6 +39,7 @@ export default function HomePage() {
         <ContactSection />
       </main>
       <Footer />
+      <GlossarioJsonLd termos={CATALOGUED_CLASSES.length} />
     </>
   );
 }

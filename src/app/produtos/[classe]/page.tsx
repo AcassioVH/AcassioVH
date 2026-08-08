@@ -8,7 +8,9 @@ import { PaymentChain } from "@/components/charts/PaymentChain";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { Disclaimer } from "@/components/ui/Disclaimer";
+import { TrilhaJsonLd, VerbeteJsonLd } from "@/components/seo/StructuredData";
 import { WhatsAppCTA, WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
+import { site } from "@/config/site";
 import { CATALOGUED_CLASSES, categoryOfClass, familyOf } from "@/domain/assets/families";
 import { CATALOG_REVIEWED_AT, TAX_NOTICE, profileFor } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
@@ -236,6 +238,22 @@ export default async function ProductPage({
       </main>
 
       <Footer />
+
+      <VerbeteJsonLd
+        termo={profile.label}
+        nomeCompleto={profile.fullName}
+        definicao={profile.summary}
+        url={`${site.url}/produtos/${assetClass}`}
+      />
+      <TrilhaJsonLd
+        itens={[
+          { nome: site.name, url: site.url },
+          ...(category
+            ? [{ nome: category.label, url: `${site.url}/categorias/${category.id}` }]
+            : []),
+          { nome: profile.fullName, url: `${site.url}/produtos/${assetClass}` },
+        ]}
+      />
     </>
   );
 }

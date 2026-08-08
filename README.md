@@ -18,9 +18,12 @@ npm run dev      # http://localhost:3000
 ```
 
 ```bash
-npm run verify   # typecheck + lint + testes
+npm run verify   # typecheck + lint + testes + build + varredura do HTML
 npm run build    # build estático de produção
 ```
+
+A varredura de conformidade roda sobre o HTML publicado, e não sobre o código:
+é a única superfície em que nenhuma palavra escapa.
 
 ## O que o site tem
 
@@ -42,6 +45,9 @@ Além disso:
 - **Gráficos de estrutura** — cadeia de pagamento, composição da categoria e a
   tabela regressiva do IR
 - **WhatsApp em todas as páginas**, porque a conversa é o destino do site
+- **Sitemap, robots e dados estruturados** — o site existe para ser encontrado
+- **Cartão de compartilhamento por página**, gerado no build: o link de um
+  verbete mandado no WhatsApp chega com título, resumo e quem paga o investidor
 
 Tudo estático: sem banco, sem login, sem coleta de dados.
 

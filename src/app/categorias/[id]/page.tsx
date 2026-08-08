@@ -11,7 +11,9 @@ import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { Disclaimer } from "@/components/ui/Disclaimer";
 import { Reveal } from "@/components/ui/Reveal";
+import { TrilhaJsonLd } from "@/components/seo/StructuredData";
 import { WhatsAppCTA, WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
+import { site } from "@/config/site";
 import { CATEGORIES, categoryById, familiesOf } from "@/domain/assets/families";
 import { CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
 
@@ -247,6 +249,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
       </main>
 
       <Footer />
+
+      <TrilhaJsonLd
+        itens={[
+          { nome: site.name, url: site.url },
+          { nome: category.label, url: `${site.url}/categorias/${category.id}` },
+        ]}
+      />
     </>
   );
 }
