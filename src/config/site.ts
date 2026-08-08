@@ -30,7 +30,7 @@ export const site = {
    */
   description:
     "Dicionário dos produtos de investimento do mercado brasileiro: o que cada um é, " +
-    "quem paga o investidor, como funciona o resgate, qual a tributação e qual a " +
+    "para onde vai o seu dinheiro, como funciona o resgate, qual a tributação e qual a " +
     "garantia. Conteúdo informativo, sem recomendação.",
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://acassium.com.br",
 

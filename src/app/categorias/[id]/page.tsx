@@ -28,8 +28,8 @@ import { CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
  * A página tem uma ordem deliberada, do geral ao específico:
  *
  *   1. o que a categoria é, em uma frase;
- *   2. quais famílias de pagamento existem dentro — cada uma com o diagrama do
- *      caminho do dinheiro, que é a parte que ensina;
+ *   2. para onde o dinheiro vai em cada família — com o diagrama do caminho,
+ *      que é a parte que ensina;
  *   3. os produtos, um cartão cada, com as mesmas quatro perguntas em todos.
  *
  * Estática: `generateStaticParams` publica uma página por categoria, e nada aqui
@@ -116,7 +116,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
           </div>
         </header>
 
-        {/* Nível 1 da página: quem paga, com o caminho desenhado. */}
+        {/* Nível 1 da página: para onde o dinheiro vai, com o caminho desenhado. */}
         <section
           data-depth="2"
           aria-labelledby="familias-title"
@@ -124,16 +124,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
         >
           <div className="mx-auto max-w-5xl">
             <Reveal>
-              <p className="tech text-amber">Passo 1 · quem paga você</p>
+              <p className="tech text-amber">Passo 1 · para onde vai o seu dinheiro</p>
               <h2 id="familias-title" className="mt-5 text-[clamp(1.7rem,4vw,2.6rem)] leading-tight">
                 {families.length === 1
-                  ? "Uma origem de pagamento."
-                  : `${families.length} origens de pagamento diferentes.`}
+                  ? "Um destino."
+                  : `${families.length} destinos diferentes.`}
               </h2>
               <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-aux">
                 É o que separa um produto do outro dentro da mesma categoria — mais do que a
-                sigla, o prazo ou o nome de quem vendeu. Cada diagrama mostra por quantas
-                mãos o dinheiro passa até chegar em você.
+                sigla, o prazo ou o nome de quem vendeu. Cada diagrama começa em você e
+                mostra por quantas mãos o dinheiro passa até chegar ao destino.
               </p>
             </Reveal>
 
@@ -147,7 +147,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
                         className="font-mono text-[11px] uppercase tracking-[0.14em]"
                         style={{ color: category.accent }}
                       >
-                        {family.whoPays}
+                        {family.destino}
                       </p>
                     </div>
 

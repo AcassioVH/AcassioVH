@@ -64,7 +64,7 @@ function navigationFragments(): [string, string][] {
     ]),
     ...PRODUCT_FAMILIES.flatMap((family): [string, string][] => [
       [`familia.${family.id}.label`, family.label],
-      [`familia.${family.id}.whoPays`, family.whoPays],
+      [`familia.${family.id}.destino`, family.destino],
       [`familia.${family.id}.blurb`, family.blurb],
       ...family.chain.map(
         (node, i) => [`familia.${family.id}.chain[${i}]`, node] as [string, string],

@@ -10,7 +10,7 @@ import { CATEGORIES } from "@/domain/assets/families";
 export const metadata: Metadata = {
   title: "Comparar produtos",
   description:
-    "Dois tipos de produto lado a lado: quem paga você, quem emite, qual a garantia, " +
+    "Dois tipos de produto lado a lado: para onde vai o dinheiro, quem emite, qual a garantia, " +
     "como funciona o resgate e qual a regra tributária.",
 };
 

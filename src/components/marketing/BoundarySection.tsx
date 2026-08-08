@@ -13,7 +13,7 @@ import { Reveal } from "@/components/ui/Reveal";
  */
 const FINDS = [
   "O que o produto é, em português",
-  "Quem paga você, e com que dinheiro",
+  "Para onde vai o seu dinheiro, e quem o devolve",
   "Como funciona o resgate",
   "Qual a regra tributária vigente",
   "Qual a estrutura de garantia",

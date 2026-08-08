@@ -23,8 +23,8 @@ export default async function Image({ params }: { params: Promise<{ classe: stri
   const family = familyOf(assetClass);
 
   return cartao({
-    // Quem paga é a informação que distingue o produto — é ela que merece o olho.
-    eyebrow: family ? `Paga você: ${family.whoPays}` : "Produto de investimento",
+    // Para onde o dinheiro vai é o que distingue o produto — merece o olho.
+    eyebrow: family ? `Destino: ${family.destino}` : "Produto de investimento",
     titulo: profile.fullName,
     descricao: profile.summary,
     accent: categoryOfClass(assetClass)?.accent ?? "#e3bc7e",

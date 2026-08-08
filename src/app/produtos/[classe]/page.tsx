@@ -140,12 +140,12 @@ export default async function ProductPage({
             {family ? (
               <figure className="mt-12 border border-edge bg-surface/60 p-7 sm:p-9">
                 <figcaption className="tech mb-6 text-tertiary">
-                  O caminho do dinheiro até você
+                  O caminho do seu dinheiro
                 </figcaption>
                 <PaymentChain chain={family.chain} accent={accent} />
                 <p className="mt-6 text-sm leading-relaxed text-muted">
-                  Quem paga: {family.whoPays}. O diagrama descreve a estrutura do
-                  pagamento — quantos elos existem não indica mérito nem risco.
+                  Destino: {family.destino}. O diagrama começa em você e descreve a
+                  estrutura — quantos elos existem não indica mérito nem risco.
                 </p>
               </figure>
             ) : null}

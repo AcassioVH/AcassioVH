@@ -63,7 +63,7 @@ export default function TermsPage() {
         />
         <p>
           A comparação de estruturas oferecida no site coloca características verificáveis
-          lado a lado — quem paga, garantia, liquidez, tributação. Ela não indica qual
+          lado a lado — destino do dinheiro, garantia, liquidez, tributação. Ela não indica qual
           opção é preferível, e essa leitura depende do seu contexto.
         </p>
         <p>

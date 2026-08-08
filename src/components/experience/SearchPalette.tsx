@@ -176,7 +176,7 @@ export function SearchPalette() {
                     setTermo(e.target.value);
                     setAtivo(0);
                   }}
-                  placeholder="CDB, agro, quem paga, internacional…"
+                  placeholder="CDB, agro, dólar, internacional…"
                   aria-label="Buscar produto ou categoria"
                   autoComplete="off"
                   spellCheck={false}
@@ -253,7 +253,7 @@ export function SearchPalette() {
                     </p>
                     <p className="mt-2 text-sm text-muted">
                       São {SEARCH_INDEX.length - CATEGORIES.length} produtos — tente a sigla, ou
-                      quem paga.
+                      para onde o dinheiro vai.
                     </p>
                   </li>
                 ) : null}

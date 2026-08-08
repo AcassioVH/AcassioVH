@@ -1,22 +1,28 @@
 "use client";
 
 /**
- * O caminho do dinheiro, desenhado — e percorrido.
+ * O caminho do seu dinheiro, desenhado — e percorrido.
  *
- * Cada família de produto tem uma cadeia de pagamento: de onde sai o dinheiro,
- * por quantas mãos passa, e em qual delas você está. Ver "Devedores dos
- * recebíveis → Securitizadora → Você" ao lado de "Tesouro Nacional → Você"
- * ensina, num olhar, a diferença que três parágrafos não fixam.
+ * Cada família de produto tem um caminho: de você até onde o dinheiro para, e
+ * por quantas mãos ele passa no meio. Ver "Você → Securitizadora → Devedores dos
+ * recebíveis" ao lado de "Você → Tesouro Nacional" ensina, num olhar, a
+ * diferença que três parágrafos não fixam.
+ *
+ * **A direção era a inversa.** O diagrama começava no pagador final e terminava
+ * em "Você", o que é verdade sobre o pagamento e é a ordem errada para quem lê:
+ * quem chega numa página de investimento pensa primeiro no dinheiro que sai da
+ * mão dele. Começando por "Você", o leitor se encontra no primeiro elo — que é
+ * onde ele de fato está quando decide.
  *
  * **Por que o diagrama se move.** A versão parada mostrava a topologia e não a
  * direção: um leitor podia ler os elos da direita para a esquerda sem perceber.
  * Quando um pulso de luz atravessa a cadeia na ordem certa, o sentido do
- * pagamento deixa de depender da seta e passa a ser visto. O movimento aqui não
+ * caminho deixa de depender da seta e passa a ser visto. O movimento aqui não
  * é enfeite — é a informação que faltava.
  *
  * **É estrutura, nunca mérito.** Mais elos não significa pior, e o pulso não
- * corre mais rápido em cadeia nenhuma. Só o último nó, que é você, tem contorno:
- * é orientação, não avaliação.
+ * corre mais rápido em cadeia nenhuma. Só o primeiro nó, que é você, tem
+ * contorno: é orientação, não avaliação.
  *
  * Dispara uma vez ao entrar na tela e não repete: animação em laço no meio de um
  * texto de leitura vira ruído periférico. Sob `prefers-reduced-motion` o
@@ -44,13 +50,16 @@ export function PaymentChain({
   return (
     <motion.ol
       className={`flex flex-col gap-0 sm:flex-row sm:flex-wrap sm:items-stretch ${className}`}
-      aria-label="Caminho do pagamento"
+      aria-label="Caminho do seu dinheiro"
       initial="oculto"
       whileInView="visivel"
       viewport={{ once: true, amount: 0.6 }}
     >
       {chain.map((node, index) => {
-        const isYou = index === chain.length - 1;
+        // "Você" é o primeiro elo desde que a cadeia passou a mostrar o caminho
+        // do dinheiro saindo, e não o pagamento voltando.
+        const isYou = index === 0;
+        const isUltimo = index === chain.length - 1;
         const atraso = index * porElo;
 
         return (
@@ -68,7 +77,7 @@ export function PaymentChain({
               }}
               transition={{ duration: 0.5, delay: parado ? 0 : atraso }}
             >
-              {/* O dinheiro chegando neste elo: um clarão que passa e some. */}
+              {/* O dinheiro passando por este elo: um clarão que atravessa e some. */}
               {parado ? null : (
                 <motion.span
                   aria-hidden="true"
@@ -86,7 +95,7 @@ export function PaymentChain({
               <span className="relative">{node}</span>
             </motion.div>
 
-            {!isYou ? (
+            {!isUltimo ? (
               <motion.span
                 aria-hidden="true"
                 className="flex items-center justify-center py-2 font-mono text-sm sm:px-3 sm:py-0"

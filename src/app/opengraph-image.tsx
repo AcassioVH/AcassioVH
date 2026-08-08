@@ -10,6 +10,6 @@ export default async function Image() {
   return cartao({
     eyebrow: "Conteúdo educativo",
     titulo: "Visto de cima, tudo parece igual.",
-    descricao: `${CATALOGUED_CLASSES.length} produtos de investimento explicados pela estrutura: o que são, quem paga você e sob quais regras.`,
+    descricao: `${CATALOGUED_CLASSES.length} produtos de investimento explicados pela estrutura: o que são, para onde vai o seu dinheiro e sob quais regras.`,
   });
 }

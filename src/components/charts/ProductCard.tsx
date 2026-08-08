@@ -3,7 +3,7 @@
  *
  * A versão anterior desta página empilhava parágrafos: o leitor precisava
  * atravessar o texto inteiro para descobrir se aquele produto tem cobertura do
- * FGC. Aqui as quatro perguntas que sempre se repetem — quem paga, qual a
+ * FGC. Aqui as quatro perguntas que sempre se repetem — para onde vai, qual a
  * garantia, quando sai o dinheiro, como é o imposto — ficam sempre no mesmo
  * lugar, na mesma ordem, em todos os produtos. O que muda é a resposta.
  *
@@ -55,7 +55,7 @@ export function ProductCard({
       <p className="mt-5 text-base leading-relaxed text-body">{profile.summary}</p>
 
       <dl className="mt-6">
-        <Row label="Quem paga">{family?.whoPays ?? "—"}</Row>
+        <Row label="Destino">{family?.destino ?? "—"}</Row>
         <Row label="Resgate">{profile.liquidityTag}</Row>
         <Row label="Imposto">{profile.taxTag}</Row>
       </dl>

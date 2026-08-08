@@ -38,7 +38,7 @@ A paleta é uma escala de profundidade, e ela carrega significado:
 | Nível | Cor | O que vive ali |
 |---|---|---|
 | 1 · Superfície | `#12333B` | o nome do produto |
-| 2 · Coluna d'água | `#0C2530` | quem paga você |
+| 2 · Coluna d'água | `#0C2530` | para onde vai o seu dinheiro |
 | 3 · Zona iluminada | `#0B1D24` | a estrutura e a comparação |
 | 4 · Fundo | `#081A21` | os documentos da emissão |
 | 5 · Abismo | `#040809` | **fora do nosso escopo** |
@@ -92,22 +92,28 @@ igual para quem investe. `tests/domain.test.ts` fixa essa escolha.
 não é a forma de negociação, é o resultado depender de um ativo fora do país e da
 variação do câmbio.
 
-**Família** é a explicação: o agrupamento por **quem paga você** — Tesouro,
-banco, empresa, carteira de recebíveis, fundo, mercado, seguradora. Esse critério
-é conteúdo, não arrumação: agrupar por rentabilidade ou por risco seria julgar,
-enquanto agrupar por quem efetivamente paga descreve a estrutura, que é o que o
-site faz.
+**Família** é a explicação: o agrupamento por **para onde vai o seu dinheiro** —
+Tesouro, banco, empresa, carteira de recebíveis, fundo, emissor no exterior,
+seguradora. Esse critério é conteúdo, não arrumação: agrupar por rentabilidade ou
+por risco seria julgar, enquanto agrupar por destino descreve a estrutura, que é
+o que o site faz.
 
 A descoberta é o produto. Entrar por "renda fixa" e encontrar ali dentro quatro
-pagadores diferentes — o Tesouro, um banco, uma empresa e uma carteira de
+destinos diferentes — o Tesouro, um banco, uma empresa e uma carteira de
 recebíveis — é o momento em que o site ensina alguma coisa.
 
-`chain`, em cada família, é a cadeia de pagamento e vira diagrama na tela — um
-diagrama que **se percorre**. A versão parada mostrava a topologia e não a
-direção: dava para ler os elos de trás para a frente sem perceber. Um pulso de
-luz atravessando a cadeia na ordem certa faz o sentido do pagamento ser visto, e
-não deduzido da seta. O movimento aqui é a informação que faltava, não enfeite —
-e a velocidade é a mesma em toda cadeia, para nenhuma parecer "pagar mais rápido".
+**A pergunta já foi "quem paga você", e virou "para onde vai o seu dinheiro".**
+Os dois cortes descrevem a mesma estrutura, em sentidos opostos, e a escolha é de
+leitura, não de fato: quem chega numa página de investimento pensa primeiro no
+dinheiro que sai da mão dele, não no que volta. Começar por "Você" põe o leitor
+no primeiro elo — que é onde ele está quando decide.
+
+`chain` é o caminho do dinheiro e vira diagrama na tela — um diagrama que **se
+percorre**. A versão parada mostrava a topologia e não a direção: dava para ler
+os elos de trás para a frente sem perceber. Um pulso de luz atravessando a cadeia
+na ordem certa faz o sentido ser visto, e não deduzido da seta. O movimento aqui
+é a informação que faltava, não enfeite — e a velocidade é a mesma em toda
+cadeia, para nenhuma parecer "pagar mais rápido".
 
 ## Uma decisão por tela
 
@@ -121,7 +127,7 @@ A navegação hoje tem três degraus, e cada um cabe numa decisão:
 | Rota | A pergunta que responde |
 |---|---|
 | `/` | o que é este site, e por onde eu entro |
-| `/categorias/[id]` | quem paga cada coisa aqui dentro, e quais são os produtos |
+| `/categorias/[id]` | para onde vai o dinheiro aqui dentro, e quais são os produtos |
 | `/produtos/[classe]` | como funciona este produto, em detalhe |
 | `/comparar` | qual a diferença entre estes dois |
 

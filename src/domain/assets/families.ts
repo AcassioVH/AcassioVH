@@ -4,16 +4,24 @@
  *   CATEGORIA (renda fixa, renda variável, internacional…) — o vocabulário que
  *   o visitante já tem quando chega.
  *
- *   FAMÍLIA (dívida soberana, securitização…) — o corte por QUEM PAGA VOCÊ, que
- *   é o que de fato distingue um produto do outro.
+ *   FAMÍLIA (dívida soberana, securitização…) — o corte por PARA ONDE VAI O SEU
+ *   DINHEIRO, que é o que de fato distingue um produto do outro.
  *
  * A categoria é a porta; a família é a explicação. Entrar por "renda fixa" e
- * descobrir que ali dentro há quatro pagadores diferentes — o Tesouro, um banco,
- * uma empresa e uma carteira de recebíveis — é o momento em que o site ensina
- * alguma coisa.
+ * descobrir que ali dentro o dinheiro vai para quatro lugares diferentes — o
+ * Tesouro, um banco, uma empresa e uma carteira de recebíveis — é o momento em
+ * que o site ensina alguma coisa.
  *
- * `chain` é a cadeia de pagamento, e vira diagrama na tela. É estrutura pura:
- * descreve o caminho do dinheiro, sem dizer se o caminho é bom.
+ * `chain` é o caminho do seu dinheiro, e vira diagrama na tela.
+ *
+ * **A direção era a inversa, e foi corrigida.** O diagrama começava no pagador
+ * final e terminava em "Você", descrevendo o pagamento voltando. Estava certo
+ * como fato e errado como leitura: quem chega numa página de investimento
+ * pensa primeiro no dinheiro que sai da mão dele, não no que volta. Começar por
+ * "Você" põe o leitor no primeiro elo, que é onde ele de fato está quando
+ * decide. O retorno continua descrito — em `destino`, e no verbete.
+ *
+ * É estrutura pura: descreve o caminho do dinheiro, sem dizer se o caminho é bom.
  */
 
 import type { AssetClass } from "./taxonomy";
@@ -21,11 +29,11 @@ import type { AssetClass } from "./taxonomy";
 export type ProductFamily = {
   readonly id: string;
   readonly label: string;
-  /** Quem, concretamente, paga o investidor. */
-  readonly whoPays: string;
+  /** Para onde o dinheiro do investidor vai, concretamente. */
+  readonly destino: string;
   /** Uma frase. Nada além disso — o detalhe vive no verbete. */
   readonly blurb: string;
-  /** Cadeia de pagamento, do pagador final até você. Vira diagrama. */
+  /** O caminho do dinheiro, de você até o destino final. Vira diagrama. */
   readonly chain: readonly string[];
   readonly classes: readonly AssetClass[];
 };
@@ -34,113 +42,113 @@ export const PRODUCT_FAMILIES: readonly ProductFamily[] = [
   {
     id: "soberano",
     label: "Dívida soberana",
-    whoPays: "O Tesouro Nacional",
+    destino: "O Tesouro Nacional",
     blurb: "Você empresta ao governo federal.",
-    chain: ["Tesouro Nacional", "Você"],
+    chain: ["Você", "Tesouro Nacional"],
     classes: ["TESOURO_DIRETO"],
   },
   {
     id: "bancaria",
     label: "Renda fixa bancária",
-    whoPays: "Uma instituição financeira",
+    destino: "Uma instituição financeira",
     blurb: "Você empresta a um banco. É a família em que mora a cobertura do FGC.",
-    chain: ["Tomadores de crédito", "Banco emissor", "Você"],
+    chain: ["Você", "Banco emissor", "Tomadores de crédito"],
     classes: ["CDB", "RDB", "LCI", "LCA", "LC", "LF", "LIG", "DPGE", "POUPANCA"],
   },
   {
     id: "corporativo",
     label: "Crédito privado",
-    whoPays: "Uma empresa",
+    destino: "Uma empresa",
     blurb: "Você empresta direto a uma companhia, sem banco no meio.",
-    chain: ["Empresa emissora", "Você"],
+    chain: ["Você", "Empresa emissora"],
     classes: ["DEBENTURE"],
   },
   {
     id: "securitizacao",
     label: "Securitização",
-    whoPays: "Os devedores de uma carteira de recebíveis",
+    destino: "Uma carteira de recebíveis",
     blurb: "Pagamentos futuros viram um título negociável.",
-    chain: ["Devedores dos recebíveis", "Securitizadora", "Você"],
+    chain: ["Você", "Securitizadora", "Devedores dos recebíveis"],
     classes: ["CRI", "CRA", "CDCA"],
   },
   {
     id: "acoes",
     label: "Participação societária",
-    whoPays: "O mercado na venda, e a empresa quando distribui",
+    destino: "O capital de uma companhia aberta",
     blurb: "Você vira sócio. Não há prazo nem valor de resgate contratado.",
-    chain: ["Resultado da empresa", "Mercado", "Você"],
+    chain: ["Você", "Mercado", "Empresa"],
     classes: ["ACAO", "UNIT"],
   },
   {
     id: "listados",
     label: "Fundos listados",
-    whoPays: "A carteira do fundo, distribuída entre cotistas",
+    destino: "A carteira de um fundo negociado em bolsa",
     blurb: "Cotas negociadas em bolsa, com carteira definida em regulamento.",
-    chain: ["Ativos da carteira", "Fundo", "Você (cotista)"],
+    chain: ["Você (cotista)", "Fundo", "Ativos da carteira"],
     classes: ["FII", "FIAGRO", "ETF", "FI_INFRA"],
   },
   {
     id: "participacoes",
     label: "Participação em empresas fechadas",
-    whoPays: "A venda das empresas investidas, ao fim do ciclo",
+    destino: "O capital de empresas fechadas",
     blurb: "O fundo compra parte de companhias fechadas e participa da gestão delas.",
-    chain: ["Empresas investidas", "Fundo", "Você (cotista)"],
+    chain: ["Você (cotista)", "Fundo", "Empresas investidas"],
     classes: ["FIP"],
   },
   {
     id: "recibos",
     label: "Listado aqui, lastro lá fora",
-    whoPays: "Um ativo no exterior, por meio de uma estrutura brasileira",
+    destino: "Um ativo no exterior, via estrutura brasileira",
     blurb: "Você negocia em reais, na B3, um papel que representa algo de fora.",
-    chain: ["Ativo no exterior", "Estrutura brasileira", "Você"],
+    chain: ["Você", "Estrutura brasileira", "Empresa no exterior"],
     classes: ["BDR", "ETF_INTERNACIONAL"],
   },
   {
     id: "exterior",
     label: "Direto no exterior",
-    whoPays: "O emissor estrangeiro, na moeda dele",
+    destino: "Um emissor estrangeiro, na moeda dele",
     blurb: "Conta fora do país, ativo original, regulação do país de origem.",
-    chain: ["Emissor no exterior", "Corretora no exterior", "Você"],
+    chain: ["Você", "Corretora no exterior", "Emissor no exterior"],
     classes: ["ACAO_EXTERIOR", "REIT", "BOND_EXTERIOR"],
   },
   {
     id: "cambial",
     label: "Exposição cambial",
-    whoPays: "A carteira do fundo, atrelada a uma moeda",
+    destino: "Uma moeda estrangeira, por meio de um fundo",
     blurb: "Aplicação em reais que acompanha a variação de uma moeda estrangeira.",
-    chain: ["Variação da moeda", "Fundo cambial", "Você (cotista)"],
+    chain: ["Você (cotista)", "Fundo cambial", "Moeda estrangeira"],
     classes: ["FUNDO_CAMBIAL"],
   },
   {
     id: "abertos",
     label: "Fundos abertos",
-    whoPays: "A carteira do fundo, no resgate",
+    destino: "A carteira de um fundo aberto",
     blurb: "Aplicação e resgate com o próprio fundo, nos prazos do regulamento.",
-    chain: ["Ativos da carteira", "Gestor", "Você (cotista)"],
+    chain: ["Você (cotista)", "Gestor", "Ativos da carteira"],
     classes: ["FUNDO", "FUNDO_RENDA_FIXA", "FUNDO_MULTIMERCADO", "FUNDO_ACOES"],
   },
   {
     id: "creditorios",
     label: "Fundos de recebíveis",
-    whoPays: "Os devedores dos créditos que o fundo comprou",
+    destino: "Uma carteira de créditos a receber",
     blurb: "A carteira é feita de dívidas de terceiros a receber.",
-    chain: ["Devedores dos créditos", "Fundo", "Você (cotista)"],
+    chain: ["Você (cotista)", "Fundo", "Devedores dos créditos"],
     classes: ["FIDC"],
   },
   {
     id: "previdencia",
     label: "Previdência",
-    whoPays: "Uma seguradora, sob supervisão da SUSEP",
+    destino: "Uma seguradora, sob supervisão da SUSEP",
     blurb: "Acumulação de longo prazo em estrutura de seguro.",
-    chain: ["Carteira do plano", "Seguradora", "Você"],
+    chain: ["Você", "Seguradora", "Carteira do plano"],
     classes: ["PREVIDENCIA", "PGBL", "VGBL"],
   },
   {
     id: "estruturado",
     label: "Estruturado",
-    whoPays: "O banco emissor, conforme regras com derivativos",
+    destino: "Um banco emissor, em estrutura com derivativos",
     blurb: "Renda fixa e derivativos empacotados num produto só.",
-    chain: ["Ativo de referência", "Banco emissor", "Você"],
+    chain: ["Você", "Banco emissor", "Ativo de referência"],
     classes: ["COE"],
   },
 ];
@@ -168,7 +176,7 @@ export type Category = {
  *
  * O vocabulário é o que o visitante já traz — "renda fixa", "renda variável",
  * "internacional". A promessa da categoria é sempre a mesma: em uma frase, o
- * que é; e, ao entrar, quem paga cada coisa lá dentro.
+ * que é; e, ao entrar, para onde vai o dinheiro em cada coisa lá dentro.
  */
 export const CATEGORIES: readonly Category[] = [
   {

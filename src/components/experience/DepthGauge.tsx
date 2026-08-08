@@ -29,7 +29,7 @@ import { useEffect, useRef, useState } from "react";
 
 const LEVELS = [
   { depth: 1, label: "Superfície", nota: "o nome do produto" },
-  { depth: 2, label: "Coluna d'água", nota: "quem paga você" },
+  { depth: 2, label: "Coluna d'água", nota: "para onde vai o dinheiro" },
   { depth: 3, label: "Zona iluminada", nota: "a estrutura" },
   { depth: 4, label: "Fundo", nota: "os documentos" },
   { depth: 5, label: "Abismo", nota: "fora do nosso escopo" },

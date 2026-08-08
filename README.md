@@ -3,7 +3,7 @@
 Site educativo sobre produtos de investimento do mercado brasileiro.
 
 > **Conteúdo meramente informativo. Não constitui recomendação de investimento.**
-> O site explica estruturas: o que cada produto é, quem paga o investidor, como
+> O site explica estruturas: o que cada produto é, para onde vai o seu dinheiro, como
 > funciona o resgate, qual a tributação e qual a garantia. Não recomenda, não
 > classifica por mérito e não afirma rentabilidade — para isso, aponta sempre a
 > fonte oficial.
@@ -31,18 +31,18 @@ A navegação tem três degraus, do vocabulário que a pessoa já tem até o doc
 da emissão:
 
 1. **Home** — o que o site é, e as seis categorias como porta de entrada
-2. **Categoria** (`/categorias/renda-fixa`) — quais famílias de pagamento existem
-   ali dentro, cada uma com o diagrama do caminho do dinheiro, e os produtos em
-   cartões que respondem sempre às mesmas quatro perguntas
+2. **Categoria** (`/categorias/renda-fixa`) — para onde o dinheiro vai em cada
+   família, com o diagrama do caminho, e os produtos em cartões que respondem
+   sempre às mesmas quatro perguntas
 3. **Produto** (`/produtos/CDB`) — o verbete completo, com as fontes oficiais
 
 Além disso:
 
-- **36 produtos** organizados por *quem paga você*, em 14 famílias de pagamento:
+- **36 produtos** organizados por *para onde vai o seu dinheiro*, em 14 famílias:
   Tesouro, banco, empresa, carteira de recebíveis, fundo listado, fundo aberto,
   emissor no exterior, seguradora
 - **Busca** por `⌘K`, `/` ou pelo botão da barra — pela sigla, pelo nome, por
-  quem paga, ou por palavra que a pessoa usa mas o catálogo não ("dólar" acha o
+  pelo destino, ou por palavra que a pessoa usa mas o catálogo não ("dólar" acha o
   fundo cambial)
 - **Comparação de estruturas** lado a lado (`/comparar`), sem ordenar nem pontuar
 - **Gráficos de estrutura** — cadeia de pagamento, composição da categoria e a
@@ -50,7 +50,7 @@ Além disso:
 - **WhatsApp em todas as páginas**, porque a conversa é o destino do site
 - **Sitemap, robots e dados estruturados** — o site existe para ser encontrado
 - **Cartão de compartilhamento por página**, gerado no build: o link de um
-  verbete mandado no WhatsApp chega com título, resumo e quem paga o investidor
+  verbete mandado no WhatsApp chega com título, resumo e o destino do dinheiro
 
 Tudo estático: sem banco, sem login, sem coleta de dados.
 

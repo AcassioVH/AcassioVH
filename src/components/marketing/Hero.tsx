@@ -97,13 +97,20 @@ export function Hero() {
           {...rise(0.5)}
           className="mt-10 max-w-[54ch] text-lg leading-[1.7] text-body sm:text-xl"
         >
-          São nomes exatos que não dizem nada a quem não trabalha com eles. Este site
-          desce cada um deles até o que ele é: quem paga você, de onde vem o dinheiro,
+          Essas sopinhas de letras não dizem nada a quem não trabalha com elas. Este
+          site desce cada uma até o que ela é: para onde vai o seu dinheiro, quem o devolve,
           em que prazo e sob quais regras.
         </motion.p>
 
         <motion.p {...rise(0.6)} className="mt-5 max-w-[54ch] text-lg text-tertiary">
           Sem recomendação, sem ranking, sem promessa de retorno.
+        </motion.p>
+
+        {/* A promessa da descida, dita na voz da marca: sair da superfície é o
+            gesto do site inteiro, e é aqui que ele é anunciado. */}
+        <motion.p {...rise(0.66)} className="mt-4 max-w-[54ch] text-lg text-aux">
+          Aqui você vai aprofundar, sair da superfície e entender de verdade o que cada
+          uma significa.
         </motion.p>
 
         <motion.div {...rise(0.72)} className="mt-12 flex flex-wrap items-center gap-6">

@@ -3,7 +3,7 @@
  *
  * O visitante chega com um vocabulário: "renda fixa", "renda variável",
  * "internacional". Começar por aí respeita o que ele já sabe. O que ele descobre
- * ao entrar é o corte que de fato importa — quem paga você — e essa descoberta
+ * ao entrar é o corte que de fato importa — para onde vai o seu dinheiro — e essa
  * é o conteúdo, não a arrumação.
  *
  * O cartão diz o mínimo: uma frase do que a categoria é, o traço estrutural
@@ -43,7 +43,7 @@ export function CategoriesSection() {
           </h2>
           <p className="mt-7 max-w-[56ch] text-lg leading-relaxed text-aux">
             Escolha por onde entrar. Dentro de cada categoria, os produtos estão separados
-            por quem efetivamente paga o investidor.
+            por onde o seu dinheiro efetivamente vai parar.
           </p>
         </Reveal>
 

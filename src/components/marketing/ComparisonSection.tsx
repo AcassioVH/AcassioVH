@@ -11,7 +11,7 @@ import type { AssetClass } from "@/domain/assets/taxonomy";
  * Comparação de estruturas, lado a lado.
  *
  * Aqui mora uma linha fina que vale enunciar. Comparar **tipos de produto** por
- * características verificáveis — quem paga, se há cobertura do FGC, como é o
+ * características verificáveis — para onde vai o dinheiro, se há cobertura do FGC, como é
  * resgate, qual a regra tributária — é descrição, e é exatamente o que um
  * material educativo faz.
  *
@@ -30,8 +30,8 @@ const GUARANTEE_SHORT: Record<string, string> = {
 
 const ROWS = [
   {
-    label: "Quem paga você",
-    value: (c: AssetClass) => familyOf(c)?.whoPays ?? "—",
+    label: "Para onde vai",
+    value: (c: AssetClass) => familyOf(c)?.destino ?? "—",
   },
   { label: "Quem emite", value: (c: AssetClass) => profileFor(c).issuedBy },
   {
@@ -96,7 +96,7 @@ export function ComparisonSection() {
           </h2>
           <p className="mt-7 max-w-[58ch] text-lg leading-relaxed text-aux">
             As diferenças que importam raramente estão no nome. Coloque dois produtos lado
-            a lado e veja quem paga, qual a garantia, como funciona o resgate e qual a
+            a lado e veja para onde vai o dinheiro, qual a garantia, como é o resgate e qual a
             regra tributária.
           </p>
         </Reveal>

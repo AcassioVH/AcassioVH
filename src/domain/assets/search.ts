@@ -105,7 +105,7 @@ function entradaDeProduto(assetClass: AssetClass): SearchEntry {
     href: `/produtos/${assetClass}`,
     title: profile.fullName,
     badge: profile.label === profile.fullName ? null : profile.label,
-    detail: family ? `Paga você: ${family.whoPays}` : (category?.label ?? "Produto"),
+    detail: family ? `Destino: ${family.destino}` : (category?.label ?? "Produto"),
     accent: category?.accent ?? "var(--color-light)",
     haystack: [
       // A sigla inteira entra também sem quebra, para "TESOURO_DIRETO" casar
@@ -117,7 +117,7 @@ function entradaDeProduto(assetClass: AssetClass): SearchEntry {
         profile.fullName,
         profile.summary,
         family?.label,
-        family?.whoPays,
+        family?.destino,
         category?.label,
       ),
     ],
