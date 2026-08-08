@@ -3,10 +3,11 @@ import Link from "next/link";
 import { Wordmark } from "@/components/brand/Wordmark";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppCTA";
 import { site, whatsappIsConfigured, whatsappUrl } from "@/config/site";
-import { CATEGORIES } from "@/domain/assets/families";
+import { CATEGORIES } from "@/domain/assets/destinations";
 
 const LINKS = [
   { href: "/#o-que-e", label: "O que é este site" },
+  { href: "/instituicoes", label: "Instituições financeiras" },
   { href: "/comparar", label: "Comparar produtos" },
   { href: "/#limite", label: "Nosso limite" },
 ] as const;

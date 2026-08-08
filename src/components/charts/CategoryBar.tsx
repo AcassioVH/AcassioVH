@@ -1,20 +1,20 @@
 /**
  * A barra que mostra do que uma categoria é feita.
  *
- * Cada segmento é uma família de pagamento dentro da categoria, e a largura é a
- * quantidade de produtos catalogados naquela família. Serve para uma coisa só:
- * revelar, antes de clicar, que "renda fixa" não é um bloco único — são quatro
- * pagadores diferentes debaixo do mesmo nome.
+ * Cada segmento é um destino do dinheiro dentro da categoria, e a largura é a
+ * quantidade de produtos catalogados naquele destino. Serve para uma coisa só:
+ * revelar, antes de clicar, que "renda fixa" não é um bloco único — o dinheiro
+ * vai para quatro lugares diferentes debaixo do mesmo nome.
  *
  * A grandeza medida é contagem do catálogo. Não é volume de mercado, não é
  * captação, não é preferência: quantos verbetes existem ali dentro. Uma barra
  * maior significa mais material para ler, e nada além disso.
  *
- * O gráfico é redundante de propósito — a lista de famílias vem escrita logo
+ * O gráfico é redundante de propósito — a lista de destinos vem escrita logo
  * abaixo. Quem não enxerga a barra não perde informação nenhuma.
  */
 
-import { familiesOf, type Category } from "@/domain/assets/families";
+import { destinationsOf, type Category } from "@/domain/assets/destinations";
 
 /** Opacidade decrescente por segmento: distingue vizinhos sem inventar cores. */
 function shade(index: number): number {
@@ -22,8 +22,8 @@ function shade(index: number): number {
 }
 
 export function CategoryBar({ category }: { category: Category }) {
-  const families = familiesOf(category);
-  const total = families.reduce((sum, family) => sum + family.classes.length, 0);
+  const destinations = destinationsOf(category);
+  const total = destinations.reduce((sum, destination) => sum + destination.classes.length, 0);
   if (total === 0) return null;
 
   return (
@@ -33,12 +33,12 @@ export function CategoryBar({ category }: { category: Category }) {
         className="flex h-1.5 w-full gap-px overflow-hidden"
         style={{ background: "var(--color-edge-soft)" }}
       >
-        {families.map((family, index) => (
+        {destinations.map((destination, index) => (
           <span
-            key={family.id}
+            key={destination.id}
             className="block h-full transition-opacity duration-500"
             style={{
-              width: `${(family.classes.length / total) * 100}%`,
+              width: `${(destination.classes.length / total) * 100}%`,
               background: category.accent,
               opacity: shade(index),
             }}
@@ -47,7 +47,7 @@ export function CategoryBar({ category }: { category: Category }) {
       </div>
 
       <p className="mt-4 font-mono text-[10px] uppercase leading-5 tracking-[0.14em] text-muted">
-        {families.length} {families.length === 1 ? "família" : "famílias"} · {total}{" "}
+        {destinations.length} {destinations.length === 1 ? "destino" : "destinos"} · {total}{" "}
         {total === 1 ? "produto" : "produtos"}
       </p>
     </div>

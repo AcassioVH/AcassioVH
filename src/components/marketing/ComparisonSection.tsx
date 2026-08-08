@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { Reveal } from "@/components/ui/Reveal";
-import { CATALOGUED_CLASSES, familyOf } from "@/domain/assets/families";
+import { CATALOGUED_CLASSES, destinationOf } from "@/domain/assets/destinations";
 import { profileFor } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
@@ -31,7 +31,7 @@ const GUARANTEE_SHORT: Record<string, string> = {
 const ROWS = [
   {
     label: "Para onde vai",
-    value: (c: AssetClass) => familyOf(c)?.destino ?? "—",
+    value: (c: AssetClass) => destinationOf(c)?.target ?? "—",
   },
   { label: "Quem emite", value: (c: AssetClass) => profileFor(c).issuedBy },
   {

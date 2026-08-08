@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { cartao, CARTAO } from "@/app/_og/cartao";
-import { CATALOGUED_CLASSES, categoryOfClass, familyOf } from "@/domain/assets/families";
+import { CATALOGUED_CLASSES, categoryOfClass, destinationOf } from "@/domain/assets/destinations";
 import { profileFor } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
@@ -20,11 +20,11 @@ export default async function Image({ params }: { params: Promise<{ classe: stri
 
   const assetClass = classe as AssetClass;
   const profile = profileFor(assetClass);
-  const family = familyOf(assetClass);
+  const destination = destinationOf(assetClass);
 
   return cartao({
     // Para onde o dinheiro vai é o que distingue o produto — merece o olho.
-    eyebrow: family ? `Destino: ${family.destino}` : "Produto de investimento",
+    eyebrow: destination ? `Destino: ${destination?.target}` : "Produto de investimento",
     titulo: profile.fullName,
     descricao: profile.summary,
     accent: categoryOfClass(assetClass)?.accent ?? "#e3bc7e",

@@ -23,7 +23,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { CATEGORIES } from "@/domain/assets/families";
+import { CATEGORIES } from "@/domain/assets/destinations";
 import { search, SEARCH_INDEX, type SearchEntry } from "@/domain/assets/search";
 
 const VAZIO: SearchEntry[] = CATEGORIES.map((category) => ({
@@ -36,6 +36,23 @@ const VAZIO: SearchEntry[] = CATEGORIES.map((category) => ({
   accent: category.accent,
   haystack: [],
 }));
+
+/**
+ * O que ocupa a coluna da sigla quando o resultado não tem sigla.
+ *
+ * A coluna existe para alinhar: sem ela, título de produto e título de
+ * categoria começam em colunas diferentes e a lista fica serrilhada. O rótulo
+ * diz que tipo de resultado é aquele — e "Porta" em cima de "Corretora e
+ * distribuidora" diria a coisa errada.
+ */
+const ROTULO_SEM_SIGLA: Record<SearchEntry["kind"], string> = {
+  categoria: "Porta",
+  instituicao: "Quem",
+  produto: "Ficha",
+};
+
+/** Quantos verbetes de produto existem — a conta que o estado vazio mostra. */
+const TOTAL_DE_PRODUTOS = SEARCH_INDEX.filter((entry) => entry.kind === "produto").length;
 
 export function SearchPalette() {
   const [aberta, setAberta] = useState(false);
@@ -226,7 +243,7 @@ export function SearchPalette() {
                           aria-hidden="true"
                           className="w-14 shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-muted"
                         >
-                          Porta
+                          {ROTULO_SEM_SIGLA[item.kind]}
                         </span>
                       )}
                       <span className="min-w-0 flex-1">
@@ -252,8 +269,8 @@ export function SearchPalette() {
                       Nada com <span className="text-title">{termo}</span> no catálogo.
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      São {SEARCH_INDEX.length - CATEGORIES.length} produtos — tente a sigla, ou
-                      para onde o dinheiro vai.
+                      São {TOTAL_DE_PRODUTOS} produtos — tente a sigla, para onde o dinheiro vai,
+                      ou o tipo de instituição.
                     </p>
                   </li>
                 ) : null}

@@ -32,15 +32,23 @@ da emissão:
 
 1. **Home** — o que o site é, e as seis categorias como porta de entrada
 2. **Categoria** (`/categorias/renda-fixa`) — para onde o dinheiro vai em cada
-   família, com o diagrama do caminho, e os produtos em cartões que respondem
+   destino, com o diagrama do caminho, e os produtos em cartões que respondem
    sempre às mesmas quatro perguntas
 3. **Produto** (`/produtos/CDB`) — o verbete completo, com as fontes oficiais
 
+A barra fixa carrega a navegação inteira — Início, Categorias, Instituições
+financeiras e a busca — porque quase todo mundo entra por um verbete, vindo de
+uma busca, e precisa do mapa ali em cima.
+
 Além disso:
 
-- **36 produtos** organizados por *para onde vai o seu dinheiro*, em 14 famílias:
+- **36 produtos** organizados por *para onde vai o seu dinheiro*, em 14 destinos:
   Tesouro, banco, empresa, carteira de recebíveis, fundo listado, fundo aberto,
   emissor no exterior, seguradora
+- **11 tipos de instituição** (`/instituicoes`) — o que cada tipo pode emitir,
+  quem o autoriza a funcionar e qual garantia se aplica. Tipos, nunca
+  instituições nomeadas: descrever o Banco X é análise de emissor. Para olhar uma
+  instituição concreta, a página entrega o endereço de quem a supervisiona
 - **Busca** por `⌘K`, `/` ou pelo botão da barra — pela sigla, pelo nome, por
   pelo destino, ou por palavra que a pessoa usa mas o catálogo não ("dólar" acha o
   fundo cambial)

@@ -15,7 +15,7 @@ import { Reveal } from "@/components/ui/Reveal";
 import { TrilhaJsonLd } from "@/components/seo/StructuredData";
 import { WhatsAppCTA, WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
 import { site } from "@/config/site";
-import { CATEGORIES, categoryById, familiesOf } from "@/domain/assets/families";
+import { CATEGORIES, categoryById, destinationsOf } from "@/domain/assets/destinations";
 import { CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
 
 /**
@@ -28,7 +28,7 @@ import { CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
  * A página tem uma ordem deliberada, do geral ao específico:
  *
  *   1. o que a categoria é, em uma frase;
- *   2. para onde o dinheiro vai em cada família — com o diagrama do caminho,
+ *   2. para onde o dinheiro vai em cada destino — com o diagrama do caminho,
  *      que é a parte que ensina;
  *   3. os produtos, um cartão cada, com as mesmas quatro perguntas em todos.
  *
@@ -59,7 +59,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
   const category = categoryById(id);
   if (!category) notFound();
 
-  const families = familiesOf(category);
+  const destinations = destinationsOf(category);
   const others = CATEGORIES.filter((other) => other.id !== category.id);
 
   // A escada do IR só aparece onde de fato descreve os produtos da página.
@@ -119,16 +119,16 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
         {/* Nível 1 da página: para onde o dinheiro vai, com o caminho desenhado. */}
         <section
           data-depth="2"
-          aria-labelledby="familias-title"
+          aria-labelledby="destinos-title"
           className="border-b border-edge-soft bg-deep px-6 py-20 sm:px-10 sm:py-24"
         >
           <div className="mx-auto max-w-5xl">
             <Reveal>
               <p className="tech text-amber">Passo 1 · para onde vai o seu dinheiro</p>
-              <h2 id="familias-title" className="mt-5 text-[clamp(1.7rem,4vw,2.6rem)] leading-tight">
-                {families.length === 1
+              <h2 id="destinos-title" className="mt-5 text-[clamp(1.7rem,4vw,2.6rem)] leading-tight">
+                {destinations.length === 1
                   ? "Um destino."
-                  : `${families.length} destinos diferentes.`}
+                  : `${destinations.length} destinos diferentes.`}
               </h2>
               <p className="mt-5 max-w-[58ch] text-lg leading-relaxed text-aux">
                 É o que separa um produto do outro dentro da mesma categoria — mais do que a
@@ -138,25 +138,25 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
             </Reveal>
 
             <ul className="mt-12 space-y-px">
-              {families.map((family, index) => (
-                <Reveal key={family.id} delay={index * 0.06} as="li">
+              {destinations.map((destination, index) => (
+                <Reveal key={destination.id} delay={index * 0.06} as="li">
                   <div className="border border-edge bg-surface/60 p-7 sm:p-9">
                     <div className="flex flex-wrap items-baseline justify-between gap-4">
-                      <h3 className="text-2xl leading-tight">{family.label}</h3>
+                      <h3 className="text-2xl leading-tight">{destination.label}</h3>
                       <p
                         className="font-mono text-[11px] uppercase tracking-[0.14em]"
                         style={{ color: category.accent }}
                       >
-                        {family.destino}
+                        {destination.target}
                       </p>
                     </div>
 
                     <p className="mt-4 max-w-[58ch] text-base leading-relaxed text-aux">
-                      {family.blurb}
+                      {destination.blurb}
                     </p>
 
                     <PaymentChain
-                      chain={family.chain}
+                      chain={destination.chain}
                       accent={category.accent}
                       className="mt-7"
                     />
@@ -193,8 +193,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
             </Reveal>
 
             <ul className="mt-12 grid gap-px sm:grid-cols-2 lg:grid-cols-3">
-              {families.flatMap((family) =>
-                family.classes.map((assetClass) => (
+              {destinations.flatMap((destination) =>
+                destination.classes.map((assetClass) => (
                   <li key={assetClass} className="h-full">
                     <ProductCard assetClass={assetClass} accent={category.accent} />
                   </li>

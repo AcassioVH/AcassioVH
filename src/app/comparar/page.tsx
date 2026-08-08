@@ -5,7 +5,7 @@ import { ComparisonSection } from "@/components/marketing/ComparisonSection";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { WhatsAppCTA } from "@/components/ui/WhatsAppCTA";
-import { CATEGORIES } from "@/domain/assets/families";
+import { CATEGORIES } from "@/domain/assets/destinations";
 
 export const metadata: Metadata = {
   title: "Comparar produtos",

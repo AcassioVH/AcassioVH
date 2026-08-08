@@ -92,7 +92,7 @@ igual para quem investe. `tests/domain.test.ts` fixa essa escolha.
 não é a forma de negociação, é o resultado depender de um ativo fora do país e da
 variação do câmbio.
 
-**Família** é a explicação: o agrupamento por **para onde vai o seu dinheiro** —
+**Destino** é a explicação: o agrupamento por **para onde vai o seu dinheiro** —
 Tesouro, banco, empresa, carteira de recebíveis, fundo, emissor no exterior,
 seguradora. Esse critério é conteúdo, não arrumação: agrupar por rentabilidade ou
 por risco seria julgar, enquanto agrupar por destino descreve a estrutura, que é
@@ -101,6 +101,13 @@ o que o site faz.
 A descoberta é o produto. Entrar por "renda fixa" e encontrar ali dentro quatro
 destinos diferentes — o Tesouro, um banco, uma empresa e uma carteira de
 recebíveis — é o momento em que o site ensina alguma coisa.
+
+**O nível se chamou "família", e o nome saiu.** "Renda fixa · 4 famílias · 14
+produtos" obrigava o leitor a aprender uma metáfora antes do assunto: família de
+quê, agrupada por qual critério? "4 destinos" responde no próprio substantivo, e
+é a mesma palavra que a ficha de cada produto já usava na linha "Destino:". O
+tipo em código acompanhou — `Destination`, `DESTINATIONS`, `destinationOf` — para
+que ninguém precise traduzir entre a tela e o arquivo.
 
 **A pergunta já foi "quem paga você", e virou "para onde vai o seu dinheiro".**
 Os dois cortes descrevem a mesma estrutura, em sentidos opostos, e a escolha é de
@@ -117,7 +124,7 @@ cadeia, para nenhuma parecer "pagar mais rápido".
 
 ## Uma decisão por tela
 
-A primeira versão da home fazia tudo: as famílias, o verbete de cada produto num
+A primeira versão da home fazia tudo: os destinos, o verbete de cada produto num
 painel de abas e a comparação lado a lado, na mesma rolagem. Ficou completa e
 ilegível — informação demais junta, sem hierarquia, e o visitante precisava
 atravessar o site inteiro para descobrir por onde começar.
@@ -129,7 +136,18 @@ A navegação hoje tem três degraus, e cada um cabe numa decisão:
 | `/` | o que é este site, e por onde eu entro |
 | `/categorias/[id]` | para onde vai o dinheiro aqui dentro, e quais são os produtos |
 | `/produtos/[classe]` | como funciona este produto, em detalhe |
+| `/instituicoes` | quem é que emite isso, e quem responde por ele |
 | `/comparar` | qual a diferença entre estes dois |
+
+`/instituicoes` responde a outra metade da pergunta do site. Toda ficha dizia
+"emitido por instituição financeira autorizada pelo Banco Central" e seguia em
+frente, como se a frase se explicasse — e é nela que mora a diferença entre ter
+FGC e não ter. A página descreve **tipos** de instituição, e nenhuma instituição
+pelo nome: falar do Banco X é análise de emissor, que exige registro que este
+site não tem. O contrapeso a essa recusa é entregar o endereço de quem
+supervisiona cada tipo — FGC, FGCoop, Banco Central, CVM, SUSEP —, o mesmo
+raciocínio das fontes oficiais de cada verbete. `tests/compliance.test.ts` varre
+esses textos e ainda mantém um tripwire para nomes de instituição.
 
 A busca (`⌘K`, `/`, ou o botão na barra) é o atalho de quem já sabe a palavra;
 a navegação continua sendo o caminho de quem não sabe. Ela não ordena por
@@ -206,7 +224,8 @@ Três lições ficaram no código:
 src/
 ├── app/
 │   ├── page.tsx                # a home: apresentação e as categorias
-│   ├── categorias/[id]/        # a categoria: famílias, diagramas e produtos
+│   ├── categorias/[id]/        # a categoria: destinos, diagramas e produtos
+│   ├── instituicoes/           # os tipos de instituição, e onde conferir cada uma
 │   ├── produtos/[classe]/      # verbete por produto, estático
 │   ├── comparar/               # duas estruturas lado a lado
 │   ├── (legal)/                # termos e privacidade
@@ -218,7 +237,8 @@ src/
 │   ├── brand/                  # a marca: as duas hastes do "A"
 │   └── ui/                     # primitivos (Reveal, StatusPill, Disclaimer, WhatsAppCTA)
 ├── domain/                     # núcleo — sem React, sem UI
-│   ├── assets/                 # taxonomia, famílias, verbetes, classificação
+│   ├── assets/                 # taxonomia, destinos, verbetes, classificação
+│   ├── institutions/           # tipos de instituição e fontes de consulta
 │   ├── cnpj/                   # validação e normalização
 │   └── compliance/             # política e detector de violações
 └── config/                     # configuração institucional

@@ -7,7 +7,7 @@
  * é o conteúdo, não a arrumação.
  *
  * O cartão diz o mínimo: uma frase do que a categoria é, o traço estrutural
- * comum, a barra do que há dentro e os nomes das famílias. Tudo o mais fica na
+ * comum, a barra do que há dentro e os nomes dos destinos. Tudo o mais fica na
  * página da categoria. A tentação de explicar aqui é a mesma que transformou a
  * versão anterior em parede de texto.
  *
@@ -20,7 +20,7 @@ import Link from "next/link";
 import { CategoryBar } from "@/components/charts/CategoryBar";
 import { MarineSnow } from "@/components/experience/Caustics";
 import { Reveal } from "@/components/ui/Reveal";
-import { CATEGORIES, familiesOf } from "@/domain/assets/families";
+import { CATEGORIES, destinationsOf } from "@/domain/assets/destinations";
 
 export function CategoriesSection() {
   return (
@@ -49,7 +49,7 @@ export function CategoriesSection() {
 
         <ul className="mt-16 grid gap-px sm:grid-cols-2 lg:grid-cols-3">
           {CATEGORIES.map((category, index) => {
-            const families = familiesOf(category);
+            const destinations = destinationsOf(category);
 
             return (
               <Reveal key={category.id} delay={index * 0.06} as="li">
@@ -77,7 +77,7 @@ export function CategoriesSection() {
                   </div>
 
                   <p className="mt-4 text-sm leading-relaxed text-tertiary">
-                    {families.map((family) => family.label).join(" · ")}
+                    {destinations.map((destination) => destination.label).join(" · ")}
                   </p>
 
                   <span className="mt-auto pt-7 font-mono text-[11px] uppercase tracking-[0.16em] text-light">

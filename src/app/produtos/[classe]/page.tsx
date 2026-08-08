@@ -12,7 +12,7 @@ import { Disclaimer } from "@/components/ui/Disclaimer";
 import { TrilhaJsonLd, VerbeteJsonLd } from "@/components/seo/StructuredData";
 import { WhatsAppCTA, WhatsAppStrip } from "@/components/ui/WhatsAppCTA";
 import { site } from "@/config/site";
-import { CATALOGUED_CLASSES, categoryOfClass, familyOf } from "@/domain/assets/families";
+import { CATALOGUED_CLASSES, categoryOfClass, destinationOf } from "@/domain/assets/destinations";
 import { CATALOG_REVIEWED_AT, TAX_NOTICE, profileFor } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
@@ -70,10 +70,10 @@ export default async function ProductPage({
   if (!assetClass) notFound();
 
   const profile = profileFor(assetClass);
-  const family = familyOf(assetClass);
+  const destination = destinationOf(assetClass);
   const category = categoryOfClass(assetClass);
   const accent = category?.accent ?? "var(--color-light)";
-  const siblings = (family?.classes ?? []).filter((c) => c !== assetClass);
+  const siblings = (destination?.classes ?? []).filter((c) => c !== assetClass);
 
   return (
     <>
@@ -105,9 +105,9 @@ export default async function ProductPage({
               ← {category ? category.label : "Todas as categorias"}
             </Link>
 
-            {family ? (
+            {destination ? (
               <p className="mt-8 font-mono text-xs uppercase tracking-[0.16em]" style={{ color: accent }}>
-                {family.label}
+                {destination.label}
               </p>
             ) : null}
 
@@ -137,14 +137,14 @@ export default async function ProductPage({
           <div className="mx-auto max-w-4xl">
             <p className="max-w-[64ch] text-xl leading-[1.8] text-body">{profile.whatItIs}</p>
 
-            {family ? (
+            {destination ? (
               <figure className="mt-12 border border-edge bg-surface/60 p-7 sm:p-9">
                 <figcaption className="tech mb-6 text-tertiary">
                   O caminho do seu dinheiro
                 </figcaption>
-                <PaymentChain chain={family.chain} accent={accent} />
+                <PaymentChain chain={destination.chain} accent={accent} />
                 <p className="mt-6 text-sm leading-relaxed text-muted">
-                  Destino: {family.destino}. O diagrama começa em você e descreve a
+                  Destino: {destination?.target}. O diagrama começa em você e descreve a
                   estrutura — quantos elos existem não indica mérito nem risco.
                 </p>
               </figure>
@@ -207,8 +207,8 @@ export default async function ProductPage({
             </section>
 
             {siblings.length > 0 ? (
-              <nav aria-label="Produtos da mesma família" className="mt-14">
-                <p className="tech mb-4 text-tertiary">Mesma família</p>
+              <nav aria-label="Produtos do mesmo destino" className="mt-14">
+                <p className="tech mb-4 text-tertiary">Mesmo destino</p>
                 <ul className="flex flex-wrap gap-2">
                   {siblings.map((sibling) => (
                     <li key={sibling}>

@@ -3,7 +3,7 @@
 /**
  * O caminho do seu dinheiro, desenhado — e percorrido.
  *
- * Cada família de produto tem um caminho: de você até onde o dinheiro para, e
+ * Cada destino tem um caminho: de você até onde o dinheiro para, e
  * por quantas mãos ele passa no meio. Ver "Você → Securitizadora → Devedores dos
  * recebíveis" ao lado de "Você → Tesouro Nacional" ensina, num olhar, a
  * diferença que três parágrafos não fixam.

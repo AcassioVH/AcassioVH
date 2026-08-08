@@ -19,7 +19,7 @@
 import { describe, expect, it } from "vitest";
 
 import { ASSET_PROFILES, CATALOG_REVIEWED_AT } from "../src/domain/assets/profiles";
-import { CATALOGUED_CLASSES, PRODUCT_FAMILIES, familyOf } from "../src/domain/assets/families";
+import { CATALOGUED_CLASSES, DESTINATIONS, destinationOf } from "../src/domain/assets/destinations";
 import { ASSET_CLASSES } from "../src/domain/assets/taxonomy";
 
 const MESES_ATE_REVISAR = 6;
@@ -64,16 +64,16 @@ describe("integridade do catálogo", () => {
     expect(semFicha, `classes sem ficha: ${semFicha.join(", ")}`).toEqual([]);
   });
 
-  it("põe toda classe catalogada em exatamente uma família", () => {
+  it("põe toda classe catalogada em exatamente um destino", () => {
     for (const assetClass of CATALOGUED_CLASSES) {
-      const familias = PRODUCT_FAMILIES.filter((f) => f.classes.includes(assetClass));
-      expect(familias.length, `${assetClass} está em ${familias.length} famílias`).toBe(1);
+      const destinos = DESTINATIONS.filter((f) => f.classes.includes(assetClass));
+      expect(destinos.length, `${assetClass} está em ${destinos.length} destinos`).toBe(1);
     }
   });
 
-  it("não deixa família sem produto", () => {
-    for (const familia of PRODUCT_FAMILIES) {
-      expect(familia.classes.length, `família ${familia.id} está vazia`).toBeGreaterThan(0);
+  it("não deixa destino sem produto", () => {
+    for (const destino of DESTINATIONS) {
+      expect(destino.classes.length, `destino ${destino.id} está vazio`).toBeGreaterThan(0);
     }
   });
 
@@ -84,6 +84,6 @@ describe("integridade do catálogo", () => {
    */
   it("mantém a ficha de fallback fora da navegação", () => {
     expect(CATALOGUED_CLASSES).not.toContain("NAO_CLASSIFICADO");
-    expect(familyOf("NAO_CLASSIFICADO")).toBeNull();
+    expect(destinationOf("NAO_CLASSIFICADO")).toBeNull();
   });
 });

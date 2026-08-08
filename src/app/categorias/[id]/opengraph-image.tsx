@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { cartao, CARTAO } from "@/app/_og/cartao";
-import { CATEGORIES, categoryById, classesOf } from "@/domain/assets/families";
+import { CATEGORIES, categoryById, classesOf } from "@/domain/assets/destinations";
 
 export const alt = "Categoria de produtos de investimento";
 export const size = CARTAO;

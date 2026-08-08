@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { site } from "@/config/site";
-import { CATALOGUED_CLASSES, CATEGORIES } from "@/domain/assets/families";
+import { CATALOGUED_CLASSES, CATEGORIES } from "@/domain/assets/destinations";
 import { CATALOG_REVIEWED_AT } from "@/domain/assets/profiles";
 
 /**
@@ -30,6 +30,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${site.url}/comparar`,
+      lastModified: revisado,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    {
+      url: `${site.url}/instituicoes`,
       lastModified: revisado,
       changeFrequency: "monthly",
       priority: 0.8,

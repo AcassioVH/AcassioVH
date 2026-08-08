@@ -310,7 +310,7 @@ const PROFILE_LIST: readonly AssetProfile[] = [
     summary: "Títulos de dívida emitidos pelo Tesouro Nacional.",
     whatItIs:
       "São títulos da dívida pública federal vendidos a pessoas físicas pela plataforma do " +
-      "Tesouro Direto. As principais famílias são o Tesouro Selic (pós-fixado, acompanha a " +
+      "Tesouro Direto. Os principais títulos são o Tesouro Selic (pós-fixado, acompanha a " +
       "taxa básica), o Tesouro Prefixado (taxa definida na compra) e o Tesouro IPCA+ " +
       "(inflação medida pelo IPCA mais uma taxa fixa).",
     issuedBy: "Tesouro Nacional.",

@@ -15,7 +15,7 @@
 import Link from "next/link";
 
 import { GuaranteeMark } from "@/components/charts/GuaranteeMark";
-import { familyOf } from "@/domain/assets/families";
+import { destinationOf } from "@/domain/assets/destinations";
 import { profileFor } from "@/domain/assets/profiles";
 import type { AssetClass } from "@/domain/assets/taxonomy";
 
@@ -38,7 +38,7 @@ export function ProductCard({
   accent?: string;
 }) {
   const profile = profileFor(assetClass);
-  const family = familyOf(assetClass);
+  const destination = destinationOf(assetClass);
 
   return (
     <article className="group flex h-full flex-col border border-edge bg-surface/60 p-7 transition-colors duration-500 hover:border-light/40 hover:bg-surface">
@@ -55,7 +55,7 @@ export function ProductCard({
       <p className="mt-5 text-base leading-relaxed text-body">{profile.summary}</p>
 
       <dl className="mt-6">
-        <Row label="Destino">{family?.destino ?? "—"}</Row>
+        <Row label="Destino">{destination?.target ?? "—"}</Row>
         <Row label="Resgate">{profile.liquidityTag}</Row>
         <Row label="Imposto">{profile.taxTag}</Row>
       </dl>

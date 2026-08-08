@@ -8,13 +8,28 @@
 
 import { describe, expect, it } from "vitest";
 
-import { CATALOGUED_CLASSES, CATEGORIES } from "../src/domain/assets/families";
+import { CATALOGUED_CLASSES, CATEGORIES } from "../src/domain/assets/destinations";
 import { normalize, search, SEARCH_INDEX } from "../src/domain/assets/search";
 import { profileFor } from "../src/domain/assets/profiles";
+import { INSTITUTION_KINDS } from "../src/domain/institutions/kinds";
 
 describe("índice de busca", () => {
-  it("indexa toda categoria e todo produto do catálogo", () => {
-    expect(SEARCH_INDEX.length).toBe(CATEGORIES.length + CATALOGUED_CLASSES.length);
+  it("indexa toda categoria, todo produto e todo tipo de instituição", () => {
+    expect(SEARCH_INDEX.length).toBe(
+      CATEGORIES.length + CATALOGUED_CLASSES.length + INSTITUTION_KINDS.length,
+    );
+  });
+
+  /**
+   * "Corretora", "cooperativa", "securitizadora" são perguntas que chegam pela
+   * busca antes de chegarem pelo menu — e a página de instituições nasceu
+   * justamente porque não havia resposta para elas.
+   */
+  it("acha todo tipo de instituição pelo nome curto", () => {
+    for (const kind of INSTITUTION_KINDS) {
+      const achados = search(kind.short).map((r) => r.id);
+      expect(achados, `"${kind.short}" não acha ${kind.id}`).toContain(kind.id);
+    }
   });
 
   /**
@@ -105,6 +120,10 @@ describe("comportamento da busca", () => {
       if (entry.kind === "categoria") {
         expect(CATEGORIES.some((c) => c.id === entry.id)).toBe(true);
         expect(entry.href).toBe(`/categorias/${entry.id}`);
+      } else if (entry.kind === "instituicao") {
+        expect(INSTITUTION_KINDS.some((k) => k.id === entry.id)).toBe(true);
+        // Âncora, e não rota própria: o alvo é o `id` do artigo na página.
+        expect(entry.href).toBe(`/instituicoes#${entry.id}`);
       } else {
         expect(CATALOGUED_CLASSES).toContain(entry.id);
         expect(entry.href).toBe(`/produtos/${entry.id}`);

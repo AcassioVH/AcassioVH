@@ -14,12 +14,14 @@
  * bytes baixados do que economiza em comparações.
  */
 
-import { CATEGORIES, CATALOGUED_CLASSES, categoryOfClass, familyOf } from "./families";
+import { INSTITUTION_GROUPS, kindsOf } from "../institutions/kinds";
+
+import { CATEGORIES, CATALOGUED_CLASSES, categoryOfClass, destinationOf } from "./destinations";
 import { profileFor } from "./profiles";
 import type { AssetClass } from "./taxonomy";
 
 export type SearchEntry = {
-  readonly kind: "produto" | "categoria";
+  readonly kind: "produto" | "categoria" | "instituicao";
   readonly id: string;
   readonly href: string;
   /** O que aparece grande no resultado. */
@@ -96,7 +98,7 @@ const SINONIMOS: Readonly<Record<string, readonly string[]>> = {
 
 function entradaDeProduto(assetClass: AssetClass): SearchEntry {
   const profile = profileFor(assetClass);
-  const family = familyOf(assetClass);
+  const destination = destinationOf(assetClass);
   const category = categoryOfClass(assetClass);
 
   return {
@@ -105,7 +107,7 @@ function entradaDeProduto(assetClass: AssetClass): SearchEntry {
     href: `/produtos/${assetClass}`,
     title: profile.fullName,
     badge: profile.label === profile.fullName ? null : profile.label,
-    detail: family ? `Destino: ${family.destino}` : (category?.label ?? "Produto"),
+    detail: destination ? `Destino: ${destination?.target}` : (category?.label ?? "Produto"),
     accent: category?.accent ?? "var(--color-light)",
     haystack: [
       // A sigla inteira entra também sem quebra, para "TESOURO_DIRETO" casar
@@ -116,8 +118,8 @@ function entradaDeProduto(assetClass: AssetClass): SearchEntry {
         profile.label,
         profile.fullName,
         profile.summary,
-        family?.label,
-        family?.destino,
+        destination?.label,
+        destination?.target,
         category?.label,
       ),
     ],
@@ -138,6 +140,36 @@ export const SEARCH_INDEX: readonly SearchEntry[] = [
     }),
   ),
   ...CATALOGUED_CLASSES.map(entradaDeProduto),
+
+  /**
+   * Os tipos de instituição entram no mesmo índice.
+   *
+   * Quem digita "corretora", "cooperativa" ou "securitizadora" está fazendo uma
+   * pergunta que o site responde — e antes desta página não havia resposta
+   * nenhuma para ela. Deixar as instituições fora da busca repetiria o defeito
+   * que a busca existe para corrigir: conteúdo publicado e invisível.
+   */
+  ...INSTITUTION_GROUPS.flatMap((group) =>
+    kindsOf(group).map(
+      (kind): SearchEntry => ({
+        kind: "instituicao",
+        id: kind.id,
+        href: `/instituicoes#${kind.id}`,
+        title: kind.short,
+        badge: null,
+        detail: kind.role,
+        accent: group.accent,
+        haystack: palavras(
+          kind.short,
+          kind.label,
+          kind.alias,
+          kind.role,
+          kind.guaranteeTag,
+          "instituicao financeira",
+        ),
+      }),
+    ),
+  ),
 ];
 
 /**

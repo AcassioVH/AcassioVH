@@ -1,6 +1,6 @@
 import { cartao, CARTAO } from "./_og/cartao";
 import { site } from "@/config/site";
-import { CATALOGUED_CLASSES } from "@/domain/assets/families";
+import { CATALOGUED_CLASSES } from "@/domain/assets/destinations";
 
 export const alt = `${site.name} — ${site.tagline}`;
 export const size = CARTAO;
