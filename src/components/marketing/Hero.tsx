@@ -52,7 +52,7 @@ export function Hero() {
       <LightShafts />
       {/* A partícula em suspensão é o que põe o leitor dentro d'água em vez de
           na frente de um fundo escuro: é o único elemento que ocupa o volume. */}
-      <MarineSnow />
+      <MarineSnow parallax />
       <WaterColumn />
       <div
         aria-hidden="true"

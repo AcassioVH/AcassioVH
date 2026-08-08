@@ -41,6 +41,9 @@ Além disso:
 - **36 produtos** organizados por *quem paga você*, em 14 famílias de pagamento:
   Tesouro, banco, empresa, carteira de recebíveis, fundo listado, fundo aberto,
   emissor no exterior, seguradora
+- **Busca** por `⌘K`, `/` ou pelo botão da barra — pela sigla, pelo nome, por
+  quem paga, ou por palavra que a pessoa usa mas o catálogo não ("dólar" acha o
+  fundo cambial)
 - **Comparação de estruturas** lado a lado (`/comparar`), sem ordenar nem pontuar
 - **Gráficos de estrutura** — cadeia de pagamento, composição da categoria e a
   tabela regressiva do IR

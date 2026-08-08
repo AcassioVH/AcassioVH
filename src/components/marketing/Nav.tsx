@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import { Wordmark } from "@/components/brand/Wordmark";
+import { SearchPalette } from "@/components/experience/SearchPalette";
 
 /**
  * A barra fixa.
@@ -18,6 +19,10 @@ import { Wordmark } from "@/components/brand/Wordmark";
  * páginas, mas nos lugares onde ele responde a uma dúvida real: a faixa no meio
  * da leitura, a chamada que fecha cada página e o rodapé. Convite vale quando
  * chega depois da explicação, não antes dela.
+ *
+ * **A busca ocupa o lugar que era do botão**, e ganha a prioridade por um motivo
+ * simples: com 36 verbetes, quem já sabe a palavra que procura não deveria ter
+ * de adivinhar em qual categoria ela mora.
  */
 const LINKS = [
   { href: "/categorias/renda-fixa", label: "Renda fixa" },
@@ -66,26 +71,30 @@ export function Nav() {
           <Wordmark size={22} />
         </Link>
 
-        <ul className="hidden items-center gap-7 lg:flex">
-          {LINKS.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-sm text-tertiary transition-colors duration-200 hover:text-title"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <div className="flex items-center gap-6">
+          <ul className="hidden items-center gap-7 lg:flex">
+            {LINKS.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="text-sm text-tertiary transition-colors duration-200 hover:text-title"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
 
-        {/* Em tela estreita, um destino só: a lista de categorias. */}
-        <Link
-          href="/#categorias"
-          className="font-mono text-[11px] uppercase tracking-[0.16em] text-light transition-colors duration-200 hover:text-title lg:hidden"
-        >
-          Categorias
-        </Link>
+          {/* Em tela estreita, um destino só: a lista de categorias. */}
+          <Link
+            href="/#categorias"
+            className="font-mono text-[11px] uppercase tracking-[0.16em] text-light transition-colors duration-200 hover:text-title lg:hidden"
+          >
+            Categorias
+          </Link>
+
+          <SearchPalette />
+        </div>
       </nav>
     </header>
   );

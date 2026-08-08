@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { GuaranteeMark } from "@/components/charts/GuaranteeMark";
 import { Caustics, MarineSnow } from "@/components/experience/Caustics";
+import { DepthGauge } from "@/components/experience/DepthGauge";
 import { PaymentChain } from "@/components/charts/PaymentChain";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
@@ -77,10 +78,14 @@ export default async function ProductPage({
   return (
     <>
       <Nav />
+      <DepthGauge />
 
       <main id="conteudo">
-        {/* Cabeçalho na zona iluminada: o produto em plena luz. */}
-        <header className="relative overflow-hidden border-b border-edge-soft px-6 pb-16 pt-32 sm:px-10 sm:pb-20 sm:pt-40">
+        {/* Nível 1: o nome do produto, em plena luz. */}
+        <header
+          data-depth="1"
+          className="relative overflow-hidden border-b border-edge-soft px-6 pb-16 pt-32 sm:px-10 sm:pb-20 sm:pt-40"
+        >
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[linear-gradient(to_bottom,#12333b,#0c2530_55%,#0b1d24)]"
@@ -90,7 +95,7 @@ export default async function ProductPage({
             className="absolute left-[64%] top-[-90px] h-[440px] w-[150px] skew-x-[-10deg] bg-[linear-gradient(176deg,rgba(227,188,126,.16),transparent_68%)]"
           />
           <Caustics className="h-[62%] opacity-60" />
-          <MarineSnow />
+          <MarineSnow parallax />
 
           <div className="relative mx-auto max-w-4xl">
             <Link
@@ -128,7 +133,7 @@ export default async function ProductPage({
           </div>
         </header>
 
-        <article className="bg-deep px-6 py-20 sm:px-10">
+        <article data-depth="2" className="bg-deep px-6 py-20 sm:px-10">
           <div className="mx-auto max-w-4xl">
             <p className="max-w-[64ch] text-xl leading-[1.8] text-body">{profile.whatItIs}</p>
 
@@ -176,7 +181,7 @@ export default async function ProductPage({
             </div>
 
             {/* Nível 4: os documentos. */}
-            <section className="mt-16 border border-edge bg-surface p-8 sm:p-10">
+            <section data-depth="4" className="mt-16 border border-edge bg-surface p-8 sm:p-10">
               <p className="tech mb-3 text-light">Nível 4 · onde conferir</p>
               <p className="mb-7 max-w-[62ch] text-base leading-relaxed text-aux">
                 Não afirmamos rentabilidade, cotação nem limites vigentes. Estes são os

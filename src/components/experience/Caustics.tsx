@@ -1,6 +1,7 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { useRef } from "react";
 
 /**
  * Cáustica: a trama que a luz desenha ao atravessar a superfície da água.
@@ -172,11 +173,37 @@ const SNOW_LAYERS = [
   },
 ] as const;
 
-export function MarineSnow({ className = "" }: { className?: string }) {
+export function MarineSnow({
+  className = "",
+  /**
+   * Liga a paralaxe de rolagem.
+   *
+   * Só vale onde há altura para percorrer — no hero e nos cabeçalhos. Numa
+   * seção baixa o deslocamento seria grande demais para o trecho visível e a
+   * partícula pareceria escorregar, que é o oposto de flutuar.
+   */
+  parallax = false,
+}: {
+  className?: string;
+  parallax?: boolean;
+}) {
   const still = useReducedMotion();
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  // Cada camada anda uma distância diferente com a mesma rolagem: é a diferença
+  // entre elas que o olho lê como profundidade. A de trás quase não se move.
+  const camadaFundo = useTransform(scrollYProgress, [0, 1], ["0%", "6%"]);
+  const camadaMeio = useTransform(scrollYProgress, [0, 1], ["0%", "14%"]);
+  const camadaFrente = useTransform(scrollYProgress, [0, 1], ["0%", "26%"]);
+  const deslocamentos = [camadaFundo, camadaMeio, camadaFrente];
 
   return (
     <div
+      ref={ref}
       aria-hidden="true"
       className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}
       style={{
@@ -187,21 +214,38 @@ export function MarineSnow({ className = "" }: { className?: string }) {
         maskImage: "linear-gradient(to bottom, transparent, black 18%, black 82%, transparent)",
       }}
     >
+      {/*
+        Duas camadas por partícula, e a separação é obrigatória.
+
+        A subida contínua é animação CSS, e a paralaxe é `transform` escrito pelo
+        Motion — as duas escrevem na mesma propriedade. Animação CSS ganha da
+        regra inline, então juntas no mesmo elemento a paralaxe simplesmente não
+        aconteceria, sem erro nenhum para denunciar. O elemento de fora carrega o
+        deslocamento da rolagem; o de dentro, a subida.
+      */}
       {SNOW_LAYERS.map((layer, index) => (
-        <div
+        <motion.div
           key={index}
-          className={still ? "" : "animate-rise"}
           style={{
             position: "absolute",
-            inset: `-${layer.size}px 0 -${layer.size}px 0`,
-            opacity: layer.opacity,
-            backgroundImage: layer.dots,
-            backgroundSize: `${layer.size}px ${layer.size}px`,
-            ["--snow-tile" as string]: `${layer.size}px`,
-            animationDuration: `${layer.duration}s`,
-            animationDelay: `${-index * 11}s`,
+            inset: 0,
+            y: parallax && !still ? deslocamentos[index] : undefined,
           }}
-        />
+        >
+          <div
+            className={still ? "" : "animate-rise"}
+            style={{
+              position: "absolute",
+              inset: `-${layer.size}px 0 -${layer.size}px 0`,
+              opacity: layer.opacity,
+              backgroundImage: layer.dots,
+              backgroundSize: `${layer.size}px ${layer.size}px`,
+              ["--snow-tile" as string]: `${layer.size}px`,
+              animationDuration: `${layer.duration}s`,
+              animationDelay: `${-index * 11}s`,
+            }}
+          />
+        </motion.div>
       ))}
     </div>
   );

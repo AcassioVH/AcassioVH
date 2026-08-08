@@ -102,7 +102,12 @@ A descoberta é o produto. Entrar por "renda fixa" e encontrar ali dentro quatro
 pagadores diferentes — o Tesouro, um banco, uma empresa e uma carteira de
 recebíveis — é o momento em que o site ensina alguma coisa.
 
-`chain`, em cada família, é a cadeia de pagamento e vira diagrama na tela.
+`chain`, em cada família, é a cadeia de pagamento e vira diagrama na tela — um
+diagrama que **se percorre**. A versão parada mostrava a topologia e não a
+direção: dava para ler os elos de trás para a frente sem perceber. Um pulso de
+luz atravessando a cadeia na ordem certa faz o sentido do pagamento ser visto, e
+não deduzido da seta. O movimento aqui é a informação que faltava, não enfeite —
+e a velocidade é a mesma em toda cadeia, para nenhuma parecer "pagar mais rápido".
 
 ## Uma decisão por tela
 
@@ -119,6 +124,14 @@ A navegação hoje tem três degraus, e cada um cabe numa decisão:
 | `/categorias/[id]` | quem paga cada coisa aqui dentro, e quais são os produtos |
 | `/produtos/[classe]` | como funciona este produto, em detalhe |
 | `/comparar` | qual a diferença entre estes dois |
+
+A busca (`⌘K`, `/`, ou o botão na barra) é o atalho de quem já sabe a palavra;
+a navegação continua sendo o caminho de quem não sabe. Ela não ordena por
+mérito, não sugere produto e não tem "mais procurados" — ranking de busca viraria
+ranking de produto. O índice sai do catálogo por derivação, nunca escrito à mão:
+índice paralelo envelheceria na primeira ficha nova, e o produto sumiria da busca
+continuando no site. `tests/busca.test.ts` exige que **toda** sigla ache o próprio
+verbete.
 
 ## Gráfico como descrição
 
@@ -169,6 +182,13 @@ Três lições ficaram no código:
   em cima das cristas. A correção não foi apagar a onda: foi um véu de
   degradê sob a barra, que escurece o bastante para o texto e vai a zero antes de
   alcançar a onda.
+- **`DepthGauge` perdeu os rótulos, e depois os recuperou de outro jeito.** Os
+  nomes dos níveis, fixos ao lado das marcas, invadiam a primeira coluna do
+  conteúdo em telas largas, e foram removidos. A remoção resolveu o atropelo e
+  custou a leitura: sem nome, a régua vira enfeite e a escala deixa de ensinar o
+  que significa. A solução não era escolher entre as duas coisas, era separá-las
+  no tempo — o nome aparece só no instante em que o nível muda e se apaga
+  sozinho. Parado, a régua é marca; descendo, ela diz onde você está.
 - **`DepthGauge` perdeu os rótulos.** Os nomes dos níveis invadiam a primeira
   coluna do conteúdo em telas largas. A correção não foi encolher a fonte: foi
   notar que o rótulo já existe no olho de cada seção, e repeti-lo na régua era

@@ -7,6 +7,7 @@ import { PaymentChain } from "@/components/charts/PaymentChain";
 import { ProductCard } from "@/components/charts/ProductCard";
 import { TaxLadder } from "@/components/charts/TaxLadder";
 import { Caustics, MarineSnow } from "@/components/experience/Caustics";
+import { DepthGauge } from "@/components/experience/DepthGauge";
 import { Footer } from "@/components/marketing/Footer";
 import { Nav } from "@/components/marketing/Nav";
 import { Disclaimer } from "@/components/ui/Disclaimer";
@@ -68,9 +69,13 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
   return (
     <>
       <Nav />
+      <DepthGauge />
 
       <main id="conteudo">
-        <header className="relative overflow-hidden border-b border-edge-soft px-6 pb-16 pt-32 sm:px-10 sm:pb-20 sm:pt-40">
+        <header
+          data-depth="1"
+          className="relative overflow-hidden border-b border-edge-soft px-6 pb-16 pt-32 sm:px-10 sm:pb-20 sm:pt-40"
+        >
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-[linear-gradient(to_bottom,#12333b,#0c2530_55%,#0b1d24)]"
@@ -80,7 +85,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
             className="absolute left-[66%] top-[-90px] h-[440px] w-[150px] skew-x-[-10deg] bg-[linear-gradient(176deg,rgba(227,188,126,.16),transparent_68%)]"
           />
           <Caustics className="h-[62%] opacity-60" />
-          <MarineSnow />
+          <MarineSnow parallax />
 
           <div className="relative mx-auto max-w-5xl">
             <Link
@@ -113,6 +118,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
         {/* Nível 1 da página: quem paga, com o caminho desenhado. */}
         <section
+          data-depth="2"
           aria-labelledby="familias-title"
           className="border-b border-edge-soft bg-deep px-6 py-20 sm:px-10 sm:py-24"
         >
@@ -170,6 +176,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
         {/* Nível 2: os produtos, com as mesmas quatro perguntas em cada um. */}
         <section
+          data-depth="3"
           aria-labelledby="produtos-title"
           className="border-b border-edge-soft bg-surface px-6 py-20 sm:px-10 sm:py-24"
         >
@@ -214,6 +221,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ id: s
 
         {/* As outras portas, para quem chegou aqui e não era isto que procurava. */}
         <nav
+          data-depth="4"
           aria-label="Outras categorias"
           className="border-b border-edge-soft bg-deep px-6 py-16 sm:px-10"
         >
