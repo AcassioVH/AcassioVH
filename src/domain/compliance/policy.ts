@@ -63,7 +63,15 @@ export const FORBIDDEN_PATTERNS: readonly { pattern: RegExp; reason: string }[] 
   { pattern: /\bmá (opção|escolha|alternativa|aplicação)/i, reason: "juízo de valor" },
   { pattern: /\bativo (bom|ruim|excelente|péssimo)\b/i, reason: "qualificação de ativo" },
   { pattern: /\brentabilidade de \d/i, reason: "afirmação de rentabilidade" },
-  { pattern: /\brende \d/i, reason: "afirmação de rentabilidade" },
+  {
+    // Cobria só o presente do indicativo (`rende 12%`), e a lacuna era visível
+    // no próprio docs/COMPLIANCE.md: "Esse fundo rendeu 12% no ano" está lá
+    // como exemplo do que não pode, e passava batido. A conjugação apareceu de
+    // vez com o boletim de conjuntura, onde o texto é gerado e usa o tempo que
+    // a notícia pedir — "deve render 14% ao ano" é a forma mais comum de todas.
+    pattern: /\brend(e|eu|em|eram|er|erá|erão|ia|iam|endo)\s+\d/i,
+    reason: "afirmação de rentabilidade",
+  },
   { pattern: /\bretorno (esperado|estimado|previsto|projetado)/i, reason: "projeção de retorno" },
   { pattern: /\bganho (garantido|certo)/i, reason: "promessa de retorno" },
   { pattern: /\bvai (subir|cair|valorizar|desvalorizar)/i, reason: "previsão de preço" },

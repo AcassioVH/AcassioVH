@@ -10,8 +10,15 @@ que violar a regra seja difícil, e não apenas proibido?*
 |---|---|---|
 | Tipos | `AssetProfile` não tem campo de rentabilidade, nota ou opinião | Escrever a frase não compila |
 | Testes | `tests/compliance.test.ts` varre o catálogo e a navegação | Texto com juízo de valor quebra o CI |
+| Saída | `scripts/varrer-html.mjs` varre o HTML publicado depois do build | Copy escrita em JSX com vocabulário proibido quebra o CI |
+| Runtime | `src/domain/boletim/conformidade.ts` peneira o texto gerado pelo modelo | Item em violação não chega a virar HTML |
 
-Nenhuma das duas depende de alguém lembrar da regra ao escrever.
+Nenhuma delas depende de alguém lembrar da regra ao escrever.
+
+A quarta camada é a mais nova e existe por um motivo específico: `/boletim`
+publica texto que nasce em produção, depois do último teste. As três primeiras
+protegem conteúdo curado; ela protege conteúdo que ninguém leu antes do leitor.
+Ver `docs/RISKS.md`, risco 9.
 
 Existia antes uma terceira camada — um banco sem coluna de performance. Ela
 deixou de ser necessária quando o produto virou site educativo: **não há banco,
@@ -27,9 +34,38 @@ não há conta e não há coleta de dados.** O que não existe não vaza.
 | Movimento | Motion 12 | Revelação por rolagem, com `prefers-reduced-motion` respeitado |
 | Tipografia | `next/font` — Libre Caslon Display, Source Sans 3, IBM Plex Mono | Baixadas no build e auto-hospedadas: sem CDN em runtime, sem requisição a terceiro carregando a navegação de quem lê |
 | Testes | Vitest | Rápido o bastante para o guardrail rodar a cada commit |
+| Apuração | `@anthropic-ai/sdk` | Só em `/api/boletim`, só no servidor. Nenhuma outra rota importa |
 
-Sem banco, sem ORM, sem autenticação, sem variável de ambiente obrigatória. O
-site publica em qualquer hospedagem de arquivos estáticos.
+Sem banco, sem ORM e sem autenticação.
+
+## A exceção: `/boletim` precisa de servidor
+
+Uma rota do site deixou de ser estática, e vale registrar o que isso custou em
+vez de deixar a mudança implícita numa tabela.
+
+Todas as outras páginas saem do build como HTML e rodam em qualquer hospedagem
+de arquivos. `/boletim` apura conjuntura econômica ao vivo, o que exige uma
+chave de API — e chave de API não pode viver no navegador, porque bundle é
+código publicado. Daí a rota `src/app/api/boletim/route.ts`: ela guarda a
+chave, monta o prompt e devolve JSON já conferido. A tela nunca fala com a
+Anthropic.
+
+**O que a exceção custa.** O deploy passa a exigir um runtime Node para uma
+rota, e a rota gasta dinheiro por requisição (`docs/RISKS.md`, risco 10).
+
+**O que ela deliberadamente não custa.** A chave é opcional: sem
+`ANTHROPIC_API_KEY`, a rota responde 503, a página informa que a apuração está
+desligada e o restante do site continua exatamente como antes — estático, sem
+variável obrigatória, publicável em qualquer lugar. Um deploy limpo não gasta
+nada e não perde nada. A exceção é uma rota, não uma mudança de modelo.
+
+**O que fica no servidor, e por quê.** O prompt vive em
+`src/app/api/boletim/prompts.ts`, dentro de `app/api/`, onde o bundler não o
+manda para o cliente. Isso não é organização: o texto do prompt usa o
+vocabulário que a varredura de conformidade proíbe — precisa usar, porque é ele
+que instrui o modelo a *não* recomendar — e no cliente ele apareceria no HTML
+publicado, quebrando `npm run varrer:html` com razão. No navegador, ele também
+seria editável por quem abrisse o DevTools, e "não recomende" viraria sugestão.
 
 ## O sistema de marca: profundidade como clareza
 
@@ -138,6 +174,15 @@ A navegação hoje tem três degraus, e cada um cabe numa decisão:
 | `/produtos/[classe]` | como funciona este produto, em detalhe |
 | `/instituicoes` | quem é que emite isso, e quem responde por ele |
 | `/comparar` | qual a diferença entre estes dois |
+| `/boletim` | o que aconteceu na economia nas últimas 48 horas |
+
+`/boletim` está fora dessa escada, e de propósito. As cinco primeiras rotas
+formam o caminho de quem chega para entender o que é um CDB; o boletim é
+ferramenta de trabalho do assessor. Por isso ele não entra na barra de
+navegação, não entra no sitemap e é `noindex`: o conteúdo dele nasce a cada
+apuração e some quando a aba fecha, então o que um buscador indexaria é uma
+casca vazia — e o que ele mostraria ao visitante seria uma promessa que a
+página não cumpre sozinha.
 
 `/instituicoes` responde a outra metade da pergunta do site. Toda ficha dizia
 "emitido por instituição financeira autorizada pelo Banco Central" e seguia em
@@ -228,22 +273,34 @@ src/
 │   ├── instituicoes/           # os tipos de instituição, e onde conferir cada uma
 │   ├── produtos/[classe]/      # verbete por produto, estático
 │   ├── comparar/               # duas estruturas lado a lado
+│   ├── boletim/                # a leitura de conjuntura, apurada ao vivo
+│   ├── api/boletim/            # a ÚNICA rota de servidor: chave, prompt e conferência
 │   ├── (legal)/                # termos e privacidade
 │   └── globals.css             # tokens da marca (@theme)
 ├── components/
 │   ├── charts/                 # gráficos de estrutura e o cartão de produto
 │   ├── experience/             # atmosfera: cáusticas, feixes, régua de profundidade
 │   ├── marketing/              # seções da home
+│   ├── boletim/                # a tela do boletim e suas peças
 │   ├── brand/                  # a marca: as duas hastes do "A"
 │   └── ui/                     # primitivos (Reveal, StatusPill, Disclaimer, WhatsAppCTA)
 ├── domain/                     # núcleo — sem React, sem UI
 │   ├── assets/                 # taxonomia, destinos, verbetes, classificação
 │   ├── institutions/           # tipos de instituição e fontes de consulta
 │   ├── cnpj/                   # validação e normalização
+│   ├── boletim/                # tipos, normalização, peneira e limite de uso
+│   ├── json/                   # extração e reparo do JSON devolvido pelo modelo
 │   └── compliance/             # política e detector de violações
 └── config/                     # configuração institucional
 tests/                          # guardrail de conformidade + domínio
 ```
+
+**Por que `src/domain/boletim/` existe, e não `src/app/api/boletim/tudo.ts`.**
+A regra que decide o que chega à tela — normalizar dado de terceiro, peneirar
+vocabulário proibido, contar uso — é a parte que mais precisa de teste, e é
+justamente a parte que uma rota HTTP torna difícil de testar. No domínio, ela
+roda em milissegundos no Vitest, sem servidor e sem chave. A rota fica sendo o
+que deveria ser: transporte.
 
 `src/domain/` não importa nada de React: o núcleo regulatório precisa ser
 testável sem montar componente.
@@ -255,7 +312,11 @@ O site está completo como peça de conteúdo. O que falta é operacional:
 1. **Razão social e CNPJ** nas páginas legais (`NEXT_PUBLIC_LEGAL_ENTITY`).
 2. **Revisão jurídica** dos dois documentos legais. Definir
    `NEXT_PUBLIC_LEGAL_REVIEWED=true` retira o aviso de "documento em elaboração".
-3. **Domínio e publicação.** Sendo estático, qualquer hospedagem serve.
+3. **Domínio e publicação.** O conteúdo é estático; só `/api/boletim` precisa de
+   runtime Node, e só quando a apuração for ligada.
+4. **Cota da chave da Anthropic**, antes de definir `ANTHROPIC_API_KEY` em
+   produção. O limite em memória do processo contém acidente, não ataque
+   distribuído — ver `docs/RISKS.md`, risco 10.
 
 O histórico do git guarda a versão anterior do produto — com conta, banco,
 carteira e criptografia — caso um dia a área logada volte.

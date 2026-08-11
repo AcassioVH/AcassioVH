@@ -291,3 +291,49 @@
     animation: none;
   }
 }
+
+/*
+ * Impressão.
+ *
+ * Existe por causa do boletim de conjuntura, que é o único conteúdo do site
+ * feito para sair da tela: quem apura de manhã leva o PDF para a conversa da
+ * tarde. Some com os controles — botão de apuração e trilho de andamento não
+ * significam nada no papel — e devolve fundo branco, porque a paleta de
+ * profundidade num jato de tinta é uma folha preta.
+ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  /*
+   * A inversão precisa alcançar cada elemento, e não só o `body`.
+   *
+   * A primeira versão pintava apenas o fundo e a cor do `body`, o que não
+   * funciona: no sistema, título e parágrafo carregam a própria cor por
+   * utilitário (`text-title`, `text-body`, `text-aux`), e essas regras vencem a
+   * herança. O resultado era texto quase branco em papel branco — uma folha em
+   * branco com o layout certo.
+   */
+  body,
+  body * {
+    background-color: transparent !important;
+    background-image: none !important;
+    color: #111 !important;
+    box-shadow: none !important;
+  }
+
+  body {
+    background-color: #fff !important;
+  }
+
+  /* As placas viram moldura de linha: o preenchimento escuro não imprime. */
+  .plate,
+  .plate-inset {
+    border: 1px solid #bbb !important;
+  }
+
+  a {
+    text-decoration: underline;
+  }
+}

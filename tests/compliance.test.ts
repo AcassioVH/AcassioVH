@@ -320,6 +320,12 @@ describe("guardrail detecta violações reais", () => {
     "Essa é a melhor opção de renda fixa hoje.",
     "Vale a pena migrar para outro emissor.",
     "Rende 12% ao ano com ganho garantido.",
+    // As conjugações passavam batido enquanto o padrão cobria só o presente —
+    // inclusive esta, que docs/COMPLIANCE.md já listava como exemplo do que não
+    // pode. A lacuna ficou visível quando o boletim de conjuntura passou a
+    // gerar texto no tempo verbal que a notícia pedisse.
+    "Esse fundo rendeu 12% no ano.",
+    "O papel deve render 14% ao ano.",
     "O papel vai subir nos próximos meses.",
     "Investimento sem risco para seu perfil.",
   ];

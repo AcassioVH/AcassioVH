@@ -17,6 +17,10 @@ npm install
 npm run dev      # http://localhost:3000
 ```
 
+A única parte que pede configuração é o boletim de conjuntura (`/boletim`):
+sem `ANTHROPIC_API_KEY` no ambiente, a página abre e informa que a apuração está
+desligada, e o resto do site funciona normalmente. Ver `.env.example`.
+
 ```bash
 npm run verify   # typecheck + lint + testes + build + varredura do HTML
 npm run build    # build estático de produção
@@ -59,8 +63,15 @@ Além disso:
 - **Sitemap, robots e dados estruturados** — o site existe para ser encontrado
 - **Cartão de compartilhamento por página**, gerado no build: o link de um
   verbete mandado no WhatsApp chega com título, resumo e o destino do dinheiro
+- **Boletim de conjuntura** (`/boletim`) — leitura diária do noticiário
+  econômico, apurada ao vivo em fontes públicas, com veículo e data em cada
+  afirmação. É ferramenta de trabalho do assessor, não conteúdo do catálogo:
+  fica fora da navegação e fora do índice de busca, e todo texto gerado passa
+  pela mesma varredura de conformidade do resto do site antes de aparecer
 
-Tudo estático: sem banco, sem login, sem coleta de dados.
+Sem banco, sem login, sem coleta de dados. Todo o conteúdo é estático, com uma
+exceção declarada: `/boletim` conversa com `/api/boletim`, a única rota de
+servidor do projeto — ver [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
 
 ## Documentação
 
@@ -78,7 +89,12 @@ escreve:
 1. **Tipos.** `AssetProfile` não tem campo de rentabilidade, nota ou opinião.
    Escrever a frase não compila.
 2. **Testes.** Um guardrail varre todo o catálogo atrás de vocabulário de
-   recomendação e quebra o CI quando encontra.
+   recomendação e quebra o CI quando encontra. Depois do build, outra varredura
+   passa pelo HTML publicado, onde nenhuma palavra escapa.
+3. **Runtime.** O texto que o boletim gera não passa por nenhuma das duas — ele
+   nasce depois do último teste. Por isso ele atravessa a mesma lista de
+   padrões em tempo de execução, e o item em violação é descartado antes de
+   virar HTML.
 
 Detalhes e a checklist de conteúdo em [`docs/COMPLIANCE.md`](docs/COMPLIANCE.md).
 

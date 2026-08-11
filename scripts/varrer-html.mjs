@@ -44,7 +44,7 @@ export const PROIBIDO = [
   [/\bmá (opção|escolha|alternativa|aplicação)/i, "juízo de valor"],
   [/\bativo (bom|ruim|excelente|péssimo)\b/i, "qualificação de ativo"],
   [/\brentabilidade de \d/i, "afirmação de rentabilidade"],
-  [/\brende \d/i, "afirmação de rentabilidade"],
+  [/\brend(e|eu|em|eram|er|erá|erão|ia|iam|endo)\s+\d/i, "afirmação de rentabilidade"],
   [/\bretorno (esperado|estimado|previsto|projetado)/i, "projeção de retorno"],
   [/\bganho (garantido|certo)/i, "promessa de retorno"],
   [/\bvai (subir|cair|valorizar|desvalorizar)/i, "previsão de preço"],

@@ -1,9 +1,15 @@
 /**
  * Catálogo de fichas educativas, curado por tipo de ativo.
  *
- * Todo texto exibido ao usuário sobre um ativo sai daqui. Não há geração
- * dinâmica de conteúdo descritivo em nenhum ponto do sistema: se está na tela,
- * passou por curadoria humana e pelo teste de conformidade.
+ * Todo texto exibido ao usuário **sobre um ativo** sai daqui: se está numa
+ * ficha, passou por curadoria humana e pelo teste de conformidade.
+ *
+ * A frase já foi mais ampla — dizia que não havia geração dinâmica de conteúdo
+ * em ponto nenhum do sistema. Deixou de ser verdade com `/boletim`, que apura
+ * notícia econômica por modelo de linguagem em tempo de execução. A distinção
+ * que sobrou é a que importa: o boletim descreve **conjuntura**, com veículo e
+ * data em cada afirmação, e nunca um produto do catálogo. Nada do que ele gera
+ * entra aqui, e o caminho contrário também não existe.
  *
  * As fichas descrevem o *tipo* de ativo, nunca o ativo específico da carteira
  * do usuário. "Como funciona um CDB" é conteúdo educativo; "como está o CDB do

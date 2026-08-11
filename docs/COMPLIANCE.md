@@ -56,7 +56,32 @@ detectados. Sem isso, um detector quebrado passaria como "nenhuma violação
 encontrada", que é o pior modo de falha possível para um guardrail.
 
 **Cobertura atual:** catálogo, política, classificador.
-**Fora da varredura:** copy escrita direto em JSX (ver `docs/RISKS.md`, risco 3).
+**Depois do build:** `scripts/varrer-html.mjs` varre o HTML publicado, o que
+fecha a copy escrita direto em JSX (`docs/RISKS.md`, risco 3).
+
+### 4. Peneira de runtime, para o que não passa por nenhuma das três
+
+As camadas acima pressupõem que o texto existe antes do deploy. `/boletim` quebra
+essa premissa: ele apura conjuntura por modelo de linguagem em tempo de
+execução, e o que sai de lá nunca foi visto por uma pessoa nem por um teste.
+
+`src/domain/boletim/conformidade.ts` aplica `FORBIDDEN_PATTERNS` — a mesma
+lista, sem exceções próprias — a cada item gerado, antes de ele virar HTML. Três
+decisões, e cada uma tem motivo:
+
+- **A unidade de descarte é a unidade de exibição.** Um cartão em violação sai
+  inteiro. Apagar um campo e manter o resto faz o leitor preencher a lacuna
+  sozinho, que é o risco que a varredura existe para evitar.
+- **URL fica de fora da varredura.** Manchete vira slug, e um link legítimo pode
+  carregar "recomendacao" no caminho. Varrer a URL descartaria a notícia pelo
+  endereço dela, não pelo que ela diz.
+- **Campos são unidos por ponto, não por espaço.** Vários padrões estão
+  ancorados em início de oração (ver a seção seguinte); com espaço, o começo de
+  um campo deixa de ser começo de frase e um imperativo escaparia no meio da
+  linha.
+
+O prompt também proíbe recomendar, e é a primeira linha de defesa. A peneira é a
+segunda, e é a única que não depende de o modelo ter obedecido.
 
 ## Sobre falsos positivos
 
@@ -75,6 +100,14 @@ Quando o detector acusar texto legítimo, a ordem de preferência é:
    "recomendação" para negá-la.
 
 Nunca afrouxe um padrão global para calar um caso isolado.
+
+**Apertar um padrão, porém, é sempre bem-vindo.** `\brende \d` cobria só o
+presente do indicativo e deixava passar "rendeu 12%" — exemplo que este próprio
+documento listava como proibido, na tabela acima. A lacuna ficou visível quando
+o boletim passou a gerar texto no tempo verbal que a notícia pedisse ("deve
+render 14% ao ano"). Ao apertar um padrão, lembre que a lista existe duas vezes:
+em `policy.ts` e em `scripts/varrer-html.mjs`. `tests/conformidade-html.test.ts`
+falha se você mexer numa e esquecer da outra.
 
 ## Antes de publicar conteúdo novo
 
